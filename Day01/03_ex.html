@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>03 연습</title>
+    </head>
+    <body>
+        
+        <!-- 1. 리스트 -->
+        <ul>
+            <li>이름: 함형준</li>
+            <li>나이: 27</li>
+            <li>주소: 서울</li>
+        </ul>
+
+        <ol>
+            <li>바나나</li>
+            <li>아몬드봉봉</li>
+            <li>엄마는 외계인</li>
+        </ol>
+
+        <dl>
+            <dt>aaa</dt>
+            <dd>aaa는 a가 3개 있습니다.</dd>
+
+            <dt>bbb</dt>
+            <dd>bbb는 한글 키보드로 ㅠㅠㅠ입니다.</dd>
+
+            <dt>ccc</dt>
+            <dd>ccc는 나빠요!</dd>
+        </dl>
+
+        <hr>
+
+        <!-- 2. 1) 하이퍼 링크 anchor 요소 (인라인 요소 - 공간이 있다면 옆으로 배치) -->
+        <a href="https://www.naver.com/">네이버</a>
+        <br> <!-- 줄 바꾸기  -->
+        <a href="https://www.google.com/" target="_blank">구글</a>
+        <br>
+
+        <!-- 2) 상대경로 지정으로 파일 링크 가능 -->
+        <a href="./01_text.html" target="_self"> 01번 실습 웹문서 열기 </a> <br>
+        <a href="./02_text.html" target="_self"> 02번 실습 웹문서 열기 </a> <br>
+
+        <!-- 3) 현재 html 문서안에서 특정 위치로 이동 [id 속성 사용] -->
+        <a href="#jump">점프!</a>
+        <hr>
+        <h3 id="jump">착지</h3>
+
+        <!-- 줄 바꾸기 위해서 매번 br 태그 사용하기보다는 단락 요소 사용하는 것 추천 (간격이 없으니, 간격 주기 좋음) -->
+        <P><a href="">aaa</a></P>
+        <P><a href="">bbb</a></P>
+
+        <!-- 리스트의 요소로 링크들을 배치할 수 있음 -->
+        <ul>
+            <li><a href="">네이버</a></li>
+            <li><a href="">구글</a></li>
+            <li><a href="">다음</a></li>
+        </ul>
+
+        <!-- href에 .html 문서 외 링크(이미지 등)도 연결할 수 있음 -->
+        <p><a href="http://mbca2025aix.dothome.co.kr/download/moana.jpg">모아나 이미지 링크</a></p>
+
+        <!-- 브라우저가 보여주지 못하는 문서는? 자동 다운로드 됨 -->
+        <p><a href="http://mbca2025aix.dothome.co.kr/download/Fonts.zip">압축문서 다운로드</a></p>
+        <p><a href="http://mbca2025aix.dothome.co.kr/download/공모전.hwp">한글문서 다운로드</a></p>
+
+        <!-- 이메일 주소를 링크하면, 이메일 앱 실행 -->
+        <p><a href="mailto:123gudwns@naver.com">함형준 이메일</a></p>
+
+        <hr>
+
+        <!-- 3. 이미지를 보여주는 요소 (인라인 요소)-->
+        <img src="http://mbca2025aix.dothome.co.kr/download/moana.jpg" alt="선생님 조카가 좋아하는 모~아~나~">
+        <img src="./image/sydney.jpg" alt="시드니 이미지" width="200" height="150" border="4">
+        <img src="./image/penguins.jpg" alt="팽귄 이미지" width="50%">
+        <img src="" alt="이미지가 없을 때 보여질 글씨">
+
+        <!-- img + anchor -->
+        <a href="./image/paris.jpg"><img src="./image/paris.jpg" alt="시드니 이미지 입니다" width="200"></a>
+
+        <!-- 수행과제 -->
+        <!-- [슬라이드 자료 2번 파일의 32,33 커피전문점 홈페이지] -->
+        <!-- [슬라이드 자료 2번 파일의 34,37 썸네일 사진 링크 페이지] -->
+
+        <!-- ~p.91 (71~76은 안 읽어도 됨) -->
+        <!-- 되새김 문제 풀기 / 챕터 4의 6,8,9,11 제외 (121p) 10번 문제가 최종 -->
+        
+    </body>
+</html>
