@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>input</title>
+    </head>
+    <body>
+        <!-- input 요소의 다양한 type 알아보기 -->
+
+        <!-- 1. 한줄 입력 요소 너비를 넘어가면 자동 스크롤 -->
+        <input type="text" size="40"> <br>
+        <!-- 2. 비밀번호 요소 -->
+        <input type="password"> <br>
+
+        <hr>
+
+        <!-- 3. 라디오 버튼 (single choice) -->
+        <!-- 추후, 서버에 전송되는 값은 input 요소의 'value'(데이터) 속성 값이 전송 됨! -->
+        <!-- [가장 중요] 아래 두 라디오 버튼이 한 그룹이라는 것을 인식하도록 'name'(변수명) 속성이 같아야 함 -->
+        라디오 버튼:
+        <input type="radio" value="aaa" name="rb"> aaa
+        <input type="radio" value="bbb" name="rb"> bbb
+        <hr>
+
+        <!-- label 요소와 함께 사용하면 글씨를 눌렀을 때 선택이 됨 -->
+        <input type="radio" value="male" name="gender" id="rb1">
+        <label for="rb1">남성</label>
+        <input type="radio" value="Female" name="gender" id="rb2" checked="checked">
+        <label for="rb2">여성</label>
+        <hr>
+
+        <!-- 4. 체크박스 (multiple choice) -->
+        <!-- label 요소 안에 input 요소를 넣으면 for 속성 부여 효과 볼 수 있음 -->
+        <label><input type="checkbox" value="apple" name="ice_cream">사과</label>
+        <label><input type="checkbox" value="banana" name="ice_cream">바나나</label>
+        <label><input type="checkbox" value="orange" name="ice_cream">오렌지</label>
+        <label><input type="checkbox" value="om_is_an alien" name="ice_cream" checked>엄마는 외계인</label>
+        <label><input type="checkbox" value="Almond_Bonbon" name="ice_cream" checked>아몬드 봉봉</label>
+        <!-- ice_cream 라는 이름의 식별자(변수)에 선택된 값들(리스트, 배열)이 서버로 전송됨 -->
+        <hr>
+
+        <!-- 5. 서버 전송을 요청하는 버튼 타입 submit (항상 form 요소와 함께 사용해야 함) -->
+        <!-- submit 타입의 버튼을 클릭하면 from 요소의 action 속성에 지정된 서버 프로그램이 실행됨 -->
+        <form action="./aaa.php">
+            <input type="text" name="title">
+            <input type="text" name="message">
+            <input type="submit" value="보내기">
+            <!-- 6. 작성내용 모두 삭제(초기화) -->
+            <input type="reset" value="모두 지우기">
+            <!-- 7. 이미지를 이용하여 submit 버튼 구현 -->
+            <input type="image" src="./image/PIA03149_hithumb.jpg" width="50"> ◀ 이미지형 버튼
+        </form>
+        <hr>
+
+        <!-- 8. input 요소의 버튼 타입 -->
+        <input type="button" value="중복체크" onclick="alert('중복된 ID 입니다')">
+        <!-- 이런 방식의 버튼은 오로지 텍스트만 들어갈 수 있다. -->
+
+        <!-- 9. button 요소 -->
+        <button onclick="alert('버튼이 딸깍! 눌려버렸다!')">눌러주세요</button>
+        <!-- 버튼 요소는 안에 글씨 외 다른 요소가 들어갈 수 있다! -->
+        <button>
+            <img src="./image/PIA03542_hithumb.jpg" alt="여러 행성들 이미지 버튼" width="100" onclick="alert('은하들인가?')">
+        </button>
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>

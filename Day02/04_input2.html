@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>input 2</title>
+    </head>
+    <body>
+
+        <!-- 여러줄 입력 -->
+        <textarea cols="40" rows="5"></textarea>
+        <hr>
+
+        <!-- 콤보박스 용 요소 -->
+        <select>
+            <option value="aa">사과</option>
+            <option value="bb">바나나</option>
+            <option value="cc">오렌지</option>
+        </select>
+
+        <!-- 옵션 그룹 활용 -->
+        <select>
+            <optgroup label="중식">
+                <option value="a">짜장면</option>
+                <option value="b">짬뽕</option>
+                <option value="c">볶음밥</option>
+            </optgroup>
+            <optgroup label="일식">
+                <option value="a2">초밥</option>
+                <option value="b2">회</option>
+                <option value="c2">덮밥</option>
+            </optgroup>
+        </select>
+
+        <hr>
+        
+        <fieldset>
+            <legend>범례 : 필드 셋의 제목을 표시할 수 있어요!(개인정보)</legend>
+            <label>이름: <input type="text" name="name"></label>
+            <label>나이: <input type="text" name="age"></label>
+        </fieldset>
+
+        <hr>
+
+        <!-- 파일 선택하기 -->
+        <input type="file" accept="image/png"> 파일 1개만 선택
+        <hr>
+        <!-- 여러개의 파일 선택 -->
+        <input type="file" accept="image/*" multiple> 파일 여러개 선택
+        <hr>
+
+        <!-- 비교적 최근 추가된 type들 -->
+        <form action="">
+
+            <!-- 날짜 선택 관련 타입들 -->
+            <input type="date"> <br>
+            <input type="datetime"> <!-- 지원 안됨 -->
+            <input type="datetime-local"> <br>
+            <input type="month">
+            <input type="week">
+            <hr>
+
+            <!-- 색상 선택창 -->
+            <input type="color"> <br>
+
+            <!-- 이메일 입력 박스 [모바일에서 키패드(소프트 키보드) 모양이 달라짐] -->
+            <input type="email"> 이메일 입력창(모바일에서 키보드..) <br>
+
+            <!-- 검색어 입력 박스 [글씨 쓰면 삭제 버튼 X가 우측 끝에 표시됨] -->
+            <input type="search"> 글씨 쓰면 삭제 버튼 X 표시됨 <br>
+
+            <!-- 범위 지정 요소 -->
+            <input type="range" min="0" max="10" step="2" value="4">
+
+            <!-- 숫자 선택 요소 -->
+            <input type="number" min="210" max="300" step="10" value="230"> <br>
+
+            <!-- URL 입력 [모바일 키보드 모양 다름] -->
+            <input type="url"> URL 입력창(모바일에서 키보드..)
+
+        </form>
+        <hr>
+        <!-- 더 최근! -->
+        <form action="">
+
+            <!-- 힌트 글씨 표시 -->
+            <input type="text" placeholder="이름을 입력하세요."> 칸 안에 내용 넣기 <br>
+
+            <!-- 반드시 입력해야 하는 요소를 적용하는 속성 (from 요소 안에서만 작동) -->
+            <input type="text" required> 필수 입력 칸 <br> 
+
+            <!-- 글씨는 보이지만 수정 불가 -->
+            <input type="text" readonly value="sam"> 글씨 미리 있고, 수정 불가 <br>
+
+            <!-- 페이지가 로딩될 때 가장 먼저 포커스 받고 싶다면?(처음부터 활성화 되도록) -->
+            <input type="text" autofocus> 처음부터 활성화 됨(바로 타이핑 가능) <br>
+
+            <!-- 최대 입력 글자 수 제한 -->
+            <input type="text" maxlength="5"> 글자 수 제한(5글자) <br>
+
+            <!-- 자동 완성 기능 -->
+            <input type="text" autocomplete list="datas"> 자동완성 기능(한글자 써도 나오고, 필터 형식 됨)
+            <datalist id="datas">
+                <option value="canada" label="캐나다"></option>
+                <option value="china" label="중국"></option>
+                <option value="korea" label="한국"></option>
+            </datalist>
+
+            <hr>
+            <input type="submit">
+
+        </form>
+
+    </body>
+</html>

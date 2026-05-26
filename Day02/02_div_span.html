@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>div와 span, 비디오 오디오 아이프레임</title>
+    </head>
+    <body>
+        <h2>div와 span, 그리고 비디오 오디오 아이프레임 알아보기</h2>
+
+        <!-- 1. audio 요소 -->
+        <audio src="./audio/old_pop.mp3" controls="controls">이 오디오 태그가 지원되지 않으면 이 글씨가 보입니다.</audio>
+
+        <!-- 브라우저마다 지원가능한 음원의 유형이 다를 수 있고, 이에 대응하기 위해서 -->
+        <audio controls>
+            <!-- type은 MIME 타입을 지정 [oudio/확장자] (정해져 있음) -->
+            <source src="./audio/old_pop.mp3" type="audio/mp3">
+            <source src="./audio/old_pop.mp3" type="audio/wav">
+            <source src="./audio/old_pop.mp3" type="audio/ogg">
+        </audio>
+        <!-- 미디오파일 변환 사이트 online-convert.com -->
+
+        <hr>
+
+        <!-- 2. 비디오 요소 -->
+        <video controls>
+            <source src="./video/movie.ogv" type="video/ogg">
+        </video>
+    
+        <!-- 영상 autoplay는 muted와 함께 써야 자동재생 가능 -->
+        <video controls width="480" height="320" poster="./image/PIA12110_hithumb.jpg" > <!-- autoplay muted -->
+            <source src="./video/trailer.mp4" type="video/mp4">
+            <source src="./video/trailer.webm" type="video/webm">
+            <source src="./video/trailer.ogv" type="video/ogg">
+        </video>
+
+        <!-- 예전에.. 미디어파일 전용 요소가 없을 때 사용하던 요소 [embed, object] -->
+        <embed src="./SQL.pdf" type="application/pdf"> <!-- 가장 오래된 요소 -->
+        <hr>
+        <object data="./SQL.pdf" type="application/pdf" width="50%" height="300"></object>
+        <hr>
+        <!-- 현재는 embed, object ==> iframe으로 사용하는 것을 권장 -->
+        
+
+        <!-- 3. iframe [inline Frame] : 다른 HTML 문서를 내 문서안에서 보여주기 -->
+        <!-- 1) 상대경로 -->
+        <iframe src="./01_table.html"></iframe>
+        <!-- 2) 절대경로 -->
+        <iframe src="http://mbca2025aix.dothome.co.kr" frameborder="0"></iframe>
+        <iframe src="https://sr.mbccomputer.co.kr/front/home" frameborder="0" height="500"></iframe>
+        <hr>
+        <!-- 3) 하이퍼링크 요소<a>에 의해 열리는 페이지를 iframe 안에 열리도록.. name 속성 지정 (레거시 전통적인 방식) -->
+        <iframe src="" frameborder="2" name="aaa" width="480" height="200"></iframe>
+        <a href="https://www.daum.net/" target="aaa">다음 포털 사이트</a>
+        <!-- iframe 이 열지 못하는 사이트도 존재. 동적으로 화면을 구성하는 사이트들(요즘 많은 사이트가 이렇게 만들고 있음) -->
+        <a href="https://www.naver.com" target="aaa">네이버 포털 사이트</a>
+        
+        <!-- PDF 파일 뷰어도 iframe 권장 -->
+        <iframe src="./SQL.pdf" frameborder="0" width="50%" height="300"></iframe>
+        <hr>
+
+        <!-- 4. 화면의 일부 영역을 구분하는 용도의 요소 2가지 div, span -->
+        <div style="background-color: rgb(215, 255, 71); border: 2px solid red; padding-left: 10;">
+            <h2>TITLE</h2>
+            <p>이건 메시지 입니다.</p>
+        </div>
+
+        <div style="background-color: black;">
+            <p>............................비밀 암호............................</p>
+            <p>............................↓...................................</p>
+            <p>....................LOVE ← ← ...................................</p>
+        </div>
+
+        <!-- div의 블럭 요소 특징 -->
+        <p>
+            안녕하세요. 저는 <div style="color: blue;">미스터 바나나 </div>입니다.
+        </p>
+
+        <!-- span의 인라인 요소 특징 -->
+        <p>
+            안녕하세요. 저는 <span style="color: blue;">미스터 바나나 </span>입니다.
+        </p>
+
+        <!-- div 요소는 실제 현업의 프론트엔드 화면개발할 때 가장 많이 사용 -->
+        <!-- 웹 페이지를 만들 때 보통 먼저 페이지의 구조를 구성하는 것부터 시작 -->
+        <!-- 이때 div를 사용함 -->
+        <div id="header" style="background-color: blueviolet;">앱 상단 로고 영역</div>
+        <div id="main" style="background-color:rgb(55, 118, 255); height: 400px;">메인 영역</div>
+        <div id="footer" style="background-color:rgb(17, 71, 10);">앱 하단 바 영역</div>
+
+    </body>
+</html>
