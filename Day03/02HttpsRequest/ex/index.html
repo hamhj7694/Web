@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>친구 지원서</title>
+    </head>
+    <body>
+        <div style ="border: 2px solid pink;">
+            <ul>
+                <h1 style="color: pink;">내 친구 지원서</h1>
+                <p>2000년생 27살 함형준을 이해하고 보살펴 주실 친구를 찾습니다.</p>
+                <hr>
+                
+                <form action="ok.php" method="post">
+                    <h4>개인 정보</h4>
+                    <ul>
+                        <label>이름 &nbsp;&nbsp; <input type="text" name="name"></label> <br>
+                        <label>연락처 <input type="text" name="phone" placeholder="010-0000-0000"></label>
+                    
+                        <p>
+                            성별 :
+                            <label><input type="radio" name="gender" value="m">남자</label>
+                            <label><input type="radio" name="gender" value="fm" checked>여자</label>
+                        </p>
+                    
+                        <p> 
+                            나이(20~35) :
+                            <input type="number" name="age" min="20" max="35" value="24">
+                        </p>
+                    
+                    </ul>
+
+                    <h4>지원 분야(복수 지원 가능)</h4>
+                    <ul>
+                        <label><input type="checkbox" name="pick[]" value="여자친구" checked>여자친구</label> <br>
+                        <label><input type="checkbox" name="pick[]" value="썸녀" checked>썸녀</label> <br>
+                        <label><input type="checkbox" name="pick[]" value="친구">친구</label>
+                    </ul>
+                    
+                    <br>
+                    <hr>
+                    <h4>지원 동기</h4>
+                    <textarea name="msg1" cols="60" rows="4" placeholder="지원 동기를 간략히 써 주세요!"></textarea>
+                    <br>
+
+                    <h4>성격 및 매력 포인트</h4>
+                    <textarea name="msg2" cols="60" rows="4" placeholder="자신의 성격이나 매력을 간략히 써 주세요!"></textarea>
+                    <br>
+                    
+                    <input type="submit" value="접수하기">
+                    <input type="reset" value="다시 쓰기">
+                </form>
+            </ul>
+        </div>
+
+    </body>
+</html>
