@@ -5,31 +5,37 @@
         <title>친구 지원서</title>
     </head>
     <body>
-        <div style ="border: 2px solid pink;">
+        <div style ="border: 2px solid rgb(255, 149, 167);">
             <ul>
-                <h1 style="color: pink;">내 친구 지원서</h1>
+                <h1 style="color: #ff8080;">친구하기 지원서</h1>
                 <p>2000년생 27살 함형준을 이해하고 보살펴 주실 친구를 찾습니다.</p>
                 <hr>
                 
-                <form action="ok.php" method="post">
+                <form action="ok.php" method="post" enctype="multipart/form-data">
                     <h4>개인 정보</h4>
                     <ul>
                         <label>이름 &nbsp;&nbsp; <input type="text" name="name"></label> <br>
                         <label>연락처 <input type="text" name="phone" placeholder="010-0000-0000"></label>
-                    
+                        
                         <p>
                             성별 :
-                            <label><input type="radio" name="gender" value="m">남자</label>
-                            <label><input type="radio" name="gender" value="fm" checked>여자</label>
+                            <label><input type="radio" name="gender" value="남성">남성</label>
+                            <label><input type="radio" name="gender" value="여성" checked>여성</label>
                         </p>
                     
                         <p> 
                             나이(20~35) :
                             <input type="number" name="age" min="20" max="35" value="24">
                         </p>
+
+                        <P>
+                            내 사진 :
+                            <input type="file" name="img1">
+                        </P>
                     
                     </ul>
-
+                    
+                    <hr>
                     <h4>지원 분야(복수 지원 가능)</h4>
                     <ul>
                         <label><input type="checkbox" name="pick[]" value="여자친구" checked>여자친구</label> <br>
@@ -39,16 +45,19 @@
                     
                     <br>
                     <hr>
-                    <h4>지원 동기</h4>
+                    <!-- <h4>지원 동기</h4>
                     <textarea name="msg1" cols="60" rows="4" placeholder="지원 동기를 간략히 써 주세요!"></textarea>
-                    <br>
+                    <br> -->
 
                     <h4>성격 및 매력 포인트</h4>
                     <textarea name="msg2" cols="60" rows="4" placeholder="자신의 성격이나 매력을 간략히 써 주세요!"></textarea>
                     <br>
-                    
+                    <hr>
                     <input type="submit" value="접수하기">
                     <input type="reset" value="다시 쓰기">
+                </form>
+                <form action="./fr_list.php" method="get">
+                    <h3>형준이의 친구들 👉 <input type="submit" value="누가 있는지 보러가기"></h3>
                 </form>
             </ul>
         </div>
