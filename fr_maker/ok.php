@@ -37,7 +37,7 @@
     //임시 저장소에 있는 실제 파일을 영구적으로 서버에 저장하기 위해 이동!
     $file_path = "./uploaded/" . $name . date('YmdHis') . $file_name;
 
-    $data ="INSERT INTO fr_maker(name, gender, age, phone, pick, msg1, msg2, file_path) VALUES('$name', '$gender', '$age', '$phone', '$pick', '$msg1', '$msg2', '$file_path')";
+    $data ="INSERT INTO fr_maker(name, gender, age, phone, pick, msg2, file_path) VALUES('$name', '$gender', '$age', '$phone', '$pick', '$msg2', '$file_path')";
 
     $result = mysqli_query($db, $data);
     $result2= move_uploaded_file($file_temp, $file_path);

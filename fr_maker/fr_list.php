@@ -36,7 +36,7 @@
                 echo "<h2>$name | $age 살 | $gender </h2>";
                 echo "<h4>성격 및 매력 포인트</h4><p>$msg2</p>";
                 if(!empty($file_path) && file_exists($file_path)){  //혹시 첨부 이미지가 있다면
-                    echo "<img src='$file_path' alt='사진 없음' width='400'>";
+                    echo "<img src='$file_path' alt='사진 없음' height='200'>";
                 }
             echo "</div>";
         }
