@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>ex</title>
+
+        <style>
+            /* 원하는 의사선택자만 써도 되지만, 이 순서는 지켜야 함 */
+            /* :link :visited :hover :active */
+            #aa:link{color: blue;}
+            #aa:visited{color: brown;}
+            #aa:hover{background-color:chartreuse;}
+            #aa:active{background-color: aqua;}
+
+            p:hover{background-color: yellow;}
+
+            /* 이미지 스타일 */
+            img{width: 100px; border: 3px solid black;}
+            img:hover{width: 200px; border: 3px solid yellow;}
+
+            /* 리스트 스타일 */
+            ul{list-style: circle;}
+            ul{list-style: disc;}
+            ul{list-style: square;}
+
+            /* 이미지로 블릿기호를 대체하는 방식은 잘 사용하지 않음 -- 사이즈 문제나 꾸밈 어려움 문제..!*/
+            /* ul{list-style-image: url('../Day01/image/sydney.jpg');} */
+            ul{list-style-type: disc; list-style-position: inside;}
+            ul{list-style: none;}
+
+            ol{list-style-type: lower-alpha;}
+            ol{list-style-type: lower-latin;}
+            ol{list-style-type: lower-roman;}
+            ol{list-style-type: lower-greek;}
+            ol{list-style-type: upper-alpha;}
+            ol{list-style-type: decimal;}
+            ol{list-style-type: decimal-leading-zero;}
+
+        </style>
+
+    </head>
+    <body>
+        
+        <a href="https://www.daum.net" id="aa">다음 포털</a>
+        <p>Hello</p>
+        <img src="../Day01/image/paris.jpg" alt="파리">
+
+        <hr>
+
+        <ul>
+            <li>aaa</li>
+            <li>bbb</li>
+            <li>ccc</li>
+        </ul>
+
+        <ol>
+            <li>aaa</li>
+            <li>bbb</li>
+            <li>ccc</li>
+        </ol>
+    </body>
+</html>

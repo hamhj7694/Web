@@ -1,0 +1,51 @@
+/* 기본문법    선택자{속성:값} */
+
+/* 선택자의 종류 */
+/* 1. 타입(요소) 선택자 */
+h2{color:red;}
+p{color: blue; font-family: serif;}
+p{font-size: 16px; color: green;} /* 같은 속성(ex. coler)을 다시 지정하면 마지막 값을 적용 */
+
+/* 2. 전체 선택자 */
+*{font-style: italic; color: orange;} /* 왜 전체 컬러 yellow가 적용이 안 되는가? 선택자마다 적용 우선순위가 있음. [개별선택자가 더 우선시 됨] */
+
+/* 3. ID 선택자(선택자 중에 우선순위가 가장 높음) */
+#p1{color: blueviolet;}
+
+/* 4. Class 선택자(id 선택자 다음의 우선순위 */
+.aa{color:rgb(0, 38, 255);}
+
+/* 요소 + 클래스 선택자 */
+/* p요소 중에서 클래스명이 aa인 요소 선택 */
+p.aa{background-color: pink;}
+
+/* 5. 선택자 그룹(다중 선택) */
+li, a{color:rgb(209, 69, 139);}
+
+/* 6. 자식, 자손 선택자 */
+#kk p{color: black;}
+#kk>p{color: brown;}
+
+/* 주의할 점, 선택자 사용모습 */
+p.aa{} /* p요소 중 클래스명이 aa */
+p .aa{} /* p요소의 자손 중 클래스명이 aa */
+
+/* 조금 더 복잡한 선택자 */
+#ss ul.gg>li{background-color:antiquewhite;}
+
+/* 7. 속성 선택자 */
+p[class]{font-size: 30px;} /* p요소 중에서 class라는 속성이 부여된 녀석 */
+div[id="ss"]{font-weight: bold;} /* id 속성값이 ss인 div요소 */
+
+/* 8. 의사(pseudo-class) 선택자 */
+a:link{color: blue;}
+a:visited{color:cadetblue;}
+a:hover{background-color: coral;}
+a:active{color: crimson;}
+
+#ss ul li:first-child{color:darkorange;}
+#ss ul li:last-child{color:rgb(255, 125, 190);}
+#ss ul li:nth-child(2){color: cadetblue;}
+
+/* nth를 수식으로.. 적용 가능(n 전체, 2n 짝수, 2n+1 홀수) */
+#ss ul li:nth-child(2n){background-color:cornsilk;}

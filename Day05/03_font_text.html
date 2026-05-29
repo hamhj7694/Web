@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>폰트&텍스트 스타일</title>
+
+        <style>
+
+            /* 1. 폰트(글꼴) 지정 */
+            p{font-family: 'Times New Roman', Times, serif;}
+            p{font-family: 'Bauhaus 93', monospace;}
+
+            /* 마지막 글꼴은 서체로 마무리 */
+            p{font-family: serif;}
+            p{font-family: sans-serif;}
+            p{font-family: monospace;}
+            /* p{font-family: fantasy;} */
+            /* p{font-family: cursive;} */
+
+            /* 사용자의 플랫폼 환경에 상관없이 같은 글꼴이 보여지려면 */
+            /* 본인만의 글꼴을 만들어 지정해야 함. 이를 웹폰트 라고 부름 */
+            /* 별도의 폰트파일(.ttf .otf)가 필요함 */
+            
+            /* 웹폰트 제작 : 나만의 폰트 이름 만들기 */
+            @font-face{
+                font-family: 'myfont';
+                src: url("./font/Jalnan.ttf");
+            }
+            /* 웹폰트를 p요소에 적용하기 */
+            p{font-family: 'myfont', sans-serif;}
+            
+            @font-face{
+                font-family: 'myfont2';
+                src: url("./font/Swagger.ttf");
+            }
+            /* 웹폰트를 p요소에 적용하기 */
+            p{font-family: 'myfont2', sans-serif;}
+
+            /* 2. 글씨 크기 */
+            p{font-size: 16px;}
+            p{font-size: 150%;} /* 원래 폰트 사이즈의 150% */
+            p{font-size: 1.5em;} /* 원래 폰트 사이즈의 1.5배 */
+            p{font-size: medium;}
+            p{font-size: small;}
+            p{font-size: large;}
+
+            /* 무료폰트 사이트 : 산돌구름, 눈누 */
+
+            /* 3. 볼드체 */
+            p{font-weight: bold;}
+            p{font-weight: normal;}
+
+            /* 4. 이테릭체 */
+            p{font-style: italic;}
+            p{font-style: normal;}
+
+            /* 1~4 까지의 속성을 한번에 축약 [ weight, style은 순서 없고, size, family 순서로 작성해야 함] */
+            p{font: bold italic 2.5em "myfont2", serif;}
+            /* 필요한 것만 순서대로 적어도 됨 */
+            p{font: 1.3em "myfont", san-serif;}
+
+            /* ----------------------------------- */
+
+            /* text style */
+            /* 텍스트 정렬(수평정렬) */
+            p{text-align: right;}
+            p{text-align: center;}
+            p{text-align: justify;} /* 양쪽 정렬 */
+
+            /* 2. 대소문자 변환 */
+            p{text-transform: lowercase;}
+            p{text-transform: uppercase;}
+            p{text-transform: capitalize;}
+            p{text-transform: none;}
+
+            /* 3. 텍스트에 줄긋기 */
+            p{text-decoration: overline;}
+            p{text-decoration: underline;}
+            p{text-decoration: line-through;}
+            p{text-decoration: none;}
+
+            /* 4. 텍스트 그림자 효과 */
+            p{text-shadow: 5px 3px 5px rebeccapurple;} /* x축 y축 떠있는정도 색상 */
+
+            /* 5. 워드 랩 */
+            p.aa{
+                width: 7em;
+                border: 1px solid red;
+
+                word-wrap: break-word; /* 영어는 단어가 길면 넘어가는데, 한글처러 줄바꾸기 해주는 방법 */
+            }
+
+            /* 6. 다중 컬룸(칸) */
+            p.bb{
+                column-count: 2;
+                column-gap: 80px;
+                column-rule: 4px dotted green;
+            }
+
+
+        </style>
+    </head>
+
+    <body>
+        <p>hello 얍!</p>
+        <p>내용입니다.</p>
+
+        <p class="aa">
+            한글은 전혀 문제없이 자동으로 워드 랩 됩니다.
+            BananaBananaBananaBananaBananaBananaBananaBananaBananaBanana
+        </p>
+
+        <p class="bb">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugiat delectus corporis quia, ducimus blanditiis architecto vitae quasi, perferendis autem provident voluptatum, rerum dolorum aperiam voluptatem facilis a fugit officiis asperiores!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Est quam mollitia inventore. Autem, dolorem qui error, ipsum cumque sit accusamus modi cupiditate dignissimos, quae deleniti consectetur sapiente recusandae excepturi alias!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo unde tenetur hic odit provident illo laborum iusto, natus repudiandae, placeat deserunt ipsa debitis aliquam enim, nobis quam atque impedit quas.
+        </p>
+
+        <hr>
+        <!-- text-aline 은 글씨 정렬이 아니라, 자식 요소의 (수평)정렬도 됨 -->
+        <p style="text-align: center;">
+            <a href="">네이버</a>
+        </p>
+
+        <!-- 단, 인라인 요소 안의 콘텐츠는 text-align으로 수평 정렬되지 않음 -->
+        <span style="background-color: yellow; text-align: center;">
+            hello
+        </span>
+
+        <!-- 인라인요소를 가운데 배치하고 싶으면? -->
+        <div style="text-align: center;">
+            <span>Hello</span>
+        </div>
+
+
+    </body>
+</html>
