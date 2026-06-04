@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>레이아웃</title>
+
+        <style>
+            /* display 속성 연습 */
+            #aa {display: inline; width: 500px; background-color: yellow;} /* 인라인은 크기를 줄 수 없어서, 여기서 한 width 500px는 무시됨 */
+            #aa {display: inline-block; width: 300px;}
+
+            img{display: block;} /* 이미지의 기본 display는 inline-block ... block으로 바꿔보기 */
+
+            #kk{display: none;} /* 리스트 bbb를 안보이게 */
+        </style>
+    </head>
+    
+    <body>
+
+        <!-- 디스플레이 속성 연습 -->
+        <p id="aa">p요소입니다</p>
+        <a href="#">링크입니다</a>
+        <strong>굵은 글씨입니다</strong>
+
+        <img src="./images/image.png" alt="이미지">
+        <hr>
+        <ul>
+            <li>리스트 aaa</li>
+            <li id="kk">리스트 bbb</li>
+            <li>리스트 ccc</li>
+        </ul>
+
+        <hr>
+        <!-- 블럭요소, 인라인요소 혼합 사용시 고려 사항 -->
+        <!-- [가능] 1.블럭요소 안에 인라인 요소를 넣을 수 있음 -->
+        <div style="background-color: tomato; border: solid; padding: 5px;">
+            Nice to <em>meet</em> you.
+        </div>
+        <br>
+
+        <!-- [불가능] 2.인라인 요소 안에 블럭 요소를 넣을 수 없음 -->
+        <span style="background-color: teal; border: solid; padding: 5px;">
+            Nice to <p>meet</p> you.
+        </span>
+        <br>
+
+        <!-- [가능] 3.블럭 안에 다른 블럭 넣기 -->
+        <div style="background-color: lightblue; border: solid; padding: 5px;">
+            블럭 요소 안에 <p>다른 블럭 요소를</p> 넣을 수 있습니다.
+        </div>
+
+        <!-- [불가능] 4. 블럭 안에 같은 블럭요소를 넣으면... 조심해야함! -->
+        <h2 style="background-color: orange; border: solid; padding: 5px;">
+            Nice to <h2 style="background-color: pink;">meet</h2> you.
+        </h2>
+
+        <!-- [가능] 5. div안에 div는 넣을 수 있음! -->
+        <div style="background-color: lightblue; border: solid; padding: 5px;">
+            블럭 요소 안에
+            <div style="background-color: lightgreen;">
+                다른 블럭 요소를
+            </div>
+            넣을 수 있습니다.
+        </div>
+        <hr>
+
+        <!-- position 속성 & 위치지정 속성(left, top, right, bottom) 연습 -->
+        <div class="region">
+            <p id="p1">블럭1</p>
+            <p id="p2">블럭2</p>
+            <p id="p3">블럭3</p>
+        </div>
+
+        <style>
+
+            .region{
+                background-color: black;
+                position: relative;
+            }
+
+            #p1{
+                background-color: aqua;
+                width: 200px;
+                height: 50px;
+            }
+            #p2{
+                position: static;   /*정적위치- default : 원래 놓여져야 할 위치에 놓여짐(겹치지 않음)*/
+                position: relative; /*상대위치- 원래 놓여질 위치에서 위치지정 속성값을 반영함*/
+                position: absolute; /*절대위치- 웹문서의 좌상단을 기준으로 배치 (위치지정 속성이 없으면 그려지지 않음)*/
+                /* 절대위치를 사용할때 부모요소의 position이 static 이 아니면.. 부모요소의 좌상단을 기준으로 함. */
+                position: fixed;    /*고정위치- 웹 브라우저창을 기준으로 배치*/
+
+                /* 위치지정 속성(position:static 에서는 무시됨) */
+                /* left: 50px; */
+                /* top: 30px; */
+                right: 10px;
+                bottom: 20px;
+
+                background-color: yellow;
+                width: 150px;
+                height: 50px;
+            }
+            #p3{
+                background-color: lightgreen;
+                width: 200px;
+                height: 50px;
+            }
+        </style>
+
+        
+    </body>
+</html>

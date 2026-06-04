@@ -1,0 +1,81 @@
+*{margin: 0; padding: 0;}
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: white;
+    color: black;
+}
+
+#container{
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.toolbar{
+    padding: 1em 16px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.toolbar-back{width: 30px;}
+.toolbar-btn{
+    font-size: 14px;
+    padding: 4px 10px;
+    background-color: white;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+
+    position: absolute;
+    right: 16px;
+    top: 1.2em;
+}
+
+h2{
+    font-size: 18px;
+    margin-bottom: 20px;
+    line-height: 1.8em;
+}
+
+.blue{
+    color: rgb(73,120,214);
+}
+
+.option{
+    display: inline-block;
+    width: 46%;
+    margin: 5px;
+    background-color: #f8f8f8;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    padding: 16px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.option img{
+    width: 24px;
+    margin-bottom: 8px;
+}
+
+.option p{
+    font-size: 12px;
+}
+
+.next-btn{
+    display: block;
+    width: 100%;
+    background-color: #0078ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 14px;
+    margin-top: 40px;
+}
+
+.selected{
+    border: 2px solid #0078ff;
+    background-color: #e6e6e6;
+    color: 0078ff;
+}

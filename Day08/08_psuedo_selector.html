@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>의사 선택자</title>
+</head>
+<body>
+    <!-- 1. has() : 특정 요소를 가지고 있는 요소를 선택 -->
+    <div>
+        <p>Hello world</p>
+    </div>
+    <div>
+        <a href="">link</a>
+    </div>
+    <style>
+        div:has(a){background-color: lightblue;}
+    </style>
+
+    <!-- 항목 위로 마우스 커서 올리면 해당 메뉴가 잘 보이게 나머지 요소들을 죽이기 -->
+    <nav>
+        <ul>
+            <li><a href="">HOME</a></li>
+            <li><a href="">ABOUT</a></li>
+            <li><a href="">PORTFOLIO</a></li>
+            <li><a href="">CONTACT</a></li>
+        </ul>
+    </nav>
+    <style>
+        nav ul{
+            background-color: black;
+            display: flex;
+            list-style: none;
+            flex-direction: row;
+            justify-content: space-evenly;
+            padding: 1rem;
+        }
+        nav ul li a{
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        nav ul li a:hover{color: orange;}
+        nav:has(a:hover) a:not(a:hover){opacity: 0.4;}
+
+
+
+    </style>
+
+</body>
+</html>

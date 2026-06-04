@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>반응형 웹 디자인</title>
+
+    <style>
+        *{padding: 0px; margin: 0px;}
+
+        #wrap{
+            width: 90%;
+            margin: 0px auto;
+            border: 4px solid black;
+            font-size: 0; /* 줄바꿀으로 인해 생긴 띄어쓰기를 없애는 과정 */
+        }
+
+        #wrap div{
+            display: inline-block;
+            height: 100px;
+            font-size: 16px; /* 띄어쓰기를 없애며 함께 없어진 내용 텍스트 다시 보이게 */
+        }
+        
+        #wrap div:first-child{background-color: blue;}
+        #wrap div:nth-child(2){background-color: yellow;}
+        #wrap div:nth-child(3){background-color: orange;}
+        #wrap div:nth-child(4){background-color: pink;}
+        #wrap div:last-child{background-color: red;}
+
+        /* 5개의 영역을 브라우저의 너비에 따라 반응형으로 배치하기 */
+        /* 작업은 모바일 우선.. 작은 사이즈부터 작성하는 것이 일반적으로 좋음 */
+
+        /* (1) 모바일 환경일 때 .. 최소너비 320px 이상 */
+        @media all and (min-width:320px){
+            #wrap div{width: 100%;} /* 한줄에 하나씩 */
+        }
+
+        /* (2) 태블릿 환경일 때 .. 600px 이상 */
+        @media all and (min-width:600px){
+            #wrap div{width: 50%;} /* 한줄에 2개씩 */
+            #wrap div:last-child{width: 100%;} /* 마지막 줄만 100% 다 먹게 */
+        }
+
+        /* (3) 데스크톱 환경일 때 .. 800px 이상 */
+        @media all and (min-width:800px){
+            #wrap div{width: 20%;}
+            #wrap div:last-child{width: 20%;} /* 다시 20%로 만들기 */
+        }
+
+    </style>
+
+</head>
+<body>
+    
+    <div id="wrap">
+        <div>aa</div>
+        <div>bb</div>
+        <div>cc</div>
+        <div>dd</div>
+        <div>ee</div>
+    </div>
+
+</body>
+</html>

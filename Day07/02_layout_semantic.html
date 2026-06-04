@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>semantic tag</title>
+
+        <style>
+            #wrapper{
+                width: 680px;
+                border: 1px solid black;
+                margin-left: auto; margin-right: auto;
+            }
+
+            header{
+                background-color: antiquewhite;
+                width: 100%;
+                padding: 3em;
+                box-sizing: border-box;
+            }
+            nav{
+                background-color: yellow;
+                width: 100%;
+                padding: 1em;
+                box-sizing: border-box;
+            }
+            main{
+                background-color: azure;
+                padding: 1em;
+                display: table-cell;
+                box-sizing: border-box;
+            }
+            aside{
+                background-color: aquamarine;
+                padding: 1em;
+                display: table-cell;
+                box-sizing: border-box;
+            }
+            footer{
+                background-color: black;
+                color: white;
+                padding: 2em;
+                text-align: center;
+            }
+
+            nav ul{list-style: none;}
+            nav ul li{display: inline-block;}
+            nav ul li a{text-decoration: none; color: blue;}
+            nav ul li a:hover{text-decoration: underline; color: red;}
+
+            aside img{
+                width: 150px;
+            }
+
+        </style>
+    </head>
+    <body>
+        
+        <div id="wrapper">
+            <header>
+                <h1>semantic tag test</h1>
+                <p>semantic tag를 사용해 보았습니다.</p>
+            </header>
+            <nav>
+                <ul>
+                    <li><a href="">뉴스</a></li>
+                    <li><a href="">연예</a></li>
+                    <li><a href="">스포츠</a></li>
+                </ul>
+            </nav>
+            <main>
+                <section>
+                    <article>
+                        <h3>제목입니다</h3>
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum, velit possimus. Rerum dolore earum tempora iste assumenda cumque. Dignissimos delectus quaerat aliquam eum vitae! Sit iste voluptatum cupiditate magni facere.</p>
+                    </article>
+                    <article>
+                        <h3>제목입니다2</h3>
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolorum, velit possimus. Rerum dolore earum tempora iste assumenda cumque. Dignissimos delectus quaerat aliquam eum vitae! Sit iste voluptatum cupiditate magni facere.</p>
+                    </article>
+                </section>
+            </main>
+            <aside>
+                <input type="text" placeholder="검색어를 입력하세요">
+
+                <figure>
+                    <img src="../Day01/image/penguins.jpg" alt="팽귄 이미지">
+                    <figcaption>팽귄 이미지</figcaption>
+                </figure>
+            </aside>
+            <footer>
+                <h6>COPYRIGHT &copy; 함형준</h6>
+            </footer>
+        </div>
+
+    </body>
+</html>

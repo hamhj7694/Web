@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>박스 모델 test</title>
+
+    <style>
+        /* body 전체 중앙정렬 */
+        /* body{margin-left: auto; margin-right: auto; width: 50%;} */
+
+        p.aaa {
+            /* 경계선 스타일 (두께는 기본값으로 부여 ~=3px) */
+            border-style: solid;
+            /* top, right, bottom, left로 나누어 스타일 지정 가능 */
+            border-top-style: dotted;
+
+            /* 경계선 두께 */
+            border-width: 3px;
+            border-bottom-width: 8px;
+
+            /* 경계선 색상 */
+            border-color: red;
+            border-right-color: blue;
+
+            /* 경계선 모서리 라운드 둥글게 */
+            border-radius: 20px;
+            border-bottom-left-radius: 0px; /* 왼쪽 아래 모서리는 라운드 효과 제거 */
+            border-top-right-radius: 0px; /* 오른쪽 위 모서리는 라운드 효과 제거 */
+
+            /* 경계선 축약 [size, style, color] */
+            border: 30px solid #00000000; /* 투명한 검은색 */
+            border: 30px solid transparent; /* 투명한 색 */
+
+            /* 경계선을 이미지 파일로 그리기 */
+            border-image-source: url(./images/border.png);
+            border-image-slice: 30 30; /* 자를 때 한 조각의 크기. 높이 30px 너비 30px */
+            border-image-repeat: repeat; /* 자른 조각을 반복해서 이어붙이기 */
+            border-image-repeat: round; /* 자른 조각을 둘러싸게 하지 */
+            
+            /* 요소의 크기 */
+            width: 70%;
+            height: 300px;
+
+            /* 요소 밖 여백 지정(마진) */
+            margin-left: calc(15% - 30px); /* 계산해서 중앙 값 찾는 방식... 단 계산 복잡.. */
+            /* 요소를 중앙에 배치 */
+            margin-left: auto;
+            margin-right: auto;
+            
+        } /* 👈 여기서 p.aaa의 괄호를 닫아주어야 합니다! */
+
+        /* 인라인 요소는 width와 height를 지정할 수 없음 */
+        a { background-color: rgb(255, 239, 186); width: 100%; }
+        em { background-color: rgb(173, 143, 143); height: 200px; }
+
+        /* 인라인 중에서도 인라인 블럭이 있음 */
+        img { width: 400px; border: 1px solid black; }
+        input { width: 100%; background-color: aqua; }
+
+        /* 인라인 요소도 마진 줄 수 있지만, 마진 오토는 못 줌 */
+        strong{margin-left: 50px;} /* 적용 됨*/
+        strong{margin-left: auto;} /* 적용 안됨*/
+        /* 인라인 블럭 요소도 margin: auto 안됨 */
+        img{margin-left: auto;} /* 적용 안됨 */
+        /* 요소의 성질을 바꾸면 블럭처럼 사용 가능 */
+        strong{display: block; background-color: pink; width: 200px; margin-left: auto;}
+
+    </style>
+
+    <style>
+        /* 마진은 겹칠 수 있음... 아래로 10, 위로 10이면 두 요소 사이 20이 아니라 10임. */
+        #p1{background-color: green; height: 50px; margin: 0px; margin-bottom: 10px;}
+        #p2{background-color: red; height: 50px; margin: 0px; margin-top: 10px;}
+
+        /* 마진에 -마이너스를 줄 수 있음... 이 경우 두 요소가 겹쳐질 수 있음. */
+        #p1{background-color: green; height: 50px; margin: 0px;}
+        #p2{background-color: red; width: 50%; height: 50px; margin-top: -20px;}
+
+    </style>
+
+    </head>
+
+    <body>
+        
+        <h1>박스 모델 다루기</h1>
+        <p class="aaa">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+            lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+        </p>
+
+        <!-- 요소 크기는 블럭요소만 적용 가능함 -->
+        <!-- 인라인 요소 배치해서 예시 확인하기 -->
+        <a href="">링크1</a>
+        <em>hello my friend</em>
+
+        <!-- 인라인 중에서도 인라인 블럭이 있음 -->
+        <img src="./images/image.png" alt="이미지">
+        <input type="text" placeholder="인풋창입니다.">
+
+        <strong>인라인 요소에 width와 height 지정하기</strong>
+
+        <!-- 마진 추가 실습 -->
+        <div id="bbb">
+            <p id="p1">p1</p>
+            <p id="p2">p2</p>
+        </div>
+
+        <p class="ccc">
+            rem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+            rem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+            rem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+        </p>
+        <!-- 내부 스크립트 -->
+        <style>
+            p.ccc{
+                background-color: pink;
+                background-image: url(./images/image.png);
+                background-size: 150px 80px; /* 이미지 크기를 조절 */
+
+                background-repeat: repeat; /* 이미지 반복 여부 기본 값이 repeat임 */
+                background-repeat: repeat-x; /* 이미지 가로 방향으로만 반복 */
+                background-repeat: no-repeat; /* 이미지 반복 없음 */
+
+                background-position: center; /* 이미지 위치 지정, 중앙 */
+                background-position: right center;
+                background-position: top center; /* 이미지 위치 지정, 왼쪽에서 20px, 위에서 30px 떨어진 위치 */
+
+                /* 축약해서 쓰기 */
+                background: greenyellow url(./images/image.png) no-repeat center;
+                margin: 20px 10px; /* 위아래 20px, 좌우 10px */
+                padding: 30px 20px 20px 30px; /* 상우하좌 */
+
+            }
+        </style>
+        <hr>
+
+        <!-- background attachment -->
+        <p class="ddd">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+            rem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+            rem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+            rem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+            rem ipsum dolor sit amet consectetur adipisicing elit. Corporis velit minima nemo! Qui ipsam ad aperiam deleniti. Esse alias repellat quaerat quis nam laborum sed, labore, doloremque enim asperiores reprehenderit.
+        </p>
+
+        <style>
+            p.ddd{
+                /* 스크롤 설정 */
+                width: 60%;
+                height: 300px;
+                border: 2px solid blue;
+                overflow: scroll; /* 넘치는 내용은 스크롤로 보이게 */
+
+                /* 가운데 두기 */
+                margin-left: auto;
+                margin-right: auto;
+
+                background-image: url(./images/image.png);
+                background-repeat: no-repeat;
+                background-size: 150px 80px;
+                background-position: center;
+
+                /* 이미지와 스크롤 */
+                background-attachment: scroll; /* 스크롤이 기본 값임.. 요소에 배경 붙임*/
+                background-attachment: fixed; /* 브라우저 전체 스크롤을 기준으로 고정되어 있음 - p요소 밖에 있으면 보이지 않음 */
+                background-attachment: local; /* 스크롤 긴 글의 중간에 위치함... 이미지와 글이 함께 스크롤됨 */
+            }
+
+
+        </style>
+
+
+    </body>
+
+</html>

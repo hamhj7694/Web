@@ -1,0 +1,72 @@
+<!-- 1차원 레이아웃 flex, 2차원 레이아웃 구조는 grid -->
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid</title>
+    <style>
+        .container{
+            /* 자식요소들의 배치를 격자모양으로... */
+            display: grid;
+            border: 2px solid black;
+
+            /* 자식요소들을 한줄에 몇개씩 놓을지 결정(방법. 각 칸(cilumn)들의 너비 지정) */
+            grid-template-columns: 100px 150px 200px;
+            /* 모든 요소의 너비를 자동으로 가려면 */
+            grid-template-columns: auto auto auto;
+            /* 비율 너비 지정하는 단위(fr: fraction) */
+            grid-template-columns: 1fr 2fr 1fr; /* 1:2:1의 너비 */ 
+            grid-template-columns: 1fr 1fr 1fr; /* 1:1:1의 너비 */ 
+
+            /* 줄 높이 지정하기 */
+            grid-template-rows: 150px 200px;
+
+            /* 격자 사이의 간격지정 가능 */
+            column-gap: 1rem; /* 최상위 요소의 글자크기 기준 1글자 벌어지게*/
+            row-gap: .5rem;
+
+            /* 축약 */
+            gap: .5rem 1rem; /*row column*/
+        }   
+        .container>div{
+            background-color: aqua;
+            margin: 4px;
+            text-align: center;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="c1">1</div>
+        <div id="c2">2</div>
+        <div id="c3">3</div>
+        <div id="c4">4</div>
+        <div id="c5">5</div>
+        <div id="c6">6</div>
+        <div id="c7">7</div>
+    </div>
+    <style>
+        /* 자식요소의 셀 위치지정 및 병합 */
+        #c1{
+            grid-column-start: 1;
+            grid-column-end: 3;
+            /* 1~2칸 : 1번부터 3번 전까지 */
+        }
+        #c3{
+            grid-column-start: 2;
+            grid-column-end: 4;
+        }
+        #c5{
+            grid-column: 3 / span 2; /* 3번 위치부터 2칸.. [4번째 칸이 없는데... 없으면 생성] */
+        }
+        #c6{
+            grid-row-start: 2;
+            grid-row-end: 5;
+            /* 2 ~ 4 번 줄까지 */
+        }
+    </style>
+</body>
+</html>

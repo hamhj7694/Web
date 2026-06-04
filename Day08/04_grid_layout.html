@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grid layout</title>
+
+    <style>
+        #wrap{
+            display: grid;
+            grid-template-columns: auto auto auto auto auto ;
+            grid-template-rows: auto 300px auto;
+        }
+        #wrap>div{
+            background-color: aquamarine;
+            text-align: center;
+            padding: 20px 0px;
+            font-size: 30px;
+            border: 1px solid black;
+        }
+        #header{
+            grid-column-start: 1;
+            grid-column-end: 6;
+        }
+        #main{
+            grid-column-start: 2;
+            grid-column-end: 5;
+        }
+        #footer{grid-column: 1 / span 5;}
+
+        
+    </style>
+</head>
+<body>
+    
+    <div id = "wrap">
+        <div id="header">헤더</div>
+        <div id="nav">메뉴</div>
+        <div id="main">콘텐츠</div>
+        <div id="aside">사이드</div>
+        <div id="footer">푸터</div>
+    </div>
+
+</body>
+</html>

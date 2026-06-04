@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부모 요소 사이즈에 대한</title>
+
+    <style>
+        *{border: 1px dotted red;}
+    </style>
+</head>
+<body>
+    
+    <!-- 부모 요소 box의 height는 언제나 자식 요소 box 높이를 감싸지 않음. -->
+
+    <!-- 1. 블럭 요소 안에 다른 블럭요소가 있다면 부모가 자식을 온전히(파딩, 마진까지 포함) 감쌈 -->
+    <div style="border: 1px dotted blue;">
+        <p style="margin: 0px; padding: 20px;">Hello</p>
+    </div>
+
+    <hr>
+
+    <!-- 2. 블럭 요소 안에 인라인 요소가 있으면 부모가 자식을 온전히 감싸지 않음(마진, 패딩 제외) -->
+    <!-- 콘텐츠만 감싼다! -->
+    <div style="background-color: khaki; border: 1px dotted blue">
+        <a href="" style="padding: 10px; margin: 10px;">naver</a>
+
+        <!-- 인라인 블럭은 적용됨 -->
+        <input type="text" style="padding: 10px; margin: 10px;">
+    </div>
+
+</body>
+</html>

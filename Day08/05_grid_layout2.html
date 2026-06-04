@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Layout</title>
+
+    <style>
+        /* 자식요소들에 특정 영역별명을 지정하고 이 별명으로 그리드를 차지하는 위치 지정 */
+        header{grid-area: h;}
+        nav{grid-area: n;}
+        main{grid-area: m;}
+        aside{grid-area: a;}
+        footer{grid-area: f;}
+
+        #wrap{
+            display: grid;
+            grid-template-areas:
+                'h h h h h'
+                'n m m m a'
+                'f f f f f';
+                grid-template-rows: auto 300px auto;
+        }
+        
+        #wrap>*{
+            background-color: blueviolet;
+            color: white;
+            text-align: center;
+            padding: 20px 0px;
+            font-size: 30px;
+            border: 1px solid black;
+        }
+
+        header{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        header div{
+            margin: 0px 20px;
+        }
+
+    </style>
+
+</head>
+<body>
+    
+    <h2>Grid area를 이용한 레이아웃 구조</h2>
+    <div id="wrap">
+        <header>
+            <div>로고</div>
+            <div>타이틀</div>
+            <div>옵션</div>
+        </header>
+        <nav>네브</nav>
+        <main>메인</main>
+        <aside>어사이드</aside>
+        <footer>푸터</footer>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>attribute selector</title>
+</head>
+<body>
+    
+    <ul>
+        <li><a href="https://www.google.com" target="_blank">구글</a></li>
+        <li><a href="https://www.naver.com" target="_self">네이버</a></li>
+        <li><a href="https://www.daum.net" target="_self">다음</a></li>
+    </ul>
+    <style>
+        a[target='_blank']{
+            background-image: url(./tab.png);
+            background-position: right;
+            background-size: 18px;
+            background-repeat: no-repeat;
+            padding-right: 25px;
+        }
+    </style>
+
+    <hr>
+    <!-- input 요소 중 type이 radio 중 선택된 요소 찾기 -->
+    <input type="radio" name="nation" value="korea" id="rb1" checked>
+    <label for="rb1">대한민국</label>
+
+    <input type="radio" name="nation" value="japan" id="rb2">
+    <label for="rb2">일본</label>
+
+    <input type="radio" name="nation" value="china" id="rb3">
+    <label for="rb3">중국</label>
+
+    <style>
+        /* 라디오 버튼 중에서 체크된 녀석의 바로 다음 label요소 */
+        input[type='radio']:checked+label{
+            font-weight: bold;
+            color: dodgerblue;
+        }
+    </style>
+
+    <hr>
+    <!-- 속성 값이 특정 글씨로 시작되는 요소 선택 -->
+    <a href="" title="네이버로 이동">네이버</a>
+    <a href="" title="검색도구 구글로 이동">구글</a>
+    <a href="" title="다음으로 이동">다음</a>
+    <style>
+        a[title^='네이버']{
+            color: green;
+        }
+        a[title^='구글']{
+            color: blue;
+        }
+        /* title 속 글씨에 일부에 '구글'이라는 글씨가 포함 되었을 때 */
+        a[title*='구글']{
+            color: red;
+        }
+
+    </style>
+
+    <hr>
+    <!-- 특정 글자로 끝나면... -->
+    <a href="./aaa.hwp">한글파일 다운로드</a>
+    <a href="./aaa.xlsx">엑셀파일 다운로드</a>
+    <a href="./aaa.zip">압축파일 다운로드</a>
+    <style>
+        a[href$='xlsx']{
+            color: tomato;
+            font-weight: bold;
+        }
+    </style>
+
+    <!-- 속성값에 특정 단어가 포함되었는가? -->
+    <p class="aa bb cc">Hello</p>
+    <p class="bb cc">Nice</p>
+    <p class="aa cc">Good</p>
+
+    <style>
+        .aa{color: blue;}
+        .bb{font-weight: bold;}
+        .cc{font-style: italic;}
+
+        p[class='bb']{font-size: 2rem;} /* 대상 없음 (정확히 bb라는 이름만 가진건 없음) */
+        p[class~='bb']{font-size: 2rem;}
+
+        p[class~='b']{border-color: brown;} /* 단어찾기 */
+        p[class*='b']{border: solid;} /* 글자찾기 */
+    </style>
+
+</body>
+</html>

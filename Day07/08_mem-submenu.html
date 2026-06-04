@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sub menu</title>
+
+    <style>
+
+        *{margin: 0; padding: 0;}
+        ul{list-style: none;}
+
+        nav{
+            height: 50px;
+            background-color: gold;
+        }
+
+        nav ul.menu>li{
+            display: inline-block;
+            border: 1px solid blue;
+            padding: 5px 10px;
+            margin: 10px;
+        }
+
+        nav ul.submenu{
+            border: 1px dotted red;
+            display: none;
+            position: absolute;
+        }
+        nav li.menu_item:hover .submenu{
+            display: block;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <nav>
+        <ul class="menu">
+            <li class="menu_item">
+                HOME
+            </li>
+            <li class="menu_item">
+                SERVICE
+                <ul class="submenu">
+                    <li>S1</li>
+                    <li>S2</li>
+                    <li>S3</li>
+                </ul>
+            </li>
+            <li class="menu_item">
+                CONTACT
+                <ul class="submenu">
+                    <li>C1</li>
+                    <li>C2</li>
+                    <li>C3</li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    
+</body>
+</html>
+
+<!-- 수행과제 -->
+<!-- 챕터 3.4(시맨틱 태그) & 챕터 10 -->
+<!-- 챕터 10 되새김 -->
+
+<!-- 모바일 UI 연습해보기 위한 샘플 페이지 사진을 보고 그대로 만들어보기 -->

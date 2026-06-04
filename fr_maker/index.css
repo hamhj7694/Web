@@ -96,18 +96,19 @@ input[type="reset"] {
     font-size: 15px;
     font-weight: bold;
     cursor: pointer;
+    margin: 0px 10px;
 }
 
 input[type="submit"],
 .friend-mini button {
     background: #ff6f91;
     color: white;
+
 }
 
 input[type="reset"] {
     background: #ffe4ec;
     color: #ff5f87;
-    margin-left: 8px;
 }
 
 input[type="submit"]:hover,
@@ -144,20 +145,24 @@ input[type="reset"]:hover {
 
 .button-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 16px;
 }
 
 .friend-mini {
     display: flex;
-    align-items: center;
     gap: 8px;
+    flex-shrink: 0;
 }
 
 .friend-mini span {
     color: #ff6f91;
     font-weight: bold;
+}
+
+.mobile-text{
+    display:none;
 }
 
 .preview-box {
@@ -185,4 +190,128 @@ input[type="reset"]:hover {
 #preview-text {
     color: #999;
     font-size: 14px;
+}
+
+#gunggo{
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 30px;
+    text-align: center;
+}
+
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+}
+
+.sub-header {
+    flex: 1;
+}
+
+.sub-header h1 {
+    margin-bottom: 24px;
+}
+
+.sub-header h4 {
+    margin: 0;
+    line-height: 1.6;
+}
+
+#header .friend-mini {
+    flex-shrink: 0;
+    align-self: flex-end;
+    margin-bottom: 4px;
+}
+
+@media all and (max-width: 600px) {
+    body {
+        padding: 16px;
+    }
+
+    .container {
+        width: 100%;
+        padding: 24px 18px;
+        border-radius: 18px;
+    }
+
+    h1 {
+        font-size: 25px;
+        line-height: 1.35;
+    }
+
+    h4 {
+        line-height: 1.6;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .file-box {
+        min-height: auto;
+        padding: 16px;
+    }
+
+    .preview-box {
+        height: 220px;
+    }
+
+    .button-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .button-row > div:first-child {
+        display: flex;
+        gap: 8px;
+    }
+
+    input[type="reset"] {
+        margin-left: 0;
+    }
+
+    .button-row input[type="submit"],
+    .button-row input[type="reset"],
+    .friend-mini button {
+        width: 100%;
+        margin: 0;
+    }
+
+    .friend-mini {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .pc-text{
+        display:none;
+    }
+
+    .mobile-text{
+        display:inline;
+    }
+
+    #gunggo {
+        padding: 0 12px;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    #header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #header .friend-mini {
+        align-self: stretch;
+        margin-bottom: 0;
+    }
+
+    #header .friend-mini button {
+        width: 100%;
+        margin: 0;
+    }
 }

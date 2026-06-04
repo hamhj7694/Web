@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미디어 쿼리</title>
+
+
+    <!-- 미디어 쿼리 : 반응형 웹 디자인 RWD를 위한 CSS의 선택 적용 문법 -->
+
+    <!-- 방법1. @media 키워드 이용 -->
+    <style>
+
+        #aa{
+            width: 320px;
+            height: 100px;
+            background-color: green;
+        }
+
+        /* 너비가 560px 이상이면 적용될 스타일 만들기 */
+        @media(min-width:560px){
+            #aa{
+                width: 560px;
+                height: 200px;
+                background-color: yellow;
+            }
+        }
+
+    </style>
+
+    <!-- 방법2. media 속성 사용 -->
+    <!-- 2-1 외부 스타일시트 -->
+    <link rel="stylesheet" href="./04.css" media="(min-width:680px) and (max-width:800px)">
+
+    <!-- 2-2 내부 스타일시트 -->
+    <style media="(min-width: 800px)">
+        #aa{width: 800px;
+        height: 400px;
+        background-color: blueviolet;
+        }
+
+    </style>
+
+</head>
+<body>
+    
+    <div id="aa"></div>
+
+</body>
+</html>

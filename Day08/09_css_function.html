@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>css function</title>
+</head>
+<body>
+    <!-- 1. css 변수를 사용하는 기능 : var() -->
+    <h1>Hello</h1>
+    <p>이것은 css의 함수</p>
+    <span>나이스 투 밋튜</span>
+
+    <style>
+        /* 요소의 색상을 지정할 때.. 특정 색을 변수에 저장하고 사용하면, 유지 관리 보수가 용이하다! */
+        /* 변수 적용될 범위 정하기 */
+        :root{ /* 문서의 최상위 요소 선택 - 가장 큰 영향력! 이 요소의 자손들은 모두 변수 사용 가능 */
+            /* css 변수 만들기.. 하이픈(-) 2개 */
+            --aa: brown;
+            --bb: blue;
+            --main-bg-color: yellow;
+            --main-text-color: black;
+            --secondary-text-color: gray;
+            --error-text-color: red;
+        }
+        body{background-color: var(--main-bg-color);}
+        h1{color: var(--aa);}
+        p{color: var(--bb);}
+        span{color: var(--bb);}
+    </style>
+
+    <!-- 2. colc() : 수치값을 적용할 때 사칙연산 계산이 필요하다면? -->
+    <div>Hello</div>
+    <style>
+        div{
+            border: 2px solid blue;
+            padding: 0px 3rem;
+            width: 100% - 30rem; /* 이건 적용 안됨... 그냥은 계산이 안됨! */
+            width: calc(100% - 6rem); /*연산자와 숫자 사이에 띄어쓰기가 있어야 함. */
+        }           
+    </style>
+
+    <hr>
+    <!-- 3. max(), min() : 여러 값 중에서 최대 또는 최소 값이 적용되는 기능함수 -->
+    <h4>이것은 이즈 헤딩이다</h4>
+    <style>
+        h4{
+            border: 3px solid black;
+            width: min(100%, 600px); /* 둘중 더 적은 값 적용 */
+        }
+    </style>
+
+    <hr>
+    <!-- 4. -->
+    <div>
+        <p>
+            <img src="../Day01/image/penguins.jpg" alt="팽귄">
+        </p>
+        <hr>
+        <p>
+            <img style="filter: blur(2px);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter: brightness(1.5);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:contrast(200%);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:drop-shadow(8px 8px 5px black);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:grayscale(100%);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:invert(100%);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:sepia(100%);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:opacity(50%);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:hue-rotate(90deg);" src="../Day01/image/penguins.jpg" alt="팽귄">
+            <img style="filter:saturate(500%);" src="../Day01/image/penguins.jpg" alt="팽귄">
+        </P>
+    </div>
+    <style>
+        img{
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 1rem;
+        }
+    </style>
+
+</body>
+</html>
+
+<!-- 11~13 챕터 -->
+<!-- 되새김 문제 -->
+<!-- 모바일 ui 플렉스,그리드로 만들어보기 -->

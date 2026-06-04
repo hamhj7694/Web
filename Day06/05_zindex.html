@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>z인덱스</title>
+
+        <style>
+            div{
+                width: 100px;
+                height: 100px;
+                border: 1px solid black;
+                position: absolute;
+            }
+
+            #b1{
+                background-color: blue;
+                top: 0; left: 0;
+                z-index: 5;
+            }
+
+            #b2{
+                background-color: red;
+                top: 30px; left: 30px;
+                z-index: 3;
+            }
+
+            #b3{
+                background-color: green;
+                top: 60px; left: 60px;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div id="b1"> box1 </div>
+        <div id="b2"> box2 </div>
+        <div id="b3"> box3 </div>
+    </body>
+</html>
