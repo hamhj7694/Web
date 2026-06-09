@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS 오브젝트</title>
+
+    <script>
+        // JS 객체의 2종류
+        // 1. 내장객체 : document, window, navigation,...etc..., Date, String, Number
+        // 2. 사용자(개발자) 정의 객체
+
+        // 이번 시간에는 사용자 정의 객체에 대해 알아보기..
+        // 오늘은 문법보다는 객체를 사용하는 효용성 느끼기.
+
+        // -----
+        // [학생 10명]의 이름, 나이 저장
+        let name= 'sam'
+        let age= 20
+
+        let name2= 'hong'
+        let age2= 23
+        // 근데... 이렇게 입력하려면 10명.. 변수 여러개 반복 작성.. 힘들다 ㅠㅠ
+
+        // -----
+        // [이름, 나이] 묶어서 관리하기.. 
+        // JS에 연관있는 변수들을 묶어서 하나로 관리하는 방법
+        var person1= {name:'sam', age:20}; // 변수 2개를 멤버로 가지는 녀석(객체)
+        var person2= {name:'hong', age:23};
+        var person3= {name:'robin', age:25};
+
+        // [이름, 나이] 출력하기
+        document.write('이름: '+person1.name+'<br>');
+        document.write('나이: '+person1.age+'<br>');
+        document.write('<br>');
+
+        document.write('이름: '+person2.name+'<br>');
+        document.write('나이: '+person2.age+'<br>');
+        document.write('<br>');
+
+        // -----
+        //데이터를 가진 객체만 다르면 되니까.. 파라미터로 받아서 재사용하면 되겠다!
+        function show_person(person){
+            document.write('이름: ' + person.name + '<br>');
+            document.write('나이: ' + person.age + '<br>');
+            document.write('<br>');
+        }
+
+        show_person(person1);
+        show_person(person2);
+        show_person(person3);
+
+        // -----
+        // 객체가 데이터를 가지고 있으니.. 객체 안에 출력 기능까지 있으면 더 편하지 않을까?
+
+        // 객체를 만들 때.. 변수와 함수도 같이 만들 수 있음.
+        let person4={
+            name: 'park',
+            age:35,
+            show: function(){
+                document.write('이름: ' + this.name + '<br>');
+                document.write('나이: ' + this.age + '<br>');
+                document.write('<br>');
+            }
+        }
+        person4.show(); //객체가 가진 멤버함수 호출
+        // person4 처럼 변수와 함수를 같이 멤버로 가진 녀석을 객체 object 라고 부름
+        document.write( typeof(person4) + '<hr>');
+
+        // 근데.. 나머지 학생들의 데이터를 저장하려면.. 객체구조를 매번 설계해야함..
+        // 그래서 매번 멤버의 구조를 만들 수 없으니..
+        // 미리 설계해놓고.. 필요할 때 마다 객체로 생성하여 사용
+        // [파이싼 에서는 설계도를 class라는 키워드로 만듦]
+        // [JS에서는 '생성자 함수'라는 방법으로 만들어 사용함. --es6버전에서 class 키워드 생김]
+        function Person(name, age){ // 첫글자 대문자 표기 권장
+            //멤버 변수
+            this.name = name;
+            this.age = age;
+            
+            //멤버 함수
+            this.show=function(){
+                document.write('이름: ' + this.name + '<br>');
+                document.write('나이: ' + this.age + '<br>');
+                document.write('<br>');
+            }
+        }
+
+        // 위에서 설계한 '생성자 함수' 구조로 객체를 새로 생성
+        var p1 = new Person('sam', 20);
+        var p2 = new Person('robin', 25);
+        var p3 = new Person('hong', 30);
+
+        p1.show();
+        p2.show();
+        p3.show();
+
+
+    </script>
+
+</head>
+<body>
+    
+</body>
+</html>

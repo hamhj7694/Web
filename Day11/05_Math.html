@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math</title>
+    <script>
+        // Math - 수학에 관련된 여러 기능들..
+        // 특이점. 객체 생성 없이 생성자함수명 만으로 기능 사용 가능
+        
+        var n=3.14;
+        document.write(Math.floor(n) + '<br>'); //소수점 내리기
+        document.write(Math.round(n) + '<br>'); //반올림
+        document.write(Math.ceil(n) + '<br>'); //소수점 올리기
+
+        // 랜덤값 얻어오기
+        var n = Math.random(); //0.0~0.99999999999...
+        document.write(n+'<br>');
+
+        // 0~9 사이 랜덤한 정수 구하고 싶으면?
+        var n= Math.random() * 10;
+        n= Math.floor(n); //소수점 날리기
+        document.write(n+'<br>');
+
+        // 5~15 사이 랜덤한 정수 구하기
+        var n= Math.random() * 11; // 0~10
+        n= Math.floor(n) + 5;
+        document.write(n+'<br>');
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

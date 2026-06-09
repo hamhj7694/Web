@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_variable</title>
+
+    <script>
+        // 변수가 저장한 데이터의 종류(자료형)
+        // 1. 수치형 : number - 정수, 실수
+        // 2. 문자형 : string - '', "", ``
+        // 3. 논리형 : boolean - true, false (파이썬은 대문자.. 파이썬과 다르게 다른 언어들은 소문자!)
+        // 4. 객체형 : object, 내장, 함수, new 키워드
+        // 5. undefined : 값이 없는 변수의 자료형
+
+        // 기본자료형(수치, 문자, 논리)을 저장하는 변수 선언
+        var a;
+        // 변수에 값 대입
+        a= 10;
+        document.write(a);
+        document.write('<br>');
+
+        var b = "aaa";
+        document.write(b);
+        document.write('<br>');
+
+        var c = true;
+        document.write(c);
+        document.write('<br>');
+        //---
+
+        // 객체로 저장해보기..
+        var d= new Date();
+        document.write(d);
+        document.write('<br>');
+
+        var e;
+        document.write(e);
+        document.write('<br>');
+
+        // 변수의 자료형을 확인하는 내장기능 typeof()
+        document.write(typeof(a) + '<br>');
+        document.write(typeof(b) + '<br>');
+        document.write(typeof(c) + '<br>');
+        document.write(typeof(d) + '<br>');
+        document.write(typeof(e) + '<br>');
+
+        // 당연하지만, 따옴표 안에 숫자 적으면 문자!
+        var f="5";
+        document.write(typeof(f) +"<br>");
+        document.write("<hr>");
+
+        // 변수는 값을 변형할 수 있음.
+        var g = 100;
+        document.write(g);
+        document.write("<br>");
+
+        var g = 'kim';
+        document.write(g);
+        document.write("<br>");
+
+        // 함수(특정 기능의 코드가 써 있는 영역:코드 덩어리)도 변수에 저장할 수 있음.
+        var h=function(){
+            document.write('hhh function...................... <br>');
+        }
+
+        document.write(h); //함수 코드가 출력됨 - 함수가 실행된 것이 아님.
+        // 실행하려면 함수 이름을 호출해야 하는데..
+        // 변수 h가 이 코드를 가지고 있으니.. 함수 이름의 역할을 할 수 있음.
+        document.write("<br>");
+        h();
+
+        document.write(typeof(h) + '<br>');
+        document.write("<hr>");
+
+        // JS에서 문자열 데이터를 값을 다루는 기능들을 멤버로 가진 객체(변수 + 함수)임.
+        var s= "Hello";
+        document.write(s.length); //글자수를 가진 멤버변수
+        document.write("<br>");
+
+        document.write(s.toUpperCase()) // 대문자로 변경(원본 불변)
+        document.write("<br>");
+        
+        document.write(s.charAt(0)) // 문자열 안에서 특정 위치(인덱스 번호)의 한 문자를 뽑아내는 기능
+        document.write("<br>");
+        
+        document.write(s.replace('H', 'K')) // 글자 바꾸기(원본 불변)
+        document.write("<br>");
+        
+        document.write("<hr>");
+
+        // 사용자 정의 객체 맛보기..(다음 챕터에서 정식 수업)
+        var person= {name:'sam', age:20, address:'seoul'};
+        document.write('<p>');
+        document.write('이름: ' + person.name + '<br>'); // 멤버 변수 사용
+        document.write('나이: ' + person.age + '<br>');
+        document.write('주소: ' + person.address + '<br>');
+        document.write('</p>');
+
+        document.write('<hr>');
+
+        // js의 변수 키워드 var의 특이한 규칙
+        // var 키워드 : '변수를 만들어라' 라는 명령어.
+    
+        var a = 10;
+        var a; //이미 선언된 변수명으로 또 사용하면 var 키워드만 무시함!(한줄을 다 무시하는게 아님.)
+        document.write(a); //10
+        document.write("<br>");
+
+        // 실수형 수치 값을 표현하는 방법 중, 지수표현법 제공됨
+        var b = 3.14;
+        document.write(b);
+        document.write('<br>');
+
+        b = 123.5e3; // 123.5 X 10^3
+        document.write(b); // 123500
+        document.write('<br>');
+
+        b = 123.5e-3; //123.5 X 10^-3(0.001)
+        document.write(b);
+        document.write('<br>');
+
+        // 권장하지 않지만.. 변수를 만들 때 파이썬처럼 var 키워드 없이도 만들어짐
+        name='sam';
+        document.write(name);
+        // var 없이 변수를 만들면.. 전역 변수가 됨.
+        
+
+
+
+    </script>
+
+</head>
+<body>
+    
+</body>
+</html>

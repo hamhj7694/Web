@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dialog</title>
+
+    <script>
+        // 경고창을 보여주는 3가지 기능함수
+        // 1. 
+        // alert();
+        // alert('알림');
+
+        // 2. 확인/취소 선택이 가능한 경고창
+        // let answer = confirm('종료하시겠습니까?');
+        // document.write(answer+'<br>');
+
+        // 3. 사용자 입력 다이얼로그
+        // let age = prompt('당신의 나이를 입력하세요!');
+        // document.write(age + '<br>');
+        // 값을 입력하지 않고 [확인] 누르면 '' 빈 글씨.
+        // [취소] 누르면 null
+        // 사용자의 모든 입력은 문자열 타입
+        // document.write(typeof(age) + '<br>')
+
+        document.write('head 영역<br>');
+
+        function aaa(){
+            // document.write('aaa 입니다 <br>'); // 화면을 모두 지우고 나옴...
+
+            var p1=document.getElementById('p1');
+            p1.innerHTML = 'aaa 입니다'
+        }
+
+    </script>
+</head>
+<body>
+    <!-- document.write() 기능 사용 시 유의할 점 -->
+    <!-- body 영역의 요소가 모두 그려진 후 .write()를 실행하면 화면을 모두 지우고 다시 씀. -->
+    <h2>doby 헤딩</h2>
+    <button onclick="aaa()">click me!</button>
+    <p id="p1"></p>
+
+</body>
+</html>

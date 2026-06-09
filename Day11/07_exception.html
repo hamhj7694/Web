@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예외처리</title>
+
+    <script>
+        //js는 에러 발생시 거기서 코드 실행 멈춤.
+
+        document.write('예외 처리에 대해 알아보아요 <br> 시작! <br>');
+
+        // dsagdsafdsr('aaa'); //오타라도 쓰거나 에러나면 뒤에 다 안 됨
+
+        // 예외처리 문법 try ... catch [파이썬에서는 try ... except]
+        // 이 문법을 사용해서 에러나면 예외처리하고 넘기기. 뒤에꺼는 실행되게 해야지!
+        try{
+            ddfsdgsfhgdgsd('aaa'); //오타
+        }catch(error){
+            document.write('<hr>');
+        }
+
+        // 예외가 발생하든 안하든 무조건 실행되는 영역 finally
+        try{
+            // aaa(); // 없는 함수
+            document.write('만약 에러가 없다면?!! 그래도 finally는 <br>');
+        }catch(error){
+            document.write('예외 발생: '+error+'<hr>');
+        }finally{
+            document.write('필수 실행!! <br>');
+            
+        }
+        // finally는 네트워크 연결 작업같은 곳에서.. 전송 성공여부와 상관없이
+        // 서버 연결을 종료하는 코드 등을 작성하는 목적으로 사용함.
+
+        document.write('<hr>');
+
+        // 예외가 아닌데, 억지로 예외로 만들어서 던지는 문법 throw.. [파이썬에서는 raise]
+        try{
+            var a=10;
+            var b=20;
+            var c= a-b;
+            if(c<0){
+                throw "음수는 나오면 안돼!"; //예외 발생 의도적으로 설계
+            }
+
+            document.write('결과: ' +c+ '<br>');
+        }catch(e){
+            document.write('에러: ' +e+ '<br>');
+        }
+
+        document.write('종료!');
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

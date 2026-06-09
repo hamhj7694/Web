@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>element ctrl</title>
+
+    <script>
+        // 1) 이미지 변경하는 코드 작성된 영역
+        function changeImage(){
+            // img 요소를 찾아와서, 그 안에 속성값 src를 변경 - css가 아니라서 선택자 선택 못함
+            // body 영역 안에 있는 요소 찾는 기능 document에 존재!
+            let img = document.getElementById('aa');
+            img.src='./img/movie1.png';
+            img.alt='오즈의 마법사';
+        }
+
+        // 2) html 요소의 특정 스타일을 변경하는 기능함수
+        function changeColor(){
+            // h2 요소를 찾아서 배경색 변경하기
+            // 태그명을 요소 찾아보기
+            let h2s= document.getElementsByTagName('h2'); // 태그명 찾기는 여러개 일 수 있어서, 무조건 배열로 찾아줌.
+            let h2= h2s[0]; //요소가 배치된 순서대로 0번
+
+            h2.style.backgroundColor= 'yellow'
+            h2.style.color='red';
+            h2.style.border='2px solid blue';
+        }
+        
+        // 3) input 요소의 값 제어
+        function cal(){
+            let in1 = document.getElementsByName('in1')[0];
+            let in2 = document.getElementsByName('in2')[0];
+
+            // input 요소 안에 써 있는 값 가져오기
+            let num1 = in1.value;
+            let num2 = in2.value;
+            
+            // 두 수의 덧셈
+            // let result= num1 + num2; // 모든 사용자의 입력은 문자열.. '50'+'30'
+            let result= parseInt(num1) + parseInt(num2)
+
+            // 결과값 넣기
+            let in3= document.getElementsByName('in3')[0];
+            in3.value= result;
+        }
+
+    </script>
+</head>
+<body>
+    
+    <!-- 보통 js 함수는 버튼 클릭 같은 이벤트에 따라 처리할 작업을 써놓은 코드 영역 -->
+
+    <!-- 1) 이미지 변경 -->
+    <img src="./img/btf.jpg" alt="백투더퓨처" width="200px" id="aa">
+    <button onclick="changeImage()">이미지 바꾸기</button>
+    <hr>
+
+    <!-- 2) 특정 요소의 스타일 변경  -->
+    <h2>이것은 엘리멘트!</h2>
+    <button onclick="changeColor()">change background color of h2</button>
+    <hr>
+
+    <!-- 3) INPUT 요소의 값 제어 -->
+    <input type="text" name="in1"> <br>
+    <input type="text" name="in2"> <br>
+    <button onclick="cal()">덧셈 계산</button> <br>
+    <input type="text" name="in3" placeholder="결과">
+
+</body>
+</html>

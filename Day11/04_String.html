@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String 오브젝트</title>
+
+    <script>
+        // 3. String 생성자 함수 - 문자열 처리에 관련된 여러 기능들 설계도
+        // 기초타입 string과 구별
+
+        var a= 'sam';
+        var b= new String('sam');
+
+        document.write(typeof(a) + '<br>');
+        document.write(typeof(b) + '<br>');
+        document.write( (a===b) + '<hr>');
+
+        // string의 유용한 변수와 기능들
+        // 1) 글자수를 가지고 있는 멤버변수(속성)
+        var s= 'Hello world'; //자동 string 객체로 렙핑(wrapping)됨
+        document.write(s.length + '<br>');
+
+        // 2) 대소문자 변환 기능
+        document.write( s.toUpperCase() + '<br>');
+        document.write( s.toLowerCase() + '<br>');
+        document.write( s + '<br>'); //원본은 그대로
+        document.write('<br>');
+
+        // 3) 글씨 결합하기
+        document.write( s.concat(' Nice') + '<br>');
+        document.write( s + '<br>'); //원본은 그대로
+        // 문자열의 결합은 많이 사용하지만, concat()은 많이 안씀.
+        // 문자열의 + 결합연산자를 더 많이 사용
+        document.write( s + ' Nice' + '<br>');
+
+        // 4) 특정 문자가 있는 위치번호(index 번호 0, 1, 2, 3, ~) 얻어오기
+        document.write(s.indexOf('world') + '<br>'); //해당 문자의 첫 글자 자리번호
+        document.write(s.indexOf('jdfhadljfhf') + '<br>'); // 없는 단어 찾으려고 하면? 못찾음.. -1로 나옴
+        document.write(s.indexOf('World') + '<br>'); // 대문자 다르면? 못찾음.. -1로 나옴
+
+        // 5) 문자열 안에 원하는 문자를 검색하여 추출(문자 탐색.. match)
+        var str='Hello world! Nice to meet you. 안녕하세요 반갑습니다. Nice work! nice'
+
+        var word= str.match('Hello');
+        document.write('검색 글자: ' + word + '<br>');
+
+        var word= str.match('good');
+        document.write('검색 글자: ' + word + '<br>');
+
+        var word= str.match('hello');
+        document.write('검색 글자: ' + word + '<br>');
+
+        // 대소문자 구분 없이 검색하고 싶으면? 민감하게 검색하지 않도록 옵션..( i : insensitive )
+        document.write(str.match(/hello/i) + '<br>'); //슬래시로 문자열을 쓰는 방식(정규표현)
+
+        // 여러개 찾아지나? 
+        var words= str.match(/Nice/);
+        document.write('탐색된 글자들: '+words+'<br>'); //하나만 찾아짐...
+
+        // 여러개는 g (global) 옵션 줘서 찾아야함
+        var words= str.match(/Nice/g);
+        document.write('탐색된 글자들: '+words+'<br>');
+
+        // 대문자도 모두 찾고 싶으면? i와 g를 같이 적어줌.
+        var words= str.match(/Nice/ig);
+        document.write('탐색된 글자들: '+words+'<br>');
+        document.write('<hr>');
+
+        // 6) 문자 바꿔치기.. replace
+        var s='Hello world';
+        document.write(s.replace('world', 'web') +'<br>'); // world --> web으로 바뀜 (원본은 그대로)
+        document.write(s.replace('nice', 'web') +'<br>'); // nice는 없음. 없는 글자를 바꾸려하면 원본 그대로 나옴.
+
+        document.write(s.replace('worID', 'web') +'<br>'); // 대소문자 달라서 안 바뀜.
+        document.write(s.replace(/worID/i, 'web') +'<br>'); // 바뀜
+
+        // 여러개의 단어를 동시에 모두 바꾸려면?
+        var str= 'hello world. nice world. good world. bad world';
+        document.write(str.replace('world','AI')+'<br>');
+        document.write(str.replace(/world/ig,'AI')+'<br>');
+
+        // 문자열 사이 사이에 있는 모든 공백문자를 없앨 때도 활용이 가능함.
+        var replace = str.replace(/ /g, ''); //공백문자를 빈문자로 바꾸기
+        document.write(replace +'<br>');
+        
+        // 7) 문자열 특정 문자기준으로 잘라서 배열로 리턴해주는 기능 (csv 파일 분석 등)
+        var s="바나나,사과,오렌지,감,딸기,고구마,감자";
+        var aaa= s.split(','); // , 기준으로 자르기
+        document.write('요소의 개수: ' + aaa.length + '<br>');
+
+        document.write(aaa[0] + '<br>');
+        document.write(aaa[1] + '<br>');
+        document.write(aaa[2] + '<br>');
+        document.write(aaa[3] + '<br>');
+        document.write(aaa[4] + '<br>');
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -8,10 +8,10 @@ if(isset($_POST['comment_submit'])){
     $fr_no = $_POST['fr_no'];
     $nickname = $_POST['nickname'];
     $cmt = $_POST['cmt'];
+    $parent_no = isset($_POST['parent_no']) ? $_POST['parent_no'] : 0;
 
-    $sql = "INSERT INTO comment(nickname, cmt, `now`, fr_no)
-            VALUES('$nickname', '$cmt', NOW(), '$fr_no')";
-
+    $sql = "INSERT INTO comment(nickname, cmt, `now`, fr_no, parent_no)
+            VALUES('$nickname', '$cmt', NOW(), '$fr_no', '$parent_no')";
     mysqli_query($db, $sql);
 
     echo "<script>location.href='fr_list.php';</script>";
@@ -22,8 +22,21 @@ if(isset($_POST['comment_delete_submit'])){
     $comment_no = $_POST['comment_no'];
     $delete_word = $_POST['delete_word'];
 
-    if($delete_word == '삭제'){
-        $sql = "DELETE FROM comment WHERE no='$comment_no'";
+    if($delete_word == '댓글 삭제'){
+        $sql = "DELETE FROM comment WHERE no='$comment_no' OR parent_no='$comment_no'";
+        mysqli_query($db, $sql);
+    }
+
+    echo "<script>location.href='fr_list.php';</script>";
+    exit;
+}
+
+if(isset($_POST['reply_delete_submit'])){
+    $reply_no = $_POST['reply_no'];
+    $delete_word = $_POST['delete_word'];
+
+    if($delete_word == '댓글 삭제'){
+        $sql = "DELETE FROM comment WHERE no='$reply_no' AND parent_no != 0";
         mysqli_query($db, $sql);
     }
 
@@ -34,9 +47,7 @@ if(isset($_POST['comment_delete_submit'])){
 if(isset($_POST['heart_ajax'])){
     $fr_no = $_POST['fr_no'];
 
-    $sql = "UPDATE fr_maker
-            SET harts = harts + 1
-            WHERE no = '$fr_no'";
+    $sql = "UPDATE fr_maker SET harts = harts + 1 WHERE no = '$fr_no'";
     mysqli_query($db, $sql);
 
     $result = mysqli_query($db, "SELECT harts FROM fr_maker WHERE no = '$fr_no'");
@@ -50,9 +61,7 @@ if(isset($_POST['delete_submit'])){
     $fr_no = $_POST['fr_no'];
     $phone = $_POST['phone'];
 
-    $sql = "DELETE FROM fr_maker 
-            WHERE no='$fr_no' AND phone='$phone'";
-
+    $sql = "DELETE FROM fr_maker WHERE no='$fr_no' AND phone='$phone'";
     mysqli_query($db, $sql);
 
     echo "<script>location.href='fr_list.php';</script>";
@@ -60,15 +69,64 @@ if(isset($_POST['delete_submit'])){
 }
 
 if(isset($_POST['edit_submit'])){
+
     $fr_no = $_POST['fr_no'];
     $phone = $_POST['phone'];
     $msg2 = $_POST['msg2'];
+    $age = $_POST['age'];
 
-    $sql = "UPDATE fr_maker 
-            SET msg2='$msg2'
-            WHERE no='$fr_no' AND phone='$phone'";
+    $sql = "SELECT * FROM fr_maker
+            WHERE no='$fr_no'
+            AND phone='$phone'";
 
-    mysqli_query($db, $sql);
+    $result = mysqli_query($db,$sql);
+
+    if(mysqli_num_rows($result)>0){
+
+        if(isset($_FILES['img1']) &&
+           $_FILES['img1']['error']==0){
+
+            $upload_dir = "upload/";
+
+            $file_name =
+                time()."_".$_FILES['img1']['name'];
+
+            $file_path =
+                $upload_dir.$file_name;
+
+            move_uploaded_file(
+                $_FILES['img1']['tmp_name'],
+                $file_path
+            );
+
+            $update_sql = "
+            UPDATE fr_maker
+            SET
+                msg2='$msg2',
+                age='$age',
+                file_path='$file_path'
+            WHERE
+                no='$fr_no'
+                AND phone='$phone'
+            ";
+
+        }else{
+
+            $update_sql = "
+            UPDATE fr_maker
+            SET
+                msg2='$msg2',
+                age='$age'
+            WHERE
+                no='$fr_no'
+                AND phone='$phone'
+            ";
+
+        }
+
+        mysqli_query($db,$update_sql);
+
+    }
 
     echo "<script>location.href='fr_list.php';</script>";
     exit;
@@ -84,337 +142,559 @@ $result_table = mysqli_query($db, $data);
 
 if($result_table){
 
-    echo "<style>
-        body {
-            margin: 0;
-            padding: 40px;
-            background: linear-gradient(135deg, #fff1f5, #ffe4ec);
-            font-family: Arial, sans-serif;
-            color: #333;
-        }
+echo "<style>
+    body {
+        margin: 0;
+        padding: 40px;
+        background: linear-gradient(135deg, #fff1f5, #ffe4ec);
+        font-family: Arial, sans-serif;
+        color: #333;
+    }
 
-        .container {
-            max-width: 760px;
-            margin: 0 auto;
-        }
+    .container {
+        max-width: 760px;
+        margin: 0 auto;
+    }
 
-        .friend-card {
-            background: white;
-            border: 3px solid #ff9aad;
-            border-radius: 24px;
-            padding: 24px;
-            margin: 20px 0;
-            box-shadow: 0 12px 30px rgba(255, 128, 160, 0.2);
-        }
+    .title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-        .friend-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 24px;
-        }
+    #title {
+        color: rgb(255, 105, 130);
+        font-size: 50px;
+        margin: 0;
+    }
 
-        .friend-text {
-            flex: 1;
-        }
+    .subtitle {
+        display: inline-block;
+    }
 
-        .friend-photo {
-            width: 170px;
-            flex-shrink: 0;
-            text-align: right;
-        }
+    #r_msg {
+        margin-left: auto;
+        margin-top: 30px;
+    }
 
-        .friend-card img {
-            width: 160px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 16px;
-            border: 2px solid #ffd1dc;
-            transition: transform 0.3s ease;
-            cursor: zoom-in;
-        }
+    #r_msg input {
+        padding: 14px 28px;
+        border: 2px solid white;
+        border-radius: 999px;
+        background: #ff6f91;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+    }
 
-        .friend-card img:hover {
-            transform: scale(2.5);
-            transform-origin: center center;
-            border: 5px solid #ff9aad;
-            box-shadow: 0 0 50px rgba(0,0,0,0.4);
-            z-index: 9999;
-            position: relative;
-        }
+    #r_msg input:hover {
+        background: #ff4f7e;
+        transform: translateY(-1px);
+    }
 
-        .friend-card img:hover {
-            background: white;
-        }
+    .view-switch {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin: 18px 0 20px;
+    }
 
-        .no-photo {
-            width: 160px;
-            height: 200px;
-            border: 2px dashed #ffd1dc;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #aaa;
-        }
+    .view-switch button {
+        padding: 9px 18px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        #title {
-            color: pink;
-            font-size: 50px;
-            margin: 0;
-        }
+    .view-switch button.active {
+        background: #ff6f91;
+        color: white;
+    }
 
-        .title-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .friend-card {
+        background: white;
+        border: 3px solid #ff9aad;
+        border-radius: 24px;
+        padding: 24px;
+        margin: 20px 0;
+        box-shadow: 0 12px 30px rgba(255, 128, 160, 0.2);
+    }
 
-        .subtitle {
-            display: inline-block;
-        }
+    .friend-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 24px;
+    }
 
-        .friend-name {
-            margin: 0 0 18px;
-            color: #222;
-            font-size: 24px;
-        }
+    .friend-text {
+        flex: 1;
+    }
 
-        .friend-section-title {
-            display: inline-block;
-            margin: 0 0 10px;
-            padding: 6px 12px;
-            background: #fff1f5;
-            color: #ff6f91;
-            border-radius: 999px;
-            font-size: 14px;
-        }
+    .friend-photo {
+        width: 170px;
+        flex-shrink: 0;
+        text-align: right;
+    }
 
-        .friend-desc {
-            margin: 0;
-            padding: 16px;
-            background: #fff8fa;
-            border-left: 4px solid #ff9aad;
-            border-radius: 12px;
-            line-height: 1.6;
-        }
+    .friend-card img {
+        width: 160px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 2px solid #ffd1dc;
+        transition: transform 0.3s ease;
+        cursor: zoom-in;
+    }
 
-        .comment-area {
-            width: 100%;
-            margin-top: 20px;
-        }
+    .friend-card img:hover {
+        transform: scale(2.5);
+        transform-origin: center center;
+        border: 5px solid #ff9aad;
+        box-shadow: 0 0 50px rgba(0,0,0,0.4);
+        z-index: 9999;
+        position: relative;
+        background: white;
+    }
 
-        .comment-form input[type='text'],
-        .comment-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 8px;
-            border: 2px solid #ffd1dc;
-            border-radius: 10px;
-            box-sizing: border-box;
-        }
+    .no-photo {
+        width: 160px;
+        height: 200px;
+        border: 2px dashed #ffd1dc;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #aaa;
+    }
 
-        .comment-form textarea {
-            height: 80px;
-            resize: none;
-        }
+    .friend-name {
+        margin: 0 0 18px;
+        color: #222;
+        font-size: 24px;
+    }
 
-        .comment-toggle,
-        .comment-view-toggle,
-        .comment-form input[type='submit'] {
-            padding: 8px 16px;
-            border: 2px solid #ff9aad;
-            border-radius: 999px;
-            background: white;
-            color: #ff6f91;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .friend-section-title {
+        display: inline-block;
+        margin: 0 0 10px;
+        padding: 6px 12px;
+        background: #fff1f5;
+        color: #ff6f91;
+        border-radius: 999px;
+        font-size: 14px;
+    }
 
-        .comment-toggle:hover,
-        .comment-view-toggle:hover,
-        .comment-form input[type='submit']:hover {
-            background: #fff1f5;
-        }
+    .friend-desc {
+        margin: 0;
+        padding: 16px;
+        background: #fff8fa;
+        border-left: 4px solid #ff9aad;
+        border-radius: 12px;
+        line-height: 1.6;
+    }
 
-        .comment-form {
-            display: none;
-            margin-top: 12px;
-            gap: 10px;
-            align-items: flex-end;
-        }
+    .comment-area {
+        width: 100%;
+        margin-top: 20px;
+    }
 
-        .comment-inputs {
-            flex: 1;
-        }
+    .bottom-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        .comment-submit-wrap {
-            display: flex;
-            align-items: flex-end;
-        }
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-        .comment-submit-wrap input[type='submit'] {
-            white-space: nowrap;
-            height: 42px;
-        }
+    .heart-form {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+    }
 
-        .comment-list {
-            display: none;
-        }
+    .heart-btn {
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        border: 2px solid #ff9aad;
+        border-radius: 50%;
+        background: white;
+        color: #ff6f91;
+        font-size: 22px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .comment-box {
-            margin-top: 12px;
-            padding: 12px;
-            background: #fff5f8;
-            border-radius: 12px;
-        }
+    .heart-btn:hover {
+        background: #ff6f91;
+        color: white;
+    }
 
-        .no-comment {
-            margin-top: 12px;
-            padding: 18px;
-            text-align: center;
-            background: #fff5f8;
-            border-radius: 12px;
-            color: #999;
-            font-style: italic;
-        }
+    .heart-count {
+        color: #ff6f91;
+        font-size: 18px;
+        font-weight: bold;
+    }
 
-        /* 하트 기능 스타일 */
-        .heart-btn {
-            width: 42px;
-            height: 42px;
-            padding: 0;
-            border: 2px solid #ff9aad;
-            border-radius: 50%;
-            background: white;
-            color: #ff6f91;
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
+    .comment-toggle,
+    .comment-view-toggle,
+    .comment-form input[type='submit'],
+    .delete-open-btn,
+    .delete-form input[type='submit'],
+    .delete-cancel-btn,
+    .edit-open-btn,
+    .edit-form input[type='submit'],
+    .edit-cancel-btn,
+    .reply-open-btn,
+    .reply-form input[type='submit'] {
+        padding: 8px 16px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .comment-toggle:hover,
+    .comment-view-toggle:hover,
+    .comment-form input[type='submit']:hover,
+    .delete-open-btn:hover,
+    .delete-form input[type='submit']:hover,
+    .delete-cancel-btn:hover,
+    .edit-open-btn:hover,
+    .edit-form input[type='submit']:hover,
+    .edit-cancel-btn:hover,
+    .reply-open-btn:hover,
+    .reply-form input[type='submit']:hover {
+        background: #fff1f5;
+    }
 
-        .heart-btn:hover {
-            background: #ff6f91;
-            color: white;
-        }
+    .comment-form {
+        display: none;
+        margin-top: 12px;
+    }
 
-        .heart-count {
-            color: #ff6f91;
-            font-size: 18px;
-            font-weight: bold;
-        }
+    .comment-form input[type='text'],
+    .comment-form textarea,
+    .delete-form input[type='text'],
+    .edit-form input[type='text'],
+    .edit-form textarea,
+    .reply-form input[type='text'],
+    .reply-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 2px solid #ffd1dc;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
 
-        .action-group{
-            display:flex;
-            align-items:center;
-            gap:8px;
-        }
+    .comment-form textarea {
+        height: 80px;
+        resize: none;
+    }
 
-        .comment-submit-btn {
-            display: none;
-            padding: 8px 16px;
-            border: 2px solid #ff9aad;
-            border-radius: 999px;
-            background: white;
-            color: #ff6f91;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .comment-submit-btn {
+        display: none;
+        padding: 8px 16px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .comment-submit-btn:hover {
-            background: #fff1f5;
-        }
+    .comment-list {
+        display: none;
+    }
 
-        .heart-form{
-            display:flex;
-            align-items:center;
-            gap:6px;
-            margin:0;
-        }
+    .comment-box {
+        margin-top: 12px;
+        padding: 12px;
+        background: #fff5f8;
+        border-radius: 12px;
+    }
 
-        .bottom-actions{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .no-comment {
+        margin-top: 12px;
+        padding: 18px;
+        text-align: center;
+        background: #fff5f8;
+        border-radius: 12px;
+        color: #999;
+        font-style: italic;
+    }
 
-        /* #r_msg 는 페이지 우측 상단의 '나도 글 남기기' 버튼 */
-        #r_msg{
-            margin-left: auto;
-            margin-top: 30px;
-        }
+    .delete-form,
+    .edit-form {
+        display: none;
+        margin-top: 12px;
+        padding: 16px;
+        background: #fff8fa;
+        border: 2px solid #ffd1dc;
+        border-radius: 16px;
+    }
 
-        #r_msg input{
-            padding: 14px 28px;
-            border: 2px solid white;
-            border-radius: 999px;
+    .delete-form p,
+    .edit-form p {
+        color: #ff5f87;
+        font-weight: bold;
+        margin: 8px 0 12px;
+    }
 
-            background: #ff6f91;
-            color: white;
+    .delete-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
 
-            font-weight: bold;
-            cursor: pointer;
+    .edit-form textarea {
+        height: 100px;
+        resize: none;
+    }
 
-            transition: 0.2s;
-        }
+    .edit-form input[type='number']{
+        width:100%;
+        padding:10px;
+        margin-bottom:10px;
+        border:2px solid #ffd1dc;
+        border-radius:10px;
+    }
 
-        #r_msg input:hover{
-            background: #ff4f7e;
-            transform: translateY(-1px);
-        }
+    .edit-form input[type='file']{
+        width:100%;
+        margin-bottom:10px;
+    }
 
-        .delete-open-btn,
-        .delete-form input[type='submit'],
-        .delete-cancel-btn {
-            padding: 8px 16px;
-            border: 2px solid #ff9aad;
-            border-radius: 999px;
-            background: white;
-            color: #ff6f91;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .edit-form input[type='submit'],
+    .edit-cancel-btn {
+        padding: 8px 18px;
+        border: 2px solid white;
+        border-radius: 999px;
+        background: #ff6f91;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .delete-open-btn:hover,
-        .delete-form input[type='submit']:hover,
-        .delete-cancel-btn:hover {
-            background: #fff1f5;
-        }
+    .edit-form input[type='submit']:hover,
+    .edit-cancel-btn:hover {
+        background: #ff4f7e;
+    }
 
-        .delete-form {
-            display: none;
-            margin-top: 12px;
-            padding: 16px;
-            background: #fff8fa;
-            border: 2px solid #ffd1dc;
-            border-radius: 16px;
-        }
+    .comment-delete-open {
+        margin-top: 8px;
+        margin-left: 10px;
+        padding: 6px 12px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .delete-form input[type='text'] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 2px solid #ffd1dc;
-            border-radius: 10px;
-            box-sizing: border-box;
-        }
+    .comment-delete-form {
+        display: none;
+        margin-top: 8px;
+    }
 
-        .delete-form p {
-            color: #ff5f87;
-            font-weight: bold;
-            margin: 8px 0 12px;
-        }
+    .comment-delete-form input[type='text'] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 6px;
+        border: 2px solid #ffd1dc;
+        border-radius: 10px;
+    }
 
-        .delete-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-        }
+    .comment-delete-form input[type='submit'] {
+        padding: 6px 12px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
+    .reply-open-btn {
+        margin-left: 8px;
+        padding: 6px 12px;
+    }
+
+    .reply-form {
+        display: none;
+        margin-top: 10px;
+        padding: 12px;
+        background: #fff8fa;
+        border: 2px solid #ffd1dc;
+        border-radius: 12px;
+    }
+
+    .reply-form textarea {
+        height: 60px;
+        resize: none;
+    }
+
+    .reply-box {
+        margin-top: 10px;
+        margin-left: 24px;
+        padding: 10px;
+        background: white;
+        border-left: 4px solid #ff9aad;
+        border-radius: 10px;
+    }
+
+    .reply-box strong {
+        color: #ff6f91;
+    }
+
+    #cardView {
+        display: none;
+    }
+
+    .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .mini-card {
+        padding: 14px;
+        background: white;
+        border: 3px solid #ff9aad;
+        border-radius: 22px;
+        text-align: center;
+        box-shadow: 0 10px 24px rgba(255, 128, 160, 0.2);
+    }
+
+    .mini-card img,
+    .mini-no-photo {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 2px solid #ffd1dc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #aaa;
+        background: #fff8fa;
+    }
+
+    .mini-card h4 {
+        margin: 10px 0 4px;
+        color: #ff6f91;
+        font-size: 18px;
+    }
+
+    .mini-card p {
+        margin: 0;
+        color: #555;
+        font-size: 14px;
+    }
+    #backToCardsBtn {
+        display: none;
+        margin: 16px auto;
+        padding: 9px 18px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: #ff6f91;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .mini-card {
+        cursor: pointer;
+    }
+
+    .mini-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .inline-detail-card {
+        grid-column: 1 / -1;
+        margin: 0 0 12px;
+    }
+
+    #backToCardsBtn {
+        display: none !important;
+    }
+    .mini-card {
+        cursor: pointer;
+    }
+
+    .mini-card.is-open {
+        display: none;
+    }
+
+    .inline-detail-card {
+        grid-column: 1 / -1;
+        margin: 0 0 12px;
+    }
+    .reply-delete-open {
+        margin-top: 8px;
+        padding: 6px 12px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .reply-delete-form {
+        display: none;
+        margin-top: 8px;
+    }
+
+    .reply-delete-form input[type='text'] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 6px;
+        border: 2px solid #ffd1dc;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+    .reply-delete-form input[type='submit'] {
+        padding: 6px 12px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .reply-list {
+        display: none;
+    }
+
+    .reply-list-toggle {
+        margin-top: 10px;
+        padding: 6px 12px;
+        border: 2px solid #ff9aad;
+        border-radius: 999px;
+        background: white;
+        color: #ff6f91;
+        font-weight: bold;
+        cursor: pointer;
+    }
+        
     @media all and (max-width: 600px) {
         body {
             padding: 16px;
@@ -467,28 +747,39 @@ if($result_table){
             height: 260px;
         }
 
-        .action-group {
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
         .bottom-actions {
             flex-direction: column;
             align-items: stretch;
             gap: 10px;
         }
 
-        .comment-submit-btn {
-            width: 100%;
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .heart-form {
+            flex: 1 1 100%;
             justify-content: center;
         }
 
         .comment-toggle,
         .comment-view-toggle {
-            flex: 1;
+            flex: 1 1 calc(50% - 4px);
+        }
+
+        .edit-open-btn,
+        .delete-open-btn {
+            flex: 1 1 calc(50% - 4px);
+        }
+
+        .action-group button {
+            min-height: 42px;
+        }
+
+        .comment-submit-btn {
+            width: 100%;
         }
 
         .delete-form {
@@ -503,94 +794,62 @@ if($result_table){
         .delete-buttons button {
             flex: 1;
         }
-    }
 
-    .comment-delete-open {
-        margin-top: 8px;
-        margin-left: 10px;
+        .mini-grid {
+            gap: 12px;
+        }
 
-        padding: 6px 12px;
-        border: 2px solid #ff9aad;
-        border-radius: 999px;
-        background: white;
-        color: #ff6f91;
-        font-weight: bold;
-        cursor: pointer;
-    }
+        .mini-card {
+            padding: 10px;
+            border-radius: 18px;
+        }
 
-    .comment-delete-form {
-        display: none;
-        margin-top: 8px;
-    }
+        .mini-card h4 {
+            font-size: 15px;
+        }
 
-    .comment-delete-form input[type='text'] {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 6px;
-        border: 2px solid #ffd1dc;
-        border-radius: 10px;
-    }
+        .mini-card p {
+            font-size: 12px;
+        }
 
-    .comment-delete-form input[type='submit'] {
-        padding: 6px 12px;
-        border: 2px solid #ff9aad;
-        border-radius: 999px;
-        background: white;
-        color: #ff6f91;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    .edit-open-btn{
-        padding: 8px 16px;
-        border: 2px solid #ff9aad;
-        border-radius: 999px;
-        background: white;
-        color: #ff6f91;
-        font-weight: bold;
-        cursor: pointer;
-    }
+        .reply-box {
+            margin-left: 12px;
+        }
+        @media all and (max-width: 600px) {
+            .friend-card img:hover {
+                transform: none;
+                border: 2px solid #ffd1dc;
+                box-shadow: none;
+                z-index: auto;
+                position: static;
+            }
 
-    .edit-open-btn:hover{
-        background:#fff1f5;
+            .friend-card img {
+                cursor: default;
+            }
+        }
     }
-
-    .edit-form{
-        display:none;
-        margin-top:12px;
-        padding:16px;
-        background:#fff8fa;
-        border:2px solid #ffd1dc;
-        border-radius:16px;
-    }
-
-    .edit-form input[type='text'],
-    .edit-form textarea{
-        width:100%;
-        padding:10px;
-        margin-bottom:10px;
-        border:2px solid #ffd1dc;
-        border-radius:10px;
-        box-sizing:border-box;
-    }
-
-    .edit-form textarea{
-        height:100px;
-        resize:none;
-    }
-
-    </style>";
+</style>";
 
     echo "<div class='container'>";
 
     echo "<div class='title-row'>";
-    echo "<h2 id='title' style='color: rgb(255, 105, 130)'>구조 대기 명단</h2>";
-    echo "<h3 class='subtitle'> <br> 우리 멋진 친구들을 만나보세요!</h3>";
-
+    echo "<h2 id='title'>구조 대기 명단</h2>";
+    echo "<h3 class='subtitle'><br>우리 멋진 친구들을 만나보세요!</h3>";
     echo "<form action='https://testham.dothome.co.kr/fr_maker/' id='r_msg'>";
     echo "<input type='submit' value='나도 글 남기기'>";
     echo "</form>";
-
     echo "</div><hr>";
+
+    echo "<div class='view-switch'>";
+    echo "<button type='button' id='fullViewBtn'>상세 보기</button>";
+    echo "<button type='button' id='cardViewBtn'>카드 보기</button>";
+    echo "</div>";
+
+    $mini_cards = "";
+
+    echo "<div id='fullView'>";
+    echo "<button type='button' id='backToCardsBtn'>카드 목록으로</button>";
 
     while($row = mysqli_fetch_array($result_table, MYSQLI_ASSOC)){
         $no = $row['no'];
@@ -598,11 +857,23 @@ if($result_table){
         $gender = $row['gender'];
         $age = $row['age'];
         $harts = $row['harts'];
+        $msg2_raw = $row['msg2'];
         $msg2 = nl2br($row['msg2']);
         $file_path = $row['file_path'];
 
-        echo "<div class='friend-card'>";
+        $mini_cards .= "<div class='mini-card' data-target='post-$no'>";
 
+        if(!empty($file_path) && file_exists($file_path)){
+            $mini_cards .= "<img src='$file_path' alt='사진'>";
+        } else {
+            $mini_cards .= "<div class='mini-no-photo'>사진 없음</div>";
+        }
+
+        $mini_cards .= "<h4>$name</h4>";
+        $mini_cards .= "<p>$age 살 · $gender</p>";
+        $mini_cards .= "</div>";
+
+        echo "<div class='friend-card' id='post-$no'>";
         echo "<div class='friend-main'>";
 
         echo "<div class='friend-text'>";
@@ -629,69 +900,64 @@ if($result_table){
         $comment_count = $count_row['cnt'];
 
         echo "<div class='bottom-actions'>";
+        echo "<div class='action-group'>";
 
-            echo "<div class='action-group'>";
-
-            echo "<div class='heart-form'>";
-                echo "<button type='button' class='heart-btn' data-no='$no'>♥</button>";
-                echo "<span class='heart-count'>$harts</span>";
-            echo "</div>";
-
-            echo "<button type='button' class='comment-toggle'>코멘트 쓰기</button>";
-
-            echo "<button type='button' class='comment-view-toggle'
-                data-default-text='코멘트 보기($comment_count)'>
-                코멘트 보기($comment_count)
-                </button>";
-
-            echo "<button type='button' class='edit-open-btn'>수정</button>";
-            echo "<button type='button' class='delete-open-btn'>삭제</button>";
-
-            echo "</div>";
-
+        echo "<div class='heart-form'>";
+        echo "<button type='button' class='heart-btn' data-no='$no'>♥</button>";
+        echo "<span class='heart-count'>$harts</span>";
         echo "</div>";
 
-        echo "<form class='edit-form' action='fr_list.php' method='post'>";
+        echo "<button type='button' class='comment-toggle'>코멘트 쓰기</button>";
+        echo "<button type='button' class='comment-view-toggle' data-default-text='코멘트 보기($comment_count)'>코멘트 보기($comment_count)</button>";
+        echo "<button type='button' class='edit-open-btn'>수정</button>";
+        echo "<button type='button' class='delete-open-btn'>삭제</button>";
 
+        echo "</div>";
+        echo "</div>";
+
+        echo "<form class='edit-form' action='fr_list.php' method='post' enctype='multipart/form-data'>";
         echo "<input type='hidden' name='fr_no' value='$no'>";
 
         echo "<p>작성자 전화번호를 입력하고 수정할 내용을 적어주세요.</p>";
 
         echo "<input type='text' name='phone' placeholder='010-0000-0000'>";
 
-        echo "<textarea name='msg2' placeholder='수정할 내용'>$msg2</textarea>";
+        echo "<input type='number' name='age' value='$age' min='20' max='40'>";
+
+        echo "<textarea name='msg2'>$msg2_raw</textarea>";
+
+        echo "<label>사진 변경</label>";
+        echo "<input type='file' name='img1' accept='image/*'>";
 
         echo "<div class='delete-buttons'>";
         echo "<input type='submit' name='edit_submit' value='수정'>";
         echo "<button type='button' class='edit-cancel-btn'>취소</button>";
         echo "</div>";
-
         echo "</form>";
 
         echo "<form class='delete-form' action='fr_list.php' method='post'>";
         echo "<input type='hidden' name='fr_no' value='$no'>";
         echo "<p>정말 삭제 하시나요? 작성자 전화번호를 입력하고 '네'를 누르면 삭제됩니다. (복구 불가)</p>";
         echo "<input type='text' name='phone' placeholder='010-0000-0000'>";
-
         echo "<div class='delete-buttons'>";
         echo "<input type='submit' name='delete_submit' value='네'>";
         echo "<button type='button' class='delete-cancel-btn'>아니요</button>";
         echo "</div>";
-
         echo "</form>";
 
         echo "<form id='comment-form-$no' class='comment-form' action='fr_list.php' method='post'>";
         echo "<input type='hidden' name='fr_no' value='$no'>";
-
+        echo "<input type='hidden' name='parent_no' value='0'>";
         echo "<div class='comment-inputs'>";
         echo "<input type='text' name='nickname' placeholder='닉네임'>";
         echo "<textarea name='cmt' placeholder='내용 입력'></textarea>";
         echo "<input class='comment-submit-btn' type='submit' name='comment_submit' value='남기기' form='comment-form-$no'>";
         echo "</div>";
-
         echo "</form>";
+
         echo "<div class='comment-list'>";
-        $comment_sql = "SELECT * FROM comment WHERE fr_no='$no' ORDER BY no DESC";
+
+        $comment_sql = "SELECT * FROM comment WHERE fr_no='$no' AND parent_no=0 ORDER BY no DESC";
         $comment_result = mysqli_query($db, $comment_sql);
 
         if($comment_count == 0){
@@ -705,27 +971,72 @@ if($result_table){
             echo "<strong>".$comment['nickname']."</strong>";
             echo "<p>".nl2br($comment['cmt'])."</p>";
             echo "<small>".$comment['now']."</small>";
-
+            echo "<button type='button' class='reply-open-btn'>답글</button>";
             echo "<button type='button' class='comment-delete-open'>삭제</button>";
+
+            echo "<form class='reply-form' action='fr_list.php' method='post'>";
+            echo "<input type='hidden' name='fr_no' value='$no'>";
+            echo "<input type='hidden' name='parent_no' value='$comment_no'>";
+            echo "<input type='text' name='nickname' placeholder='닉네임'>";
+            echo "<textarea name='cmt' placeholder='답글 입력'></textarea>";
+            echo "<input type='submit' name='comment_submit' value='답글 남기기'>";
+            echo "</form>";
 
             echo "<form class='comment-delete-form' action='fr_list.php' method='post'>";
             echo "<input type='hidden' name='comment_no' value='$comment_no'>";
-            echo "<input type='text' name='delete_word' placeholder=\"'삭제'를 입력하세요\">";
-            echo "<input type='submit' name='comment_delete_submit' value='삭제'>";
+            echo "<input type='text' name='delete_word' placeholder=\"'댓글 삭제'를 입력하세요\">";
+            echo "<input type='submit' name='comment_delete_submit' value='댓글 삭제'>";
             echo "</form>";
 
-            echo "</div>";
+            $reply_sql = "SELECT * FROM comment WHERE parent_no='$comment_no' ORDER BY no ASC";
+            $reply_result = mysqli_query($db, $reply_sql);
+
+            while($reply = mysqli_fetch_array($reply_result, MYSQLI_ASSOC)){
+                $reply_sql = "SELECT * FROM comment WHERE parent_no='$comment_no' ORDER BY no ASC";
+                $reply_result = mysqli_query($db, $reply_sql);
+                $reply_count = mysqli_num_rows($reply_result);
+
+                if($reply_count > 0){
+                    echo "<button type='button' class='reply-list-toggle'>대댓글 열기($reply_count)</button>";
+                }
+
+                echo "<div class='reply-list'>";
+
+                while($reply = mysqli_fetch_array($reply_result, MYSQLI_ASSOC)){
+                    $reply_no = $reply['no'];
+
+                    echo "<div class='reply-box'>";
+                    echo "<strong>ㄴ ".$reply['nickname']."</strong>";
+                    echo "<p>".nl2br($reply['cmt'])."</p>";
+                    echo "<small>".$reply['now']."</small>";
+
+                    echo "<br>";
+                    echo "<button type='button' class='reply-delete-open'>삭제</button>";
+
+                    echo "<form class='reply-delete-form' action='fr_list.php' method='post'>";
+                    echo "<input type='hidden' name='reply_no' value='$reply_no'>";
+                    echo "<input type='text' name='delete_word' placeholder=\"'댓글 삭제'를 입력하세요\">";
+                    echo "<input type='submit' name='reply_delete_submit' value='삭제'>";
+                    echo "</form>";
+
+                    echo "</div>";
+                }
+
+                echo "</div>";
         }
 
         echo "</div>";
         echo "</div>";
-
         echo "</div>";
     }
 
     echo "</div>";
 
-    // echo "<div id='go_top'>TOP↑<div>";
+    echo "<div id='cardView' class='mini-grid'>";
+    echo $mini_cards;
+    echo "</div>";
+
+    echo "</div>";
 
 } else {
     echo "게시글 리스트를 불러오는 중 오류가 발생했습니다.";
@@ -734,11 +1045,33 @@ if($result_table){
 mysqli_close($db);
 
 echo "<script>
+    const fullView = document.getElementById('fullView');
+    const cardView = document.getElementById('cardView');
+    const fullViewBtn = document.getElementById('fullViewBtn');
+    const cardViewBtn = document.getElementById('cardViewBtn');
+
+    fullViewBtn.classList.add('active');
+
+    fullViewBtn.addEventListener('click', function(){
+        fullView.style.display = 'block';
+        cardView.style.display = 'none';
+
+        fullViewBtn.classList.add('active');
+        cardViewBtn.classList.remove('active');
+    });
+
+    cardViewBtn.addEventListener('click', function(){
+        fullView.style.display = 'none';
+        cardView.style.display = 'grid';
+
+        cardViewBtn.classList.add('active');
+        fullViewBtn.classList.remove('active');
+    });
+
     const writeButtons = document.querySelectorAll('.comment-toggle');
 
     writeButtons.forEach(function(button) {
         button.addEventListener('click', function() {
-
             const card = button.closest('.comment-area');
             const form = card.querySelector('.comment-form');
             const submitBtn = card.querySelector('.comment-submit-btn');
@@ -834,7 +1167,6 @@ echo "<script>
 
     editOpenButtons.forEach(function(button){
         button.addEventListener('click', function(){
-
             const card = button.closest('.comment-area');
             const form = card.querySelector('.edit-form');
 
@@ -847,13 +1179,109 @@ echo "<script>
 
     editCancelButtons.forEach(function(button){
         button.addEventListener('click', function(){
-
             const card = button.closest('.comment-area');
             const form = card.querySelector('.edit-form');
             const openButton = card.querySelector('.edit-open-btn');
 
             form.style.display = 'none';
             openButton.style.display = 'inline-block';
+        });
+    });
+
+    const replyOpenButtons = document.querySelectorAll('.reply-open-btn');
+
+    replyOpenButtons.forEach(function(button){
+        button.addEventListener('click', function(){
+            const box = button.closest('.comment-box');
+            const form = box.querySelector('.reply-form');
+
+            if(form.style.display === 'block'){
+                form.style.display = 'none';
+                button.textContent = '답글';
+            } else {
+                form.style.display = 'block';
+                button.textContent = '답글 취소';
+            }
+        });
+    });
+
+    const miniCards = document.querySelectorAll('.mini-card');
+    const detailCards = document.querySelectorAll('.friend-card');
+
+    function closeInlineDetail(){
+        miniCards.forEach(function(card){
+            card.classList.remove('is-open');
+        });
+
+        detailCards.forEach(function(detail){
+            detail.classList.remove('inline-detail-card');
+            detail.style.display = 'none';
+            fullView.appendChild(detail);
+        });
+    }
+
+    miniCards.forEach(function(card){
+        card.addEventListener('click', function(event){
+            event.stopPropagation();
+
+            const targetId = card.dataset.target;
+            const targetCard = document.getElementById(targetId);
+
+            closeInlineDetail();
+
+            card.classList.add('is-open');
+
+            targetCard.classList.add('inline-detail-card');
+            targetCard.style.display = 'block';
+
+            card.insertAdjacentElement('afterend', targetCard);
+        });
+    });
+
+    detailCards.forEach(function(detail){
+        detail.addEventListener('click', function(event){
+            event.stopPropagation();
+        });
+    });
+
+    document.addEventListener('click', function(){
+        if(cardView.style.display === 'grid'){
+            closeInlineDetail();
+        }
+    });
+
+    cardViewBtn.addEventListener('click', function(){
+        closeInlineDetail();
+        fullView.style.display = 'none';
+        cardView.style.display = 'grid';
+
+        cardViewBtn.classList.add('active');
+        fullViewBtn.classList.remove('active');
+    });
+
+    fullViewBtn.addEventListener('click', function(){
+        closeInlineDetail();
+
+        detailCards.forEach(function(detail){
+            detail.style.display = 'block';
+        });
+
+        fullView.style.display = 'block';
+        cardView.style.display = 'none';
+
+        fullViewBtn.classList.add('active');
+        cardViewBtn.classList.remove('active');
+    });
+
+    const replyDeleteButtons = document.querySelectorAll('.reply-delete-open');
+
+    replyDeleteButtons.forEach(function(button){
+        button.addEventListener('click', function(){
+            const box = button.closest('.reply-box');
+            const form = box.querySelector('.reply-delete-form');
+
+            form.style.display = 'block';
+            button.style.display = 'none';
         });
     });
 </script>";

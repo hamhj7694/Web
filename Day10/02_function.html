@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function</title>
+
+    <script>
+        // 1. 함수 정의 및 호출(선언적 함수라고 부름)
+        function aaa(){
+            document.write('aaa function <br>');
+            document.write('Hello <br>');
+        }
+
+        aaa(); //함수 호출
+        aaa();
+
+        // 특이한 점 : 함수 정의보다 호출문이 먼저 있어도 됨.
+        // 이유는? js는 스크립트 영역의 코드를 실행하기 전에, 해당 영역의 '선언적 함수'들을 먼저 읽어들여서 인식함.
+        bbb();
+
+        function bbb(){
+            document.write('bbb function <br>');
+        }
+
+        // 아래에 작성한 다른 script 영역의 함수를 호출할 수 있을까? NO...
+        ccc(); //no 에러 발생!
+        // 에러가 발생하면, 사용자가 보는 바디 영역에는 아무 표시가 없음.
+        // 대신 브라우저의 [개발자 도구 F12]의 콘솔 탭에 에러내용이 표시됨.
+        // 에러 발생 시... 그 스크립트 영역은 더이상 코드를 진행하지 않음.
+        
+        document.write('첫 스크립트 영역 종료 <hr>')
+        //단, 다른 스크립트는 별도로 이어서 실행됨.
+    </script>
+
+    <!-- 또 다른 스크립트 영역 -->
+    <script>
+        // 위 영역에 있던 선언적 함수를 호출할 수 있나? YES! 
+        bbb(); //ok
+
+        function ccc(){
+            document.write('ccc <br>')
+        }
+
+    </script>
+
+    <!-- 2. 함수 파라미터에 값 전달하기 -->
+    <script>
+        document.write('<hr>')
+
+        // 값 1개를 전달받는 함수 정의.
+        function ddd(a){ // 주의!!!!!!!!!!!!! 파라미터(매개변수)를 만들 때는 var 키워드가 있으면 안됨.
+            document.write(a + '입니다. <br>');
+        }
+
+        // 함수 호출하면서 값 전달하기
+        ddd(100)
+        ddd('sam')
+        ddd(new Date())
+        // 값 전달 안하면?
+        ddd(); //undefined 에러 아님
+        document.write('<br>')
+
+        // 매개변수(파라미터) 2개짜리 함수
+        function eee(a,b){
+            document.write(a + ', ' + b + '입니다. <br>');
+
+            // 혹시 a와 b 값이 전달되지 않으면.. 에러 안내문구.. 보여주기
+            // 그리고 덧셈하지 않도록 함수의 동작을 멈추기..
+            if(a==undefined || b==undefined){
+                document.write('2개의 수를 모두 전달해 주세요! <br>');
+                return;
+            }
+
+            var c = a + b;
+            document.write('결과: ' + c + '<br>');
+        }
+
+        eee(50, 30);
+        eee(50); // 50, 
+        eee('<h1> 근데 그 여자가 나를 이성적으로, 남자로 좋아한다면 밀당이 의미가 있을텐데..애기로 보는 거 같아요</h1>')
+
+        // 같은 이름의 함수를 또 정의하면.. 덮어쓰기됨(즉, 마지막 정의한 함수내용으로 덮어써짐)
+        // 위에서 먼저 호출하던 eee(50,30) 문도 영향 받음..
+        function eee(){
+            document.write('같은 이름을 또 써버린 eee 함수 입니다. <br>')
+        }
+
+    </script>
+
+    <!-- 3. 함수 실행 후 결과 리턴 받기 -->
+    <script>
+
+    function ggg(){
+        //return 1000; //ggg()함수를 호출한 위치로 1000 이라는 값을 가지고 돌아가기
+        return 'sam';
+    }
+    
+    var n= ggg(); //ggg 함수의 코드가 실행되고, 그 리턴값(1000)이 이 자리로 들어옴!
+    document.write(n+'<br>');
+    document.write('<br>');
+
+    function hhh(){
+        // return 10, 20, 30; //여러개 값 중 마지막 값 1개만 리턴됨.
+        // 여러개 값 리턴하려면 배열로 묶어서 리턴해야 함.
+        return [ 10, 20, 30 ]
+    }
+
+    var m= hhh();
+    document.write(m+'<br>');
+    document.write(m[0]+'<br>');
+
+    </script>
+
+    <script>
+        document.write('<hr>');
+
+        function sss(a=5){ // 파라미터 디폴트 값
+            document.write(a+'<br>');
+        }
+        sss(1000);
+        sss();
+
+        function ttt(a=1, b=2){
+            document.write(a+', ' + b + '<br>');
+        }
+        ttt(10,20);
+        ttt(100);
+        ttt();
+        // 파이썬과 다른 점. 값을 전달할 때 파라미터명을 지정할 수 없음. [순서 변경 안됨]
+        ttt(b=1000, a=20); // 그냥 파라미터 순서대로 전달됨
+    </script>
+
+    <!-- 내장된 arguments 배열 변수 (거의 사용 안함 -- 선호하지 않음... 비선호!) -->
+    <script>
+        document.write('<hr>');
+
+        // arguments 배열: 매개변수를 자동으로 저장하는 내장된 배열변수
+        function add(){
+            document.write('전달된 값의 개수: ' + arguments.length + '<br>')
+            // 전달된 각 값들을 알고 싶으면? 반복문으로 arguments의 요소들에 접근!
+            for(n=0; n<arguments.length; n++){
+
+            }
+        }
+
+        add();
+        add(10);
+        add(10, 20);
+    </script>
+
+    <!-- 지역변수와 전역변수 -->
+    <script>
+        document.write('<hr>');
+
+        // 지역변수 : 함수 안에서 var 키워드로 만든 변수
+        // 전역변수 : 함수 밖에서 var 키워드로 만들거나, 함수 안에서 var키워드 없이 만든 변수
+        
+        // 지역변수는 변수를 만든 그 영역(지역)에서만 인식되는 변수
+        // 전역변수는 이 스크립트 안에 어디서든 인식 가능
+
+        var name= 'sam';
+        function mmm(){
+            var num = 369;
+            document.write('함수 안 지역변수 num: ' + num + '<br>');
+            document.write('함수 안 전역변수 name: ' + name + '<br>');
+
+            // 함수 안에서 전역 변수를 만들고 싶다면? var 키워드 없이 만들면 됨!
+            address='서울'; //전역 변수 (권장하지 않음)
+            document.write('함수 안 전역변수 address: ' + address + '<br>');
+        }
+        mmm();
+        // document.write('함수 밖 num: ' + num + '<br>'); // 에러
+        document.write('함수 밖 전역변수 name: ' + name + '<br>'); // ok
+        document.write('함수 밖 전역변수 address: ' + address + '<br>'); //ok
+        document.write('<hr>');
+
+        // var 키워드 사용하는 변수를 사용할 때... 지역변수에서 지역이라는 의미는 함수의 {} 영역을 의미함.
+        // 그래서 다른 {} 영역(예시: if, for 등)은 지역으로 인식하지 않음.
+        if(true){
+            var tel = '010-1234-5678';
+            document.write('조건문 안 tel: ' + tel + '<br>');
+        }
+        document.write('조건문 밖 tel: ' + tel + '<br>');
+
+        // 반면 JS의 버전 ECMAScript6 버전에서..
+        // 새로 등장한 변수 생성 키워드 let, const 는 .. {}는 모두 지역으로 인식함!
+    </script>
+
+    <!-- 이름 없는 함수 : 익명 함수 -->
+    <script>
+        document.write('<hr>');
+
+        show(); // 실행안됨... 에러 남.. -- 익명함수는 선언적 함수가 아님. 그래서 함수 정의하기 전에 먼저 호출하면 안됨!
+
+        // 익명함수는 반드시 선언하면서 변수에 넣어야 함.
+        var show = function(){
+            document.write('익명함수');
+        }
+        document.write(show+'<br>'); // 변수가 저장하고 있는 함수 코드가 출력됨
+
+        // 변수의 이름을 함수처럼 호출 가능
+        show();
+        show();
+    </script>
+
+    <!-- 함수를 변수에 대입할 수 있기에.. 다른 변수에도 함수코드를 넘겨줄 수 있음. -->
+    <script>
+        document.write('<hr>');
+        
+        var sss=function(){
+            document.write('나는야 sss <br>');
+        }
+
+        var ttt=sss; // sss변수가 가진 코드를 ttt 변수에 대입
+        // ttt는 함수 코드를 가지니 함수 이름처럼 사용해서 호출 가능
+        ttt();
+
+        // 일반 변수 말고.. 다른 함수의 매개변수(파라미터)에 sss 함수 코드를 전달할 수도 있겠다.
+        function www(f){
+            // f가 함수를 가지고 있으니.. 함수명처럼 호출 가능
+            f();
+        }
+        www(sss) // www함수를 호출하며, sss가 가진 함수 코드를 전달. f라는 매개변수가 받음.
+        
+        // 같은 함수 호출하면서 다른 함수를 전달할 수 있겠다!
+        www(function(){
+            document.write('내꺼도 출력해! <br>')
+        })
+        // 같은 기능 함수 www를 호출하면서, 서로 다르게 동작하도록.. 기능함수를 다르게 전달하는 형태
+        // GUI에서 버튼 클릭 시 다른 동작이 수행되도록 할 때 매우 많이 사용되는 기법
+        // 이렇게 다른 함수를 파ㅏ미터로 받아 대신 실행해주는 함수를 '고차함수'라고 부름
+    </script>
+
+</head>
+<body>
+    <!-- <hr> <br> <h1> MBTI가... 뭐더라? ISTP 였나...?? <br> 저 그냥 즐기려고요. </h1> -->
+    <!-- <h1> 그러면 내가 도파민 주는 거 아니면... 나한테 관심 없겠네요..?</h1>
+    <h1> 그리고 내가 도파민을 줘도 그건 날 좋아하는 건 아니고.. 걍 그 도파민만 즐기는 거잖아요...? </h1> -->
+    <!-- <h1> 우리 모임 중 남자 ESTP가 있고, 그 누나가 ISTP거든요</h1> -->
+</body>
+</html>

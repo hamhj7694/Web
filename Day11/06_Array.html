@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array</title>
+
+    <script>
+
+        // 5. Array
+        var aaa= new Array(10,20,30);
+        document.write( typeof(aaa) + '<br>');
+
+        // 배열 객체가 가지고 있는 유용한 기능
+        // 1) 배열요소의 값들을 , 구분자로 하여 하나의 문자열로 만들어줌
+        document.write( aaa.toString() + '<br>');
+        // 근데 잘 안 씀! --> 배열 참조변수를 출력하면 자동으로 적용됨
+        document.write( aaa + '<br>');
+
+        // 2) 다른 배열을 이어 붙이기 --> 새로운 배열을 만들어주는 기능
+        var bbb=[4,5,6];
+        var ccc= aaa.concat(bbb);
+        document.write( ccc + '<br>');
+
+        // 파이썬 리스트처럼 + 경합 연산이 될까? -- 안됨! -- 각 배열을 문자열로 변환 후 '문자열 결합' 함
+        var ddd= aaa+bbb;
+        document.write( aaa+bbb +'<br>'); //안됨
+        document.write( ddd +'<br>'); //안됨
+        // concat 사용 추천!
+        document.write('<hr>');
+
+        // 3) indexOf - 특정 값이 몇번째 위치에 있는지? 인덱스 번호
+        document.write( aaa.indexOf(30) + '<br>');
+        document.write( aaa.indexOf(515634) + '<br>'); //없으면 -1
+        document.write( aaa.indexOf(10, 1) + '<br>'); //1번방 이후부터 10을 찾기
+
+        // 4) push, pop [stack 구조] (웹사이트의 창이 하나씩 쌓고, 끄면 맨 위에꺼부터 끔)
+        var stack = [1,2,3,4,5,6,7];
+        stack.push(9999);
+        document.write(stack+'<br>');
+
+            // 마지막 요소를 빼오기.. [실제 배열에 변화가 생김]
+            var e=stack.pop();
+            document.write(e + '<br>');
+            document.write(stack+'<br>');
+
+        // 5) push, shift [queue 구조] (먼저 넣는 순서대로, 먼저 나옴)
+        var queue = [1,2,3,4,5];
+        queue.push(9999);
+        document.write(queue +'<br>');
+
+        var e= queue.shift(); //첫번째 요소 빼오기
+        document.write(e + '<br>');
+        document.write(queue +'<br>');
+        document.write('<hr>');
+
+        // 5) revers - 배열의 저장 순서를 뒤집기(원본이 변경됨)
+        var aaa=[1,2,3,4,5];
+        aaa.reverse();
+        document.write(aaa +'<br>');
+
+        // 6) slice - 배열의 일부분을 잘라서 새로운 배열로 리턴..(원본 불변)
+        var aaa= [1,2,3,4,5,6,7,8,9];
+        var bbb= aaa.slice(3); // 3번 위치부터 잘래서 새로운 배열로 리턴
+        document.write(bbb +'<br>');
+
+        var ccc= aaa.slice(3, 6);
+        document.write(ccc +'<hr>');
+
+        // 7) join - 배열의 요소를 특정문자를 구분자로 하여 하나의 문자열로 리턴(string의 split)
+        var aaa= ['sam', 'robin', 'hong'];
+        var bbb= aaa.join("&");
+        document.write(bbb +'<hr>');
+
+        // 8) sort - 정렬 (원본 변경 됨)
+        var aaa= [3,5,4,8,1,6,7];
+        aaa.sort();
+        document.write(aaa +'<br>');
+
+            // 두 자리 이상의 숫자를 정렬하면?
+            var aaa= [3, 1, 15, 15, 48, 15214, 321, 53];
+            aaa.sort(); // 숫자를 자리수끼리.. 비교하며 순위 정함
+            document.write(aaa +'<br>'); // 앞에부터 한 자리씩 순서대로 정렬됨...
+
+            // 그래서 정렬을 기준으로 결정하는 함수 이용[정렬기준함수]라고 부름..
+            aaa.sort(function(a,b){ // 오름차순
+                return a-b;               
+            })
+            document.write(aaa+'<br>');
+
+            aaa.sort(function(a,b){ // 내림차순
+                return b-a;               
+            })
+            document.write(aaa+'<br>');
+
+        document.write('<hr>');
+
+        // 9) filter -- 필터지정함수를 활용(필터의 기준을 정하는 것)
+        var scores = [90, 75, 68, 42, 48, 85, 100, 32, 99, 76];
+        // 80점 이상의 점수만 뽑아서.. 새로운 배열로 만들기(필터)
+
+        var good_scores = scores.filter(function(e, index, array){
+            // 여기에 조건을 적으면 됨
+            // return true; //이건 모든 숫자 다 뽑아옴
+            return e>=80 //80점 이상만 뽑아옴
+        });
+        document.write(good_scores+'<br>');
+        document.write('<hr>');
+
+        // -----------
+        // 버전 5에서 새로 추가된 기능들
+        var aaa=[10,20,30,40,50];
+        
+        // 10) 각각의 배열 요소들에 접근하는 반복기능을 제공
+        aaa.forEach( function(e,index,array){
+            document.write(e + " : " + index + '<br>')
+        })
+
+        // 11) forEach 처럼 각 요소 개수만큼 전달한 함수를 실행해주며, 리턴을 통해 새로운 배열을 만들어 줌.
+        //aaa 배열의 요소들 마다 x2를 한 새로운 배월을 만들기
+        var bbb=aaa.map(function(e,idx,ary){
+            return e*2;
+        }); 
+        document.write(bbb + '<br>');
+
+        // .map()은 원본 배열을 가지고 조작해서 새 배열 만들 때 유용! 많이 사용.
+        
+        // .map()에 전달한 함수의 파라미터 개수는 최대 3개이며, 순서가 정해져 있음.
+        // 변수명을 바꿔도 되고, 필요한 것 만 써도 됨.
+
+        var bbb=aaa.map(function(e){ // e만 필요하고 idx,ary는 필요 없을 때.
+            return e**2;
+        }); 
+        document.write(bbb + '<br>');
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

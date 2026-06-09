@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number 오브젝트</title>
+
+    <script>
+        // 2. Nunber 생성자 함수
+
+        // js의 기초타입 수치형과 다름
+        var a= 10;
+        var b= new Number(10);
+        document.write(typeof(a)+'<br>');
+        document.write(typeof(a)+'<br>');
+        document.write( (a===b)+'<br>');
+
+        // 유용한 기능들
+        var num= new Number(123.456);
+
+        // 1) 지수표현식
+        document.write( num.toExponential() +'<br>');
+        document.write( num.toExponential(2) +'<br>'); //소수점 2자리까지만
+
+        // 2) 소수점을 특정 자리수 까지만 보여주는 문자열로 변환
+        document.write( num.toFixed() +'<br>' );
+        document.write( num.toFixed(2) +'<br>' ); // 반올림 ㅇ
+
+        //3) 진법 변환 표기
+        var num= new Number(10);
+        document.write( num.toString() +"<br>" ); //10진수 표기 문자열
+        document.write( num.toString(16) +"<br>" ); //16진수 표기 문자열
+        document.write( num.toString(8) +"<br>" ); //8진수 표기 문자열
+        document.write( num.toString(2) +"<br>" ); //2진수 표기 문자열
+
+        // ---------------------
+        // 수치형 값을 가진 변수는 Number 객체로 자동 wrapping 됨.
+        var a=255; //수치형 number
+        document.write(a.toString(16) + 'br'); //자동 wrapping
+
+        // 수치형 값을 그대로 써도 wrapping 되긴 하지만.. 실수일때만 가능
+        // document.write( 10.toString() ); //error
+        document.write( 10.0.toString(2) ='<br>');
+
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

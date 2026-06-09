@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>햄스터 포트폴리오</title>
+
+    <!-- 반응형 웹 디자인 -->
+    <!-- 1. 모바일 -->
+    <!-- <link rel="stylesheet" href="./hamst_mobile.css" media="(max-width:600px)"> -->
+        
+    <!-- 2. 태블릿, 데스크탑 -->
+    <!-- <link rel="stylesheet" href="./hamst_desktop.css" media="(min-width:600px)"> -->
+    
+    <!-- -------------------------------------------------------- -->
+     
+    <style>
+        /* 임시 스타일 */
+        #container div{
+            border: 2px solid red;
+        }
+
+        /* 스타일 초기화 */
+        *{
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        /* --------------------------- */
+
+        body {
+            display: flex;
+            justify-content: center;
+        }
+
+        #container{
+            height: 800px;
+            width: 95%;
+            padding: 10px;
+            margin-top: 2%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #container>div{
+            width: 100%;
+        }
+
+        #main div{
+            width: 100%;
+        }
+
+
+
+        /* header, main, footer 레이아웃 구분 */
+        /* header 영역 */
+        #header{
+            flex-grow: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #header>.header-in-left{
+            display: flex;
+            align-items: center;
+        }
+
+        .header-in-left>img{
+            width: 30px; height: 30px;
+        }
+
+        .header-in-right{
+            width: 30px; height: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+
+
+        /* main 영역 */
+        #main{
+            flex-grow: 1;
+            flex-direction: column;
+            align-items: center;
+            display: flex;
+        }
+
+        /* main 안에 들어갈 요소 3개 */
+        .my-info{
+            flex-grow: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            margin: .5rem;
+        }
+
+        .my-info ul{
+            display: flex;
+            width: 100%;
+        }
+
+        .copy1 li{
+            font-size: large;
+            font-weight: bold;
+            margin-right: .5rem;
+        }
+
+        .copy2 li{
+            font-size: small;
+            color: gray;
+            margin-right: .5rem;
+        }
+
+        .interaction{
+            flex-grow: 1;
+        }
+
+        .interaction iframe{
+            width: 100%;
+            height: 90%;
+            border: none;
+        }
+
+        .interaction h6{
+            color: gray;
+        }
+
+        .content-title-bar{
+            display: flex;
+            margin-top: .2rem;
+        }
+        
+        .content-title-bar div{
+            display: flex;
+            align-items: center;
+        }
+        
+        .content-title-bar img{
+            width: 40px;
+            height: 40px;
+            margin-right: .5rem;
+        }
+
+        .content-title-bar button{
+            width: 120px;
+            height: 35px;
+            align-self: center;
+        }
+
+        .work-list{
+            flex-grow: 4;
+        }
+
+
+
+        /* footer 요소 */
+        #footer{
+            flex-grow: 0;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div id="container">
+        <div id="header">
+            <div class="header-in-left">
+                <img src="../../Day01/image/복마어주자.jpg" alt="반짝이 이미지">
+                <p>Experience Engineer</p>
+            </div>
+            <a href=""><img class="header-in-right" src="../../Day01/image/복마어주자.jpg" alt="메뉴"></a>
+        </div>
+
+        <div id="main">
+            <div class = "my-info">
+                <h1>함형준</h1>
+                <ul class="copy1">
+                    <li>경험</li>
+                    <li>·</li>
+                    <li>행동</li>
+                    <li>·</li>
+                    <li>생각을 개발하다</li>
+                </ul>
+                <ul class="copy2">
+                    <li>Branding web/app</li>
+                    <li>·</li>
+                    <li>interactive media</li>
+                    <li>·</li>
+                    <li>Service MVP model</li>
+                </ul>
+            </div>
+
+            <div class = "interaction">
+                <iframe src=""></iframe> <!-- 메모: 여기 귀여운 햄스터 인터렉티브 + 역량들 넣음 (화면 돌려서 관련 역량 활성화 되면 하단에도 카드가 뾰로롱 움직이며 관련된 내용이 포함된 카드가 나옴) -->
+                <h6>드래그 하거나 스와이프 해보세요.</h6>
+            </div>
+
+            <div class = "work-list">
+                <div class="content-title-bar">
+                    <div>
+                        <img src="./img/wedding-ring.png" alt="아이콘">
+                        <h3>Interactive Web</h3>
+                    </div>
+                    <button>전체 보기 <span>></span> </button>
+                </div>
+
+                <div class="">
+
+                </div>
+
+            </div>
+        </div>
+
+        <div id="footer">
+            바닥 부분
+        </div>
+        
+    </div>
+    
+</body>
+</html>
