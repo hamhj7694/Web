@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS 파일 리더</title>
+</head>
+<body>
+    
+    <h2>텍스트 파일 데이터 읽기</h2>
+    <input type="file" id="in1">
+    <button onclick="aaa()">파일 데이터 읽기</button>
+    <textarea id="ta" cols="30" rows="10"></textarea>
+    <script>
+        function aaa(){
+            //사용자가 선택한 파일의 데이터를 읽어오는 능력을 가진 FileReader 객체를 생성하여 읽어오기
+            //보안상의 문제로.. 사용자가 선택한 파일만 읽을 수 있음..파일경로를 직접 개발자가 쓸 수 없음.
+            //보안상의 문제로.. 사용자의 컴퓨터에 파일을 쓸 수 있는 기능은 제공되지 않음.
+
+            //사용자가 선택한 파일정보 가져오기
+            var f= document.getElementById('in1').value;
+            //alert(f); //value로 취득한 경로는 실제 파일경로가 아님. 가짜경로. fakePath..
+
+            //가짜경로로는 파일읽기 불가능.
+            //사용자가 선택한 파일객체를 그대로 받아오기
+            var files= document.getElementById('in1').files;//여러개 선택될 수 있어서 무조건 배열로 줌
+            alert( files[0].name +"\n" + files[0].size + '\n' + files[0].type );
+
+            // 파일데이터 읽어오기
+            // 1. 파일리더 객체 생성
+            var fr= new FileReader();
+            
+            // 3. 파일 읽는 동안 작업이 오래걸림. 그래서 완료되면 자동으로 실행되는 함수를 등록
+            // 읽기 요청보다 먼저 작성하는 게 좋음(파일을 빨리 읽을 수도 있기 때문)
+            fr.onload=function(){
+                document.getElementById('ta').innerHTML= fr.result;//리더가 읽어들인 결과
+            }
+
+            // 2. 파일리더에게 텍스트로 데이터를 읽어달라고 요청
+            fr.readAsText( files[0], "utf-8" );
+        }
+    </script>
+
+    <hr>
+    <!-- 사용자가 선택한 이미지의 미리보기 구현 -->
+    <h2>이미지파일 읽기 및 미리보기</h2>
+    <input type="file" id="in2" multiple onchange="bbb()">
+    <hr>
+    <!-- <img src="" alt="" id="aa" style="border: 4px solid black; max-width: 400px; max-height: 400px;"> -->
+
+    <!-- <script>
+        function bbb(){
+            // 사용자 선택한 파일들 받기
+            var files= document.getElementById('in2').files;
+            // 1. 파일 리더 생성
+            var fr= new FileReader();
+            // 2. 로딩 완료되면 실행될 함수 등록
+            fr.onload= function(){
+                alert(fr.result); //선택 이미지의 URL 경로
+                document.getElementById('aa').src=fr.result; //선택한 이미지의 URL
+            }
+            // 3. 파일 읽기 요청.. 단, <img> 요소에 보여줘야 하기에..파일 경로 (URL)형태로 읽어달라 요청
+            fr.readAsDataURL(files[0]) // 첫 선택 이미지 읽기
+        }
+    </script> -->
+
+    <script>
+        function bbb(){
+            // 1. 사용자가 선택한 파일들 배열로 받기
+            var files = document.getElementById('in2').files;
+            
+            // 2. 반복문을 돌며 파일마다 각각의 리더를 생성해 처리하기
+            for(var i = 0; i < files.length; i++){
+                
+                // 반복문이 돌 때마다 독립된 파일 리더 상자를 만듭니다.
+                var fr = new FileReader();
+                
+                // 현재 리더가 해당 이미지를 다 읽었을 때 실행할 함수
+                fr.onload = function(e) {
+                    // 1. 새로운 <img> 태그를 메모리 상에 새로 만듭니다.
+                    var newImg = document.createElement('img');
+                    
+                    // 2. 새로 만든 이미지 태그에 읽어온 이미지 주소를 넣어줍니다.
+                    newImg.src = e.target.result;
+                    
+                    // (선택) 원래 있던 이미지처럼 예쁘게 테두리나 크기를 지정해줍니다.
+                    newImg.style.border = "4px solid black";
+                    newImg.style.maxWidth = "400px";
+                    newImg.style.maxHeight = "400px";
+                    newImg.style.margin = "10px"; // 이미지끼리 살짝 띄우기
+                    
+                    // 3. HTML 본문(body)에 이 새로운 이미지 태그를 자식으로 착 붙여줍니다!
+                    document.body.appendChild(newImg);
+                }
+                
+                // 현재 순서(i)의 이미지 파일을 URL 형태로 읽기 시작합니다.
+                fr.readAsDataURL(files[i]);
+            }
+        }
+    </script>
+
+</body>
+</html>

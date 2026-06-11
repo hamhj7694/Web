@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01_canvas_context_3D_OK</title>
+</head>
+<body>
+    <h3>그림 그리기! 2d,3d... 특정 라이브러리(웹 gl) 사용하면 3D도 가능! 그림판 만들기 가능 <br>
+    햄스터 얼굴 돌아가는 3d 제작 가능할 듯! (오늘 만들어보기!)</h3>
+    <!-- ------------------------------------------------------------------------------ -->
+
+
+    <canvas id="c1" width="300" height="400" style="border: 2px solid black;"></canvas>
+    <script>
+        var canvas= document.getElementById('c1');
+        // 캔버스에 그림을 그리기 위해.. 그림도구를 얻기
+        var context= canvas.getContext('2d');
+
+        // 글씨 색상 바꾸기
+        context.fillStyle='red';
+        context.font="20px serif";
+        
+        //그림도구를 이용해 캔버스에 글씨 그리기
+        context.fillText('Hello', 10, 40); //글씨의 좌하단 좌표 지정
+        context.fillText('Hello', 0, 10);
+        context.fillText('Hello', 0, 400);
+
+        // 윤곽선 스타일 지정
+        context.strokeStyle='green';
+        context.font="30px serif";
+
+        // 윤곽선 글씨 그리기
+        context.strokeText('Hello', 100, 40);
+
+        // 사각형 도형 그리기
+        context.fillStyle='blue';
+        context.fillRect(10,50, 100, 40); // 좌상단 10,50 / 너비 100, 높이 40
+
+        // 윤곽선 사각형
+        context.strokeStyle='blue';
+        context.strokeRect(120, 50, 100, 40);
+
+        // 직선 그리기..
+        context.beginPath(); //선의 경로 작업을 시작
+        context.moveTo(10, 100); //선의 시작위치로 붓 이동
+        context.lineTo(100,150); //직선의 종료 위치를 지정
+        context.lineTo(150,120);
+        // 위 경로로 선 그리기
+        context.stroke();
+
+        // 슬라이드 자료에 사각형, 곡선, 원, 패컨, 그래디언트 등... 다양한 방법이 소개됨
+
+        //도화지안에 이미지를 그리기
+        var img1= new Image();
+        img1.src="./img/ms19.png";
+        //이미지파일은 용량이 크기에.. 이미지객체로 만들어지는데 시간이 걸림.
+        //그래서 곧바로 그려내라고 하면.. 안 그려지는 경우가 많음.
+        //context.drawImage(img1);
+        //그래서 일반적으로..이미지객체의 파일로딩작업이 완료되면 실행되는 함수를 만들어 이미지를 그려냄.
+        img1.onload= function(){
+            context.drawImage(img1, 10, 180); //이미지의 좌상단 자표 [원본사이즈]
+            context.drawImage(img1, 10, 180, 100, 100); //좌상단좌표, 너비, 높이
+            // 이미지 일부만 도려내 그리기 가능
+            context.drawImage(img1, 100, 100, 100, 100, 200, 180, 100, 100); //앞 4개 = 도려낸 위치와 사이즈, 뒤 4개 숫자 = 그려질 위치와 크기
+        }
+
+        // 하나의 캔버스 안에 여러개 이미지 그릴 수 있음
+        var img2= new Image();
+        img2.src= './img/ms21.png';
+        img2.onload= function(){
+            context.drawImage(img2, 150, 0, 150, 150);
+        }
+        
+        
+    </script>
+
+</body>
+</html>

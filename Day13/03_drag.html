@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>드래그 앤 드롭</title>
+
+    <style>
+        #cart{
+            width: 400px; height: 150px; padding: 10px; border: 1px dotted red;
+        }
+    </style>
+
+    <script>
+        //cart 위로 올라갔는지 여부
+        var isOver=false;
+        
+        function endDrag(){
+            if(isOver){
+                // 드래그가 종료된 요소를 id를 기반으로 찾기
+                var e= document.getElementById(window.event.target.id); //이벤트를 발생시킨 녀석의 id
+                // cart 아이디를 가진 div요소 안에 드래그한 요소를 자식으로 추가
+                document.getElementById('cart').appendChild(e);
+            }
+            isOver=false;
+        }
+
+        function overDrag(){
+            // 기본적으로 내 위에 다른 요소가 놓여지지 않게 마우스에 표시 되지만
+            // 이게 싫다면.. 이 기본설정을 막아 방지해야 함
+            window.event.preventDefault(); //디폴트프리벤트 : 원래 하던 기본을 막아라
+            
+            // 요소가 올라왔다가 변수 변경
+            isOver=true;
+        }
+
+        function leaveDrag(){
+            isOver=false;
+        }
+
+        // 다시 꺼내기도 만들어보자 --------------------------------------------
+        
+    </script>
+
+</head>
+<body>
+    <h1>상품 드래그 앤 드롭으로 담고 빼는 쇼핑몰 만들어볼까?</h1>
+    <h1>마인크래프트 순서 맞취기 게임 모티브로 게임도 가능할듯?</h1>
+    
+    <div id="cart" ondragover="overDrag()" ondragleave="leaveDrag()"></div>
+
+    <img id="img1" src="./img/ms19.png" alt="ms19" width="150" height="150" ondragend="endDrag()">
+    <img id="img2" src="./img/ms21.png" alt="ms21" width="150" height="150" ondragend="endDrag()">
+
+</body>
+</html>

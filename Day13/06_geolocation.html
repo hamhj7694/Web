@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>위치기반서비스</title>
+
+    <script>
+        function aaa(){ //내 위치 정보 얻어와
+            // 현재 내 위치 정보를 얻어오는 데 시간이 걸림
+            // 내 위치 탐색이 완료되면 실행될 콜백 함수를 파라미터로 등록
+            window.navigator.geolocation.getCurrentPosition(function(position){
+                //파라미터로 전달된 position 안에 위도, 경도 정보 있음
+                var lat= position.coords.latitude;
+                var lng= position.coords.longitude;
+                document.getElementById('hh').innerHTML= lat + " , " + lng;
+            }, function(error){ //실패했을 때..
+                alert(error.code + '\n' + error.message)
+            })
+        }
+
+        var id;
+        function bbb(){
+            id= navigator.geolocation.watchPosition(function(position){ //실시간 갱신함
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+                document.getElementById('hh').innerHTML= lat + "<br>" + lng;
+            }); 
+        }
+        function ccc(){
+            navigator.geolocation.clearWatch(is);
+        }
+    </script>
+</head>
+<body>
+    
+    <button onclick="aaa()">내 위치</button>
+    <h3 id='hh'>위도, 경도</h3>
+    <hr>
+    <button onclick="bbb()">위치 자동 업데이트</button>
+    <button onclick="ccc()">자동 업데이트 종료</button>
+
+
+</body>
+</html>

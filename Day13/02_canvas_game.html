@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas game</title>
+
+    <script>
+        //전역변수로 이미지 객체 준비
+        var imgPlayer= new Image();
+        imgPlayer.src = './img/ms19.png';
+
+        //전역변수 그림 도구와 캔버스 준비
+        var canvas;
+        var context;
+
+        // 플레이어가 표시될 이미지의 중심 좌표 변수
+        x=200, y=250;
+
+        // 플레이어 사이즈 동적 조절할지도 모르니..
+        // 이미지의 절반 너비와 높이 값 저장
+        w=40, h=40;
+
+        // 플레이어의 이동 방향과 속도 변수
+        var dx= 1;
+        var dy= 1;
+
+        // 배경이미지 준비
+        var bg = new Image();
+        bg.src = './img/bg.png';
+
+        // 배경 이미지의 좌상단 좌표
+        var bx=0, by=0;
+        
+        // 이미지를 그려내는 작업은... body 영역의 로딩이 완료된 후 진행!
+        function loaded(){
+            canvas= document.getElementById('c1');
+            context= canvas.getContext('2d');
+
+            // 게임 진행 함수 호출
+            runGame();
+            // 10ms마다 runGame()함수를 다시 호출
+            setInterval(runGame,10);
+        } //----------------------------------------------------
+
+        function runGame(){
+            moveAll(); // 움직이기
+            drawAll(); // 이미지 그리기
+        }
+
+        function moveAll(){
+            // 배경 이미지 이동(왼쪽으로)
+            bx+=-1;
+            if(bx <= -400 ) bx=0;
+            
+            // 플레이어 위치를 이동
+            x += dx;
+            y += dy;
+
+            // 벽에 닿으면 반대방향으로
+            if(x<w || x>400-w) dx= -dx;
+            if(y<h || y>500-h) dy= -dy;
+
+        }
+
+        function drawAll(){
+            // 배경 이미지 그리기
+            context.drawImage(bg, bx, by, 400, 500); // 배경을 먼저 그림, 그후 캐릭터 그림 > 배경이 잔상을 덮고, 캐릭터 그리고... 반복
+            context.drawImage(bg, bx+400, by, 400, 500);
+            
+            // 플레이어 이미지 그려내기
+            context.drawImage(imgPlayer, x-w, y-h, w*2, h*2);
+        }
+
+        // ------------- 키보드 조작
+        function key_down(){
+            keyCode= window.event.keyCode;
+            switch(keyCode){
+                case 37: dx=-2; break;//키보드 왼쪽
+                case 38: dy=-2; break;//위
+                case 39: dx=2; break;//오른쪽
+                case 40: dy=2; break;//아래
+
+                default: dx=1; dy=1; //자동
+            }
+        }
+
+        function key_up(){
+            keyCode= window.event.keyCode;
+            //방향키를 놓으면 멈춤
+            if(keyCode>=37 && keyCode<=40){
+                dx=0; dy=0; //자동
+            }
+        }
+
+    </script>
+</head>
+<body onload="loaded()" onkeydown="key_down()" onkeyup="key_up()">
+    <h1>월드컵 시즌이니까 축구 관련 게임,<br>
+    라이브 웹(축구 보며 소통, 아이콘 및 이모티콘 응원) </h1>
+        
+        
+    <canvas id="c1" width="400" height="500" style="border: 2px solid black"></canvas>
+
+    
+
+
+</body>
+</html>

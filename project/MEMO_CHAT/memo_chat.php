@@ -143,24 +143,72 @@ if(isset($_POST['action']) && $_POST['action'] === 'send'){
     exit;
 }
 
-/* 메모 동의 */
+/* 메모 동의 / 취소 */
 if(isset($_POST['action']) && $_POST['action'] === 'agree_memo'){
+    $memo_id = (int)($_POST['memo_id'] ?? 0);
+    $nickname = trim($_POST['nickname'] ?? '');
+
+    $nickname = filterBadWords($nickname);
+
+    if($nickname === ''){
+        echo "no_nickname";
+        exit;
+    }
+
+    if($memo_id > 0){
+        $check_sql = "SELECT id FROM memo_agree WHERE memo_id = ? AND nickname = ?";
+        $check_stmt = mysqli_prepare($db, $check_sql);
+        mysqli_stmt_bind_param($check_stmt, "is", $memo_id, $nickname);
+        mysqli_stmt_execute($check_stmt);
+        $check_result = mysqli_stmt_get_result($check_stmt);
+
+        if(mysqli_num_rows($check_result) > 0){
+            $delete_sql = "DELETE FROM memo_agree WHERE memo_id = ? AND nickname = ?";
+            $delete_stmt = mysqli_prepare($db, $delete_sql);
+            mysqli_stmt_bind_param($delete_stmt, "is", $memo_id, $nickname);
+            mysqli_stmt_execute($delete_stmt);
+
+            echo "canceled";
+            exit;
+        }
+
+        $insert_sql = "INSERT INTO memo_agree (memo_id, nickname) VALUES (?, ?)";
+        $insert_stmt = mysqli_prepare($db, $insert_sql);
+        mysqli_stmt_bind_param($insert_stmt, "is", $memo_id, $nickname);
+        mysqli_stmt_execute($insert_stmt);
+
+        echo "ok";
+    } else {
+        echo "fail";
+    }
+
+    exit;
+}
+
+/* 메모 글로벌 핀 */
+if(isset($_POST['action']) && $_POST['action'] === 'toggle_pin'){
     $memo_id = (int)($_POST['memo_id'] ?? 0);
 
     if($memo_id > 0){
-        $sql = "UPDATE memo_chat SET agree_count = agree_count + 1 WHERE id = ?";
-        $stmt = mysqli_prepare($db, $sql);
-        mysqli_stmt_bind_param($stmt, "i", $memo_id);
-        mysqli_stmt_execute($stmt);
+        $check_sql = "SELECT is_pinned FROM memo_chat WHERE id = ?";
+        $check_stmt = mysqli_prepare($db, $check_sql);
+        mysqli_stmt_bind_param($check_stmt, "i", $memo_id);
+        mysqli_stmt_execute($check_stmt);
+        $check_result = mysqli_stmt_get_result($check_stmt);
+        $row = mysqli_fetch_assoc($check_result);
 
-        $count_sql = "SELECT agree_count FROM memo_chat WHERE id = ?";
-        $count_stmt = mysqli_prepare($db, $count_sql);
-        mysqli_stmt_bind_param($count_stmt, "i", $memo_id);
-        mysqli_stmt_execute($count_stmt);
-        $count_result = mysqli_stmt_get_result($count_stmt);
-        $count_row = mysqli_fetch_assoc($count_result);
+        if($row){
+            $next = ((int)$row['is_pinned'] === 1) ? 0 : 1;
 
-        echo (int)$count_row['agree_count'];
+            $sql = "UPDATE memo_chat SET is_pinned = ? WHERE id = ?";
+            $stmt = mysqli_prepare($db, $sql);
+            mysqli_stmt_bind_param($stmt, "ii", $next, $memo_id);
+            mysqli_stmt_execute($stmt);
+
+            echo $next;
+        } else {
+            echo "fail";
+        }
     } else {
         echo "fail";
     }
@@ -260,10 +308,10 @@ if(isset($_POST['action']) && $_POST['action'] === 'delete_comment'){
 
 /* 채팅 목록 불러오기 */
 if(isset($_GET['action']) && $_GET['action'] === 'list'){
-    $sql = "SELECT id, nickname, message, long_message, user_color, created_at, agree_count
+        $sql = "SELECT id, nickname, message, long_message, user_color, created_at, agree_count, is_pinned
         FROM memo_chat
         WHERE is_deleted = 0
-        ORDER BY id DESC
+        ORDER BY is_pinned DESC, id DESC
         LIMIT 80";
 
     $result = mysqli_query($db, $sql);
@@ -277,8 +325,25 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
         $has_long = $long_message_raw !== '';
         $user_color = cleanText($row['user_color']);
         $created_at = cleanText($row['created_at']);
-        $agree_count = (int)($row['agree_count'] ?? 0);
-        $agree_stars = str_repeat('⭐', $agree_count);
+        $is_pinned = (int)$row['is_pinned'];
+        $pin_class = $is_pinned === 1 ? " is-pinned" : "";
+        $pin_text = $is_pinned === 1 ? "📌 모두의 안건" : "📌";
+        $pin_style = $is_pinned === 1
+            ? "border:4px solid #ffda33; box-shadow:7px 7px 0 rgba(252, 255, 75, 0.45);"
+            : "";
+
+        $agree_stars = "";
+
+        $agree_sql = "SELECT nickname FROM memo_agree WHERE memo_id = ? ORDER BY id ASC";
+        $agree_stmt = mysqli_prepare($db, $agree_sql);
+        mysqli_stmt_bind_param($agree_stmt, "i", $id);
+        mysqli_stmt_execute($agree_stmt);
+        $agree_result = mysqli_stmt_get_result($agree_stmt);
+
+        while($agree = mysqli_fetch_assoc($agree_result)){
+            $agree_name = cleanText($agree['nickname']);
+            $agree_stars .= "<span class='agree-star' data-name='{$agree_name}'>⭐</span>";
+        }
 
         $long_button = "";
         $long_panel = "";
@@ -400,10 +465,10 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
         }
 
         echo "
-        <div class='memo-card' data-id='{$id}' style='background: {$user_color};'>
+        <div class='memo-card{$pin_class}' data-id='{$id}' style='background: {$user_color}; {$pin_style}'>
             <div class='memo-top'>
                 <div class='memo-top-left'>
-                    <button type='button' class='memo-pin-btn'>📌</button>
+                    <button type='button' class='memo-pin-btn'>{$pin_text}</button>
                     <strong class='nickname'>{$nickname}</strong>
                 </div>
                 <span class='time'>{$created_at}</span>
@@ -413,14 +478,14 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
 
             <div class='memo-bottom'>
                 <div class='memo-action-row'>
+                    <button type='button' class='memo-agree-btn'>동의하기</button>
                     <button type='button' class='comment-toggle-btn'>댓글 {$comment_count}</button>
                     {$long_button}
                     <button type='button' class='memo-delete-open'>삭제</button>
-                    <button type='button' class='memo-agree-btn'>동의</button>
                     <button type='button' class='memo-check-btn'>접기</button>
                 </div>
 
-                <div class='agree-stars' data-count='{$agree_count}'>{$agree_stars}</div>
+                <div class='agree-stars'>{$agree_stars}</div>
                 
                 {$long_panel}
 
@@ -994,6 +1059,10 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
             cursor: pointer;
         }
 
+        .memo-action-row .memo-agree-btn {
+            margin-right: auto;
+        }
+
         .memo-agree-btn.is-agreed {
             background: #222;
             color: white;
@@ -1005,6 +1074,27 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
             text-align: left;
             font-size: 18px;
             letter-spacing: 2px;
+        }
+
+        .agree-star {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
+        .agree-star:hover::after {
+            content: attr(data-name);
+            position: absolute;
+            left: 22px;
+            top: -8px;
+            background: #222;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 999;
         }
 
         @keyframes memoPop {
@@ -1040,8 +1130,10 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
         }
 
         .memo-card.is-pinned {
-            border-width: 4px;
-            box-shadow: 7px 7px 0 rgba(0,0,0,0.95);
+            border-color: #ffda33 !important;
+            border-width: 4px !important;
+            border-style: solid !important;
+            box-shadow: 7px 7px 0 rgba(252, 255, 75, 0.45) !important;
         }
 
         .memo-pin-btn.is-pinned {
@@ -1131,6 +1223,50 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
 
             .long-message-input {
                 min-height: 180px;
+                font-size: 16px;
+            }
+
+            .memo-action-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .memo-action-row .memo-agree-btn {
+                flex: 1 1 calc(66.666% - 8px);
+                margin-right: 0;
+            }
+                        
+            .memo-action-row .memo-agree-btn.is-agreed {
+                background: #222;
+                color: #fff;
+            }
+
+            .memo-action-row .comment-toggle-btn {
+                flex: 1 1 calc(33.333% - 8px);
+            }
+
+            .memo-action-row .long-view-btn,
+            .memo-action-row .memo-delete-open,
+            .memo-action-row .memo-check-btn {
+                flex: 1 1 calc(33.333% - 8px);
+            }
+
+            .memo-action-row button {
+                min-height: 38px;
+                padding: 8px 10px;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            .memo-delete-open {
+                opacity: 0.55;
+                background: rgba(255,255,255,0.45);
+            }
+
+            .agree-stars {
+                margin-top: 4px;
                 font-size: 16px;
             }
         }
@@ -1226,8 +1362,7 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
 
                         fillCommentNicknames();
                         applyCheckedMemos();
-                        applyPinnedMemo();
-                        applyAgreedMemos();
+                        applyAgreeButtons();
                     }
                 });
         }
@@ -1272,53 +1407,6 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
                     checkBtn.textContent = '접기';
                 }
             });
-        }
-
-        function getPinnedMemoId(){
-            return localStorage.getItem('memo_pinned_id') || '';
-        }
-
-        function savePinnedMemoId(id){
-            localStorage.setItem('memo_pinned_id', id);
-        }
-
-        function clearPinnedMemoId(){
-            localStorage.removeItem('memo_pinned_id');
-        }
-
-        function applyPinnedMemo(){
-            const pinnedId = getPinnedMemoId();
-
-            document.querySelectorAll('.memo-card').forEach(function(card){
-                const pinBtn = card.querySelector('.memo-pin-btn');
-
-                card.classList.remove('is-pinned');
-
-                if(pinBtn){
-                    pinBtn.classList.remove('is-pinned');
-                    pinBtn.textContent = '📌';
-                }
-            });
-
-            if(!pinnedId) return;
-
-            const pinnedCard = document.querySelector(`.memo-card[data-id="${pinnedId}"]`);
-
-            if(!pinnedCard){
-                clearPinnedMemoId();
-                return;
-            }
-
-            const pinBtn = pinnedCard.querySelector('.memo-pin-btn');
-
-            pinnedCard.classList.add('is-pinned');
-
-            if(pinBtn){
-                pinBtn.classList.add('is-pinned');
-                pinBtn.textContent = '📌 해제';
-            }
-
-            chatList.prepend(pinnedCard);
         }
         
         form.addEventListener('submit', function(e){
@@ -1371,16 +1459,36 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
                 const card = agreeBtn.closest('.memo-card');
                 const memoId = card.dataset.id;
 
-                let agreedIds = getAgreedMemoIds();
+                const nickname = localStorage.getItem('memo_chat_nickname') || nicknameInput.value.trim();
 
-                if(agreedIds.includes(memoId)){
-                    alert('이미 이 메모에 동의했습니다.');
+                if(nickname === ''){
+                    alert('닉네임을 먼저 입력하세요.');
                     return;
+                }
+
+                localStorage.setItem('memo_chat_nickname', nickname);
+
+                const stars = card.querySelector('.agree-stars');
+                let alreadyAgreed = false;
+
+                stars.querySelectorAll('.agree-star').forEach(function(star){
+                    if(star.dataset.name === nickname){
+                        alreadyAgreed = true;
+                    }
+                });
+
+                if(alreadyAgreed){
+                    const ok = confirm('이미 동의했습니다. 동의를 취소하겠습니까?');
+
+                    if(!ok){
+                        return;
+                    }
                 }
 
                 const body = new URLSearchParams();
                 body.append('action', 'agree_memo');
                 body.append('memo_id', memoId);
+                body.append('nickname', nickname);
 
                 fetch('memo_chat.php', {
                     method: 'POST',
@@ -1390,15 +1498,29 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
                     body: body.toString()
                 })
                 .then(response => response.text())
-                .then(count => {
-                    agreedIds.push(memoId);
-                    saveAgreedMemoIds(agreedIds);
+                .then(result => {
+                    if(result === 'canceled'){
+                        agreeBtn.classList.remove('is-agreed');
+                        agreeBtn.textContent = '동의하기';
 
-                    agreeBtn.classList.add('is-agreed');
-                    agreeBtn.textContent = '동의 완료';
+                        stars.querySelectorAll('.agree-star').forEach(function(star){
+                            if(star.dataset.name === nickname){
+                                star.remove();
+                            }
+                        });
 
-                    const stars = card.querySelector('.agree-stars');
-                    stars.textContent = '⭐'.repeat(Number(count));
+                        loadChats();
+                        return;
+                    }
+
+                    if(result === 'ok'){
+                        agreeBtn.classList.add('is-agreed');
+                        agreeBtn.textContent = '동의 했어요!';
+
+                        stars.innerHTML += `<span class="agree-star" data-name="${nickname}">⭐</span>`;
+
+                        loadChats();
+                    }
                 });
 
                 return;
@@ -1409,18 +1531,22 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
             if(pinBtn){
                 const card = pinBtn.closest('.memo-card');
                 const memoId = card.dataset.id;
-                const currentPinnedId = getPinnedMemoId();
 
-                if(currentPinnedId === memoId){
-                    clearPinnedMemoId();
+                const body = new URLSearchParams();
+                body.append('action', 'toggle_pin');
+                body.append('memo_id', memoId);
 
-                    card.classList.remove('is-pinned');
-                    pinBtn.classList.remove('is-pinned');
-                    pinBtn.textContent = '📌';
-                } else {
-                    savePinnedMemoId(memoId);
-                    applyPinnedMemo();
-                }
+                fetch('memo_chat.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: body.toString()
+                })
+                .then(response => response.text())
+                .then(result => {
+                    loadChats();
+                });
 
                 return;
             }
@@ -1655,30 +1781,30 @@ if(isset($_GET['action']) && $_GET['action'] === 'list'){
                 return;
             }
         });
-            
-        function getAgreedMemoIds(){
-            return JSON.parse(localStorage.getItem('memo_agreed_ids') || '[]');
-        }
 
-        function saveAgreedMemoIds(ids){
-            localStorage.setItem('memo_agreed_ids', JSON.stringify(ids));
-        }
-
-        function applyAgreedMemos(){
-            const agreedIds = getAgreedMemoIds();
+        function applyAgreeButtons(){
+            const nickname = localStorage.getItem('memo_chat_nickname') || nicknameInput.value.trim();
 
             document.querySelectorAll('.memo-card').forEach(function(card){
-                const memoId = card.dataset.id;
-                const agreeBtn = card.querySelector('.memo-agree-btn');
+                const btn = card.querySelector('.memo-agree-btn');
+                const stars = card.querySelector('.agree-stars');
 
-                if(!agreeBtn) return;
+                if(!btn || !stars || nickname === '') return;
 
-                if(agreedIds.includes(memoId)){
-                    agreeBtn.classList.add('is-agreed');
-                    agreeBtn.textContent = '동의 완료';
+                let alreadyAgreed = false;
+
+                stars.querySelectorAll('.agree-star').forEach(function(star){
+                    if(star.dataset.name === nickname){
+                        alreadyAgreed = true;
+                    }
+                });
+
+                if(alreadyAgreed){
+                    btn.classList.add('is-agreed');
+                    btn.textContent = '동의 했어요!';
                 } else {
-                    agreeBtn.classList.remove('is-agreed');
-                    agreeBtn.textContent = '동의';
+                    btn.classList.remove('is-agreed');
+                    btn.textContent = '동의하기';
                 }
             });
         }

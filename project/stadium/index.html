@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>온라인 구장 - 로비</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #101820;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .lobby-wrap {
+      width: 100%;
+      max-width: 420px;
+      background: #17232f;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 32px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .title-box {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 36px;
+      box-shadow: 0 10px 30px rgba(46, 204, 113, 0.35);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #b8c3cc;
+      line-height: 1.5;
+    }
+
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 14px;
+      color: #dce6ee;
+      font-weight: 700;
+    }
+
+    input {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 14px;
+      padding: 0 16px;
+      font-size: 15px;
+      background: #0f1821;
+      color: #ffffff;
+      outline: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    input::placeholder {
+      color: #6f7d88;
+    }
+
+    input:focus {
+      outline: 2px solid #2ecc71;
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      width: 100%;
+      height: 52px;
+      border: none;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .primary-btn {
+      background: #2ecc71;
+      color: #0b1a10;
+    }
+
+    .secondary-btn {
+      background: #243545;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:active,
+    .secondary-btn:active {
+      transform: translateY(0);
+      opacity: 0.85;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #7e8d98;
+      font-size: 13px;
+      margin: 4px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .join-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notice {
+      margin-top: 24px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(46, 204, 113, 0.08);
+      color: #a8dbc0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px;
+        align-items: flex-start;
+        padding-top: 48px;
+      }
+
+      .lobby-wrap {
+        padding: 28px 20px;
+        border-radius: 22px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .logo {
+        width: 64px;
+        height: 64px;
+        font-size: 32px;
+      }
+
+      input,
+      .primary-btn,
+      .secondary-btn {
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="lobby-wrap">
+    <section class="title-box">
+      <div class="logo">⚽</div>
+      <h1>온라인 구장</h1>
+      <p class="subtitle">
+        친구들과 같은 경기를 보며<br />
+        가상 관객석에서 함께 응원해요.
+      </p>
+    </section>
+
+    <section class="form-section">
+      <div class="input-group">
+        <label for="nickname">닉네임</label>
+        <input
+          type="text"
+          id="nickname"
+          placeholder="닉네임을 입력하세요"
+          maxlength="12"
+        />
+      </div>
+
+      <button type="button" class="primary-btn" id="createRoomBtn">
+        새 관전방 만들기
+      </button>
+
+      <div class="divider">또는</div>
+
+      <div class="join-box">
+        <div class="input-group">
+          <label for="roomCode">입장코드</label>
+          <input
+            type="text"
+            id="roomCode"
+            placeholder="입장코드 입력"
+            maxlength="8"
+          />
+        </div>
+
+        <button type="button" class="secondary-btn" id="joinRoomBtn">
+          관전방 입장하기
+        </button>
+      </div>
+    </section>
+
+    <p class="notice">
+      닉네임과 입장코드만으로 방을 만들거나 참여합니다.
+    </p>
+  </main>
+
+  <script>
+    const nicknameInput = document.getElementById("nickname");
+    const roomCodeInput = document.getElementById("roomCode");
+    const createRoomBtn = document.getElementById("createRoomBtn");
+    const joinRoomBtn = document.getElementById("joinRoomBtn");
+
+    // 닉네임 불러오기
+    const savedNickname = localStorage.getItem("stadium_nickname");
+
+    if (savedNickname) {
+      nicknameInput.value = savedNickname;
+    }
+
+    createRoomBtn.addEventListener("click", () => {
+      const nickname = nicknameInput.value.trim();
+
+      if (!nickname) {
+        alert("닉네임을 입력해주세요.");
+        nicknameInput.focus();
+        return;
+      }
+
+      // 닉네임 저장
+      localStorage.setItem("stadium_nickname", nickname);
+
+      createRoomBtn.disabled = true;
+      createRoomBtn.textContent = "방 만드는 중...";
+
+      const body = new URLSearchParams();
+      body.append("nickname", nickname);
+
+      fetch("api/create_room.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: body.toString()
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            alert(data.message || "방 생성에 실패했습니다.");
+            return;
+          }
+
+          window.location.href = data.redirect_url;
+        })
+        .catch(error => {
+          console.error(error);
+          alert("서버 통신 중 오류가 발생했습니다.");
+        })
+        .finally(() => {
+          createRoomBtn.disabled = false;
+          createRoomBtn.textContent = "새 관전방 만들기";
+        });
+    });
+
+    joinRoomBtn.addEventListener("click", () => {
+      alert("방 참여 기능은 다음 단계에서 연결할 예정입니다.");
+    });
+  </script>
+
+</body>
+</html>

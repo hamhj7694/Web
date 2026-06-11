@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Event Handling</title>
+
+    <!-- 내부 스크립트 -->
+    <script>
+        //body 안에 있는 h2 요소에 글씨를 추가하기 -- 실행안됨. 
+        var h2= document.getElementById('aa'); //why? body영역이 만들어지기 전에 head가 실행되기에 아직 h2요소가 없는 상태임.
+        h2.innerHTML='Hello';
+
+        //위 동작이 되려면.. body영역의 요소들이 모두 만들어진 후 수행해야 함.
+        //그래서 body 요소에 문서로딩이 완료되었을때 발생하는 load 이벤트를 처리하기!!!
+        function loaded(){
+            var h2= document.getElementById('aa'); //why? body영역이 만들어지기 전에 head가 실행되기에 아직 h2요소가 없는 상태임.
+            h2.innerHTML='Hello';
+        }
+    </script>
+
+    <!-- [꿀팁 TIP] [실무] -->
+    <!-- 실무에서는 외부 스크립트를 더 선호하며..
+    외부 스크립트를 사용한다면 defer 속성으로 onload 이벤트 처리를 대신할 수 있음.
+    defer:연기하다 -->
+    <script src="./aa.js" defer></script>
+    <!-- defer는 외부 스크립트만 사용 가능함. -->
+
+</head>
+<body onload="loaded()">
+    
+    <h2 id="aa"></h2>
+    <h3 id="bb">안녕하세요</h3>
+
+    <hr>
+
+    <!-- 이벤트 처리함수를 등록하는 도 다른 방법(JS로 요소를 찾아서 이벤트 처리) -->
+    <button id="btn">나를 눌러줘</button>
+
+    <!-- 또 다른 이벤트 등록 방법 -->
+    <button class="kk">버튼</button>
+    
+</body>
+</html>

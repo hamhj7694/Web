@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이벤트2 대표적 종류들!</title>
+</head>
+
+[활용] onchange 기능 써서 대소문자 모두 대문자로 바뀌도록 만들자! <br>
+마우스 좌표 확인 <br>
+마우스 버튼 다운 & 업 이벤트 활용해서 '누르고 있는 동안 효과 유지, 떼면 원래대로' <br>
+
+<body>
+    
+    <!-- 이벤트 종류들 다뤄보기 -->
+
+    <!-- 1. input요소의 입력필드값 변경 이벤트 -->
+    <input type="text" id="in1" onfocus="aaa()">
+    <input type="text" id="in1" onblur="bbb()" onchange="ccc()">
+    <script>
+        function aaa(){
+            document.querySelector('#in1').value= "sam";
+        }
+
+        function bbb(){
+            alert('blur');
+        }
+
+        function ccc(){
+            alert('값이 바뀌었어');
+        }
+    </script>
+
+    <hr> <!-- ------------------------------------------------------ -->
+
+    <!-- onchange 자주 활용되는 예제: 사용자 입력 완료되면 모두 대문자로 자동 변환 -->
+    <input type="text" placeholder="아이디 입력" id="in3" onchange="ddd()">
+    <script>
+        function ddd(){
+            // input 요소에 써 있는 값(value)을 얻어오기
+            var v= document.getElementById('in3').value;
+            document.getElementById('in3').value = v.toUpperCase();
+        }
+    </script>
+    <hr>
+
+    <!-- 2. 마우스 이벤트 : over, out, move -->
+    <div onmouseover="eee(this)" onmouseout="fff(this)" onmousemove="hhh(this)" style="width: 200px; height: 100px; background-color: yellow;"></div>
+    <script>
+        function eee(e){
+            e.style.backgroundColor='lightgreen'; 
+            e.style.border='2px solid red';           
+        }
+        function fff(e){
+            e.style.backgroundColor='yellow'; 
+            e.style.border='';
+        }
+        var n=0;
+        function hhh(e){
+            n++;
+            e.innerHTML= n;
+        }
+    </script>
+
+    <!-- 마우스 좌표 확인 -->
+    <div id="kkk" style="width: 200px; height: 100px; background-color: aqua;"></div>
+    <script>
+        var div= document.querySelector('#kkk');
+        div.addEventListener('mousemove', function(event){ //event 정보를 가진 객체
+            var s= `영역 안 좌표: ${event.offsetX}, ${event.offsetY}<br>`;
+            s += `문서 안 좌표:${event.clientX}, ${event.clientY}<br>`;
+            s += `모니터의 좌표:${event.screenX}, ${event.screenY}<br>`;
+
+            div.innerHTML= s;
+
+        })
+    </script>
+    <hr>
+
+    <!-- 마우스 버튼 다운 & 업 이벤트 -->
+    <h4 class="tt">안녕안녕안녕</h4>
+    <script>
+        var h4= document.querySelector('.tt');
+
+        h4.addEventListener('mousedown', function(){
+            h4.style.backgroundColor='#F00';
+            h4.style.color='#ff0';
+            h4.style.fontSize= '150%';
+        })
+
+        var up= function(){
+            h4.style.backgroundColor='';
+            h4.style.color='';
+            h4.style.fontSize= '100%';
+        }
+        h4.addEventListener('mouseup', up);
+    </script>
+    <hr> <!-- ------------------------------------------------------ -->
+
+    <!-- 3. 키보드 입력 이벤트 -->
+    <input type="text" onkeydown="www()">
+    <input type="text" onkeypress="rrr()">
+    <script>
+        function www(){
+            // 누른 키보드의 값을 window 객체 안 event 객체가 가지고 있음.
+            alert(window.event.keyCode); // onkeydown는 대소문자 구분 못함. 대신 키보드의 모든 키(방향키 같은 특수키 포함) 모두 번호가 존재함
+        }
+        function rrr(){
+            // onkeypress는 아스키코드 기반 대소문자 구분 인식. 대신 키보드의 모든 키(방향키 같은 특수키 포함) 반응 안함
+            alert(window.event.keyCode);
+        }
+    </script>
+
+    <hr> <!-- ------------------------------------------------------ -->
+
+    <!-- input요소를 만들면 통상적으로 사용자 입력에 대한 검증과정을 구현함 -->
+    <!-- 예) 비밀번호 규칙..(8자리 이산, 대소문자 포함 등), 주민번호규칙 어긋나는 입력 등 -->
+    <!-- 이런 사용자 입력값에 대한 검증을 '유효성검사'라고 부름. 모든 웹사이트는 이 검사 구현을 권장 -->
+    <!-- 이 검증을 if문으로 모두 처리하기는 다소 번거로움... -->
+    <!-- 특정 문자 규칙을 따르는지 검사하기 위한 규칙만드는 문법이 있음 -->
+    <!-- [ 정규표현식 ] -->
+    
+    <hr>
+    <h2>유효성 검사 - 정규표현식 사용(regular expression)</h2>
+
+    <input type="text" id="in4">
+    <button onclick="zzz()">유효성 검사</button>
+    <script>
+        function zzz(){
+            // 검증용 정규표현식 만들기(규칙 정하기)
+            var regExp= /^[a-zA-Z]+$/   // 규칙: 영문자 한개 이상 요구
+
+            // 여러가지 정규표현 규칙을 연습해보기!
+            regExp= /a/;                // 규칙: 소문자 a가 포함된 모든...
+            regExp= /A/;                // 규칙: 대문자 A가 포함된 모든...
+            regExp= /ab/;               // 규칙: 붙어있는 ab가 포함된 모든...
+            regExp= /^a/;               // 규칙: 소문자 a로 시작되는 모든...
+            regExp= /^[a-z]/;           // 규칙: 소문자로 시작되는 모든...
+            regExp= /a$/;               // 규칙: a로 끝나는 모든...
+            regExp= /ab$/;              // 규칙: ab로 끝나는 모든...
+            regExp= /^a$/;              // 규칙: 오직 a 한글자!
+            regExp= /^[a-z]$/;          // 규칙: 오직 영어 소문자 한글자!
+            regExp= /^[a-zA-Z]$/;       // 규칙: 오직 영어 한글자!
+            regExp= /^[a-zA-Z0-9]$/;    // 규칙: 영어 or 숫자 한글자!
+            regExp= /^[a-z]{2}$/;       // 규칙: 영어 소문자 2글자!
+            regExp= /^[a-z]{2,4}$/;     // 규칙: 영어 소문자 2~4글자 사이!
+            regExp= /^[a-z]{4,}$/;      // 규칙: 영어 소문자 4글자 이상~
+            regExp= /^\w{4,}$/;         // 규칙: 문자 or 숫자 4글자 이상~
+            regExp= /^[a-z]*$/;         // 규칙: 영어 소문자 0글자 이상~ (값이 없어도 OK)
+            regExp= /^[a-z]?$/;         // 규칙: 영어 소문자 0개 또는 1개 (값이 없어도 OK)
+            regExp= /^[a-z]+$/;         // 규칙: 영어 소문자 1개 이상~ (값 없는 0개면 안됨)
+            regExp= /^\d$/;             // 규칙: 숫자 1개 (영어 x)
+            regExp= /^\d\d\d$/;         // 규칙: 숫자 3개 (영어 x)
+            regExp= /^\d{3,4}$/;        // 규칙: 숫자 3~4개 (영어 x)
+            regExp= /^\d\d-\d\d-\d\d$/; // 규칙: 숫자 2개 - 2개 - 2개 (영어 x) ex: 00-00-00 (전화번호, 제품번호 등)
+            regExp= /^[a-zA-Z0-9]+@[a-z]+.[a-z]+$/; // 규칙: 이메일 규칙 ###@##.##
+            regExp= /^http/             // 규칙: URL 주소를 올바르게 입력하도록 요구
+
+            // 사용자가 input요소에 입력한 글씨가 위 규칙에 맞는지 검사
+            var in4= document.getElementById('in4');
+            if( regExp.test(in4.value) ){
+                alert('OK')
+            }else{
+                alert('요구하는 형식에 맞지 않아요!')
+            }
+        }
+    </script>
+
+
+</body>
+</html>

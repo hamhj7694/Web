@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS DOM</title>
+</head>
+<body>
+    
+    <!-- 1. DOM tree에 노드를 동적으로 생성/추가/삭제 -->
+    <button onclick="add_Text_node()">add Text node</button>
+    <button onclick="add_Element_node()">add Element node</button>
+    <button onclick="remove_childe_node()">remove childe node</button>
+    <p id="pp"></p>
+
+    <script>
+
+        function add_Text_node(){
+            // // [정석] 원래 방법
+            // // 텍스트 노드를 js로 생성
+            // var node= document.createTextNode('나는 글씨입니다! <br>');
+            // // 텍스트 노드를 붙일(추가할) 요소를 찾기
+            // var p= document.getElementById('pp');
+            // // 위에서 만든 텍스트 노드를 p요소 노드에 자식으로 추가하기(append)
+            // p.appendChild(node);
+
+            // -----
+            // [실무] 실무에서 아주 간단한 속성 하나로 처리 가능!
+            var p= document.getElementById('pp');
+            p.textContent+='<a href="">글씨지롱 링크인척 하지롱 야호~</a>;'
+        }
+
+        function add_Element_node(){
+
+            // // [정석] 원래 방법
+            // // a 요소 노드 객체 만들기
+            // var a= document.createElement('a'); //(괄호)안에 태그(div, p, h2 등) 적음
+
+            // // a 요소에 적용할 속성 노드 만들기
+            // var attr= document.createAttribute('href'); //(괄호)안에 속성 적음
+            // attr.value= 'https://www.naver.com'; // 속성 값(링크) 넣기
+            
+            // // a 요소노드에 속성노드 설정
+            // a.setAttributeNode(attr);
+
+            // // a 요소가 보여줄 텍스트 노드 만들어 붙이기
+            // var text=document.createTextNode('naver');
+            // a. appendChild(text);
+
+            // // 완성된 a 요소노드를 p요소노드에 자식을 추가
+            // var p= document.getElementById('pp');
+            // p.appendChild(a);
+
+            // -----
+            // [실무] 실무에서는 위 요소를 추가 작업을 속성 하나로 처리..
+            var p= document.getElementById('pp');
+            p.innerHTML+='<a href="https://www.naver.com">네이버</a>';
+        }
+
+        function remove_childe_node(){
+            var p= document.getElementById('pp');
+            p.removeChild(p.firstChild);
+        }
+        
+    </script>
+
+    <hr>
+
+    <!-- 2. DOM tree에 계층 구조를 이용하여 특정요소를 찾아올 수 있습니다. -->
+    <p>이것은 파라그래프입니다.</p>
+    <button onclick="change_style(this)">스타일 변경</button>
+
+    <script>
+        function change_style(e){ //e는 위에 this 있는 스타일 변경 버튼(button) 요소
+            // 버튼이 클릭되면 버튼의 바로 앞에 p 요소를 찾아서 그 스타일 변경
+            var p= e.previousElementSibling;
+            p.style.color= 'red';
+        }
+    </script>
+
+    <hr>
+
+    <!-- 결국 DOM tree 이해하고 있으면 node 간의 관계를 이용하여 요소들의 선택을 쉽게 할 수 있음. -->
+    <!-- 사실 HTML 요소를 찾는 가장 다양하고 쉬운 방법은, CSS 언어의 선택자를 이용하는 것 -->
+    <!-- [불편] 원래 js의 document 객체는 부모/자식 등의 요소선택기능을 제공하지 않았음. 그래서 DOM tree 필요했었음 -->
+    <!-- [개선] 그래서.. 새로이 document의 기능으로 CSS선택자를 사용할 수 있게 개선됨! -->
+    <div id="wrap">
+        <p>안뇽</p>
+        <h4>aaa</h4>
+        <h4>bbb</h4>
+        <h4>ccc</h4>
+    </div>
+    <script>
+        var p= document.querySelector('#wrap p'); //자손 선택자
+        p.style.color='blue';
+
+        var h4s= document.querySelectorAll('#wrap>h4'); //자식 선택자,
+        h4s[0].style.color='hotpink';
+        h4s[1].style.color='green';
+        h4s[2].style.color='red';
+    </script>
+
+
+</body>
+</html>
