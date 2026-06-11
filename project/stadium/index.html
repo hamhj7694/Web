@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>온라인 구장 - 로비</title>
 
   <style>
@@ -25,7 +26,7 @@
 
     .lobby-wrap {
       width: 100%;
-      max-width: 420px;
+      max-width: 460px;
       background: #17232f;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 24px;
@@ -81,7 +82,7 @@
       font-weight: 700;
     }
 
-    input {
+    input[type="text"] {
       width: 100%;
       height: 48px;
       border: none;
@@ -93,12 +94,167 @@
       outline: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    input::placeholder {
+    input[type="text"]::placeholder {
       color: #6f7d88;
     }
 
-    input:focus {
+    input[type="text"]:focus {
       outline: 2px solid #2ecc71;
+    }
+
+    .face-upload-box {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 14px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .character-preview {
+      position: relative;
+      width: 96px;
+      height: 132px;
+      margin: 0 auto;
+    }
+
+    .preview-nickname {
+      position: absolute;
+      left: 50%;
+      bottom: 74px;
+      transform: translateX(-50%);
+      max-width: 100px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.62);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 3;
+    }
+
+    .preview-avatar {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 4px solid #ffffff;
+      background: #ffd7a8;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .preview-avatar::before,
+    .preview-avatar::after {
+      content: "";
+      position: absolute;
+      top: 20px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #101820;
+    }
+
+    .preview-avatar::before {
+      left: 15px;
+    }
+
+    .preview-avatar::after {
+      right: 15px;
+    }
+
+    .preview-mouth {
+      position: absolute;
+      left: 50%;
+      top: 34px;
+      width: 16px;
+      height: 8px;
+      border-bottom: 3px solid #101820;
+      border-radius: 0 0 999px 999px;
+      transform: translateX(-50%);
+      z-index: 3;
+    }
+
+    .preview-avatar.has-image::before,
+    .preview-avatar.has-image::after,
+    .preview-avatar.has-image .preview-mouth {
+      display: none;
+    }
+
+    .preview-body {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 38px;
+      border-radius: 20px 20px 14px 14px;
+      background: red;
+      border: 4px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.22);
+      z-index: 1;
+    }
+
+    .face-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .face-help {
+      color: #a8b7c2;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .face-file-label {
+      width: 100%;
+      height: 44px;
+      border-radius: 14px;
+      background: #243545;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .face-file-label:hover {
+      transform: translateY(-1px);
+    }
+
+    .face-file-label:active {
+      transform: translateY(0);
+      opacity: 0.85;
+    }
+
+    .face-file-input {
+      display: none;
+    }
+
+    .face-file-name {
+      min-height: 18px;
+      color: #8fa0ad;
+      font-size: 12px;
+      line-height: 1.4;
+      word-break: break-all;
     }
 
     .primary-btn,
@@ -133,6 +289,13 @@
     .secondary-btn:active {
       transform: translateY(0);
       opacity: 0.85;
+    }
+
+    .primary-btn:disabled,
+    .secondary-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .divider {
@@ -194,10 +357,18 @@
         font-size: 32px;
       }
 
-      input,
+      input[type="text"],
       .primary-btn,
       .secondary-btn {
         height: 50px;
+      }
+
+      .face-upload-box {
+        grid-template-columns: 1fr;
+      }
+
+      .character-preview {
+        width: 110px;
       }
     }
   </style>
@@ -225,8 +396,45 @@
         />
       </div>
 
+      <div class="input-group">
+        <label for="faceImage">캐릭터 얼굴 이미지</label>
+
+        <div class="face-upload-box">
+          <div class="character-preview">
+            <div class="preview-nickname" id="previewNickname">나</div>
+
+            <div class="preview-avatar" id="previewAvatar">
+              <div class="preview-mouth"></div>
+            </div>
+
+            <div class="preview-body"></div>
+          </div>
+
+          <div class="face-controls">
+            <label for="faceImage" class="face-file-label">
+              얼굴 이미지 선택
+            </label>
+
+            <input
+              type="file"
+              id="faceImage"
+              class="face-file-input"
+              accept="image/png, image/jpeg, image/webp"
+            />
+
+            <p class="face-help">
+              선택한 이미지는 캐릭터 얼굴에 표시됩니다.
+            </p>
+
+            <div class="face-file-name" id="faceFileName">
+              선택된 이미지 없음
+            </div>
+          </div>
+        </div>
+      </div>
+
       <button type="button" class="primary-btn" id="createRoomBtn">
-        새 관전방 만들기
+        내 관전방 만들기
       </button>
 
       <div class="divider">또는</div>
@@ -256,14 +464,136 @@
   <script>
     const nicknameInput = document.getElementById("nickname");
     const roomCodeInput = document.getElementById("roomCode");
+    const faceImageInput = document.getElementById("faceImage");
+
     const createRoomBtn = document.getElementById("createRoomBtn");
     const joinRoomBtn = document.getElementById("joinRoomBtn");
 
-    // 닉네임 불러오기
+    const previewNickname = document.getElementById("previewNickname");
+    const previewAvatar = document.getElementById("previewAvatar");
+    const faceFileName = document.getElementById("faceFileName");
+
+    let facePreviewUrl = null;
+    let rememberedFaceDataUrl = localStorage.getItem("stadium_face_data_url") || "";
+    let rememberedFaceName = localStorage.getItem("stadium_face_name") || "remembered-face.png";
+
     const savedNickname = localStorage.getItem("stadium_nickname");
+    const savedRoomCode = localStorage.getItem("stadium_room_code");
 
     if (savedNickname) {
       nicknameInput.value = savedNickname;
+      previewNickname.textContent = savedNickname;
+    }
+
+    if (savedRoomCode) {
+      roomCodeInput.value = savedRoomCode;
+    }
+
+    if (rememberedFaceDataUrl) {
+      previewAvatar.classList.add("has-image");
+      previewAvatar.style.backgroundImage = `url("${rememberedFaceDataUrl}")`;
+      faceFileName.textContent = rememberedFaceName + " 기억됨";
+    }
+
+    nicknameInput.addEventListener("input", () => {
+      const nickname = nicknameInput.value.trim();
+      previewNickname.textContent = nickname || "나";
+    });
+
+    faceImageInput.addEventListener("change", () => {
+      const file = faceImageInput.files[0];
+
+      if (facePreviewUrl) {
+        URL.revokeObjectURL(facePreviewUrl);
+        facePreviewUrl = null;
+      }
+
+      if (!file) {
+      previewAvatar.classList.remove("has-image");
+      previewAvatar.style.backgroundImage = "";
+      faceFileName.textContent = "선택된 이미지 없음";
+
+      rememberedFaceDataUrl = "";
+      rememberedFaceName = "";
+
+      localStorage.removeItem("stadium_face_data_url");
+      localStorage.removeItem("stadium_face_name");
+
+      return;
+    }
+
+      const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+
+      if (!allowedTypes.includes(file.type)) {
+        alert("png, jpg, webp 이미지만 선택할 수 있습니다.");
+        faceImageInput.value = "";
+        previewAvatar.classList.remove("has-image");
+        previewAvatar.style.backgroundImage = "";
+        faceFileName.textContent = "선택된 이미지 없음";
+        return;
+      }
+
+      const maxSize = 3 * 1024 * 1024;
+
+      if (file.size > maxSize) {
+        alert("이미지는 최대 3MB까지 선택할 수 있습니다.");
+        faceImageInput.value = "";
+        previewAvatar.classList.remove("has-image");
+        previewAvatar.style.backgroundImage = "";
+        faceFileName.textContent = "선택된 이미지 없음";
+        return;
+      }
+
+    facePreviewUrl = URL.createObjectURL(file);
+
+    previewAvatar.classList.add("has-image");
+    previewAvatar.style.backgroundImage = `url("${facePreviewUrl}")`;
+    faceFileName.textContent = file.name;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      rememberedFaceDataUrl = reader.result;
+      rememberedFaceName = file.name;
+
+      localStorage.setItem("stadium_face_data_url", rememberedFaceDataUrl);
+      localStorage.setItem("stadium_face_name", rememberedFaceName);
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+    function dataURLToFile(dataUrl, filename) {
+      const parts = dataUrl.split(",");
+      const meta = parts[0];
+      const base64 = parts[1];
+
+      const mimeMatch = meta.match(/data:(.*?);base64/);
+      const mime = mimeMatch ? mimeMatch[1] : "image/png";
+
+      const binary = atob(base64);
+      const length = binary.length;
+      const bytes = new Uint8Array(length);
+
+      for (let i = 0; i < length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+
+      return new File([bytes], filename || "remembered-face.png", {
+        type: mime
+      });
+    }
+        
+    function appendFaceImageToFormData(formData) {
+      if (faceImageInput.files[0]) {
+        formData.append("face_image", faceImageInput.files[0]);
+        return;
+      }
+
+      if (rememberedFaceDataUrl) {
+        const rememberedFile = dataURLToFile(rememberedFaceDataUrl, rememberedFaceName);
+        formData.append("face_image", rememberedFile);
+      }
     }
 
     createRoomBtn.addEventListener("click", () => {
@@ -275,21 +605,19 @@
         return;
       }
 
-      // 닉네임 저장
       localStorage.setItem("stadium_nickname", nickname);
 
       createRoomBtn.disabled = true;
       createRoomBtn.textContent = "방 만드는 중...";
 
-      const body = new URLSearchParams();
-      body.append("nickname", nickname);
+      const formData = new FormData();
+      formData.append("nickname", nickname);
+
+      appendFaceImageToFormData(formData);
 
       fetch("api/create_room.php", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: body.toString()
+        body: formData
       })
         .then(response => response.json())
         .then(data => {
@@ -306,14 +634,61 @@
         })
         .finally(() => {
           createRoomBtn.disabled = false;
-          createRoomBtn.textContent = "새 관전방 만들기";
+          createRoomBtn.textContent = "내 관전방 만들기";
         });
     });
 
     joinRoomBtn.addEventListener("click", () => {
-      alert("방 참여 기능은 다음 단계에서 연결할 예정입니다.");
-    });
-  </script>
+      const nickname = nicknameInput.value.trim();
+      const roomCode = roomCodeInput.value.trim().toUpperCase();
 
+      if (!nickname) {
+        alert("닉네임을 입력해주세요.");
+        nicknameInput.focus();
+        return;
+      }
+
+      if (!roomCode) {
+        alert("입장코드를 입력해주세요.");
+        roomCodeInput.focus();
+        return;
+      }
+
+      localStorage.setItem("stadium_nickname", nickname);
+      localStorage.setItem("stadium_room_code", roomCode);
+
+      joinRoomBtn.disabled = true;
+      joinRoomBtn.textContent = "입장하는 중...";
+
+      const formData = new FormData();
+      formData.append("nickname", nickname);
+      formData.append("room_code", roomCode);
+
+      appendFaceImageToFormData(formData);
+
+      fetch("api/join_room.php", {
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            alert(data.message || "방 입장에 실패했습니다.");
+            return;
+          }
+
+          window.location.href = data.redirect_url;
+        })
+        .catch(error => {
+          console.error(error);
+          alert("서버 통신 중 오류가 발생했습니다.");
+        })
+        .finally(() => {
+          joinRoomBtn.disabled = false;
+          joinRoomBtn.textContent = "관전방 입장하기";
+        });
+    });
+
+  </script>
 </body>
 </html>
