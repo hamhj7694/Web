@@ -1,0 +1,17 @@
+<users>
+    <user>
+        <name>sam</name>
+        <age>20</age>
+        <address>seoul</address>
+    </user>
+    <user>
+        <name>robin</name>
+        <age>25</age>
+        <address>busan</address>
+    </user>
+    <user>
+        <name>hong</name>
+        <age>30</age>
+        <address>incheon</address>
+    </user>
+</users>

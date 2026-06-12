@@ -124,8 +124,11 @@ $has_face_image = $safe_face_image !== "";
     .stadium-section {
       flex: 1;
       min-height: 0;
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      grid-template-rows: minmax(0, 1fr);
+      grid-template-areas:
+        "viewer audience";
       background:
         radial-gradient(circle at 20% 0%, rgba(255,255,255,0.8), transparent 24%),
         linear-gradient(#c9f3bd, #8fdc95);
@@ -134,13 +137,13 @@ $has_face_image = $safe_face_image !== "";
     }
 
     .viewer-area {
-      flex: 1 1 auto;
+      grid-area: viewer;
       min-height: 0;
-      padding: 12px 18px 10px;
+      padding: 12px 14px 12px 18px;
       background:
         radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent 28%),
         linear-gradient(#efffe9, #d8f6cf);
-      border-bottom: 3px solid rgba(52, 122, 70, 0.12);
+      border-right: 3px solid rgba(52, 122, 70, 0.12);
       display: flex;
       flex-direction: column;
     }
@@ -375,11 +378,14 @@ $has_face_image = $safe_face_image !== "";
     }
 
     .audience-area {
-    flex: none;
-    height: 150px;
-    position: relative;
-    overflow: visible;
-    z-index: 30;
+      grid-area: audience;
+      height: auto;
+      min-height: 0;
+      position: relative;
+      overflow: visible;
+      z-index: 30;
+      padding-top: 64px;
+      padding-bottom: 214px;
       background:
         radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.55), transparent 24%),
         linear-gradient(rgba(255,255,255,0.22) 2px, transparent 2px),
@@ -412,6 +418,46 @@ $has_face_image = $safe_face_image !== "";
       opacity: 0.42;
     }
 
+    .goal-post {
+      position: absolute;
+      left: 50%;
+      width: 150px;
+      height: 54px;
+      transform: translateX(-50%);
+      border: 5px solid rgba(255, 255, 255, 0.92);
+      background:
+        linear-gradient(rgba(255,255,255,0.32) 2px, transparent 2px),
+        linear-gradient(90deg, rgba(255,255,255,0.32) 2px, transparent 2px),
+        rgba(255, 255, 255, 0.08);
+      background-size: 18px 18px;
+      box-shadow:
+        0 8px 16px rgba(30, 80, 45, 0.14),
+        inset 0 0 0 2px rgba(55, 120, 75, 0.12);
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    .goal-post-top {
+      top: 72px;
+      border-top: none;
+      border-radius: 18px 18px 0 0;
+    }
+
+    .goal-post-bottom {
+      bottom: 224px;
+      border-bottom: none;
+      border-radius: 0 0 18px 18px;
+    }
+
+    .goal-net {
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px);
+      background-size: 14px 14px;
+    }
+    
     .effect-layer {
       position: absolute;
       left: 0;
@@ -433,14 +479,15 @@ $has_face_image = $safe_face_image !== "";
     .character {
       position: absolute;
       left: 50%;
-      bottom: 24px;
+      top: 50%;
+      bottom: auto;
       width: 108px;
       height: 170px;
-      transform: translate(-50%, var(--jump-y, 0px));
+      transform: translate(-50%, calc(-50% + var(--jump-y, 0px)));
       text-align: center;
       transition: none;
       z-index: 20;
-      will-change: left, transform;
+      will-change: left, top, transform;
     }
 
     .fire-aura {
@@ -703,9 +750,10 @@ $has_face_image = $safe_face_image !== "";
 
     .chat-log {
       position: absolute;
-      right: 18px;
-      bottom: 18px;
-      width: 390px;
+      left: 10px;
+      right: 10px;
+      bottom: 214px;
+      width: auto;
       max-height: 210px;
       padding: 16px;
       border-radius: 22px;
@@ -750,17 +798,21 @@ $has_face_image = $safe_face_image !== "";
     }
 
     .stadium-header {
-      height: 52px;
-      padding: 0 18px;
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 10px;
+      height: 46px;
+      padding: 0 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(255, 255, 255, 0.88);
-      border-top: 3px solid rgba(52, 122, 70, 0.12);
-      border-bottom: 3px solid rgba(52, 122, 70, 0.1);
+      background: rgba(255, 255, 255, 0.9);
+      border: 3px solid rgba(52, 122, 70, 0.12);
+      border-radius: 18px;
       flex-shrink: 0;
-      z-index: 12;
-      box-shadow: 0 -6px 18px rgba(41, 82, 49, 0.06);
+      z-index: 70;
+      box-shadow: 0 8px 18px rgba(41, 82, 49, 0.08);
     }
 
     .stadium-title {
@@ -784,16 +836,26 @@ $has_face_image = $safe_face_image !== "";
     }
 
     .controls {
-      min-height: 118px;
-      padding: 16px 18px;
-      background: rgba(255, 255, 255, 0.92);
-      border-top: 3px solid rgba(52, 122, 70, 0.1);
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      min-height: 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 3px solid rgba(52, 122, 70, 0.14);
+      border-radius: 22px;
       display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 14px;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "chat"
+        "reactions"
+        "moves";
+      gap: 10px;
       align-items: center;
       flex-shrink: 0;
-      z-index: 10;
+      z-index: 70;
+      box-shadow: 0 14px 28px rgba(41, 82, 49, 0.14);
     }
 
     .reaction-row {
@@ -884,6 +946,53 @@ $has_face_image = $safe_face_image !== "";
       gap: 10px;
     }
 
+    .reaction-row {
+      grid-area: reactions;
+    }
+
+    .move-row {
+      grid-area: moves;
+    }
+
+    .chat-form {
+      grid-area: chat;
+      justify-self: end;
+      width: 100%;
+    }
+
+    .audience-area .reaction-row,
+    .audience-area .move-row {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .audience-area .reaction-btn,
+    .audience-area .move-btn {
+      min-width: 50px;
+      height: 50px;
+      font-size: 22px;
+      border-radius: 16px;
+    }
+
+    .audience-area .move-btn {
+      padding: 0 12px;
+      font-size: 18px;
+    }
+
+    .audience-area .chat-form input {
+      height: 50px;
+      font-size: 16px;
+      border-radius: 16px;
+      padding: 0 14px;
+    }
+
+    .audience-area .chat-form button {
+      width: 68px;
+      height: 50px;
+      font-size: 16px;
+      border-radius: 16px;
+    }
+    
     @media (max-width: 720px) {
       body {
         overflow: auto;
@@ -921,8 +1030,15 @@ $has_face_image = $safe_face_image !== "";
       }
 
       .viewer-area {
-        min-height: 260px;
-        padding: 12px;
+        min-height: 500px;
+        padding: 8px;
+      }
+
+      .viewer-frame-wrap {
+        min-height: 500px;
+        max-height: 500px;
+        height: 500px;
+        border-radius: 18px;
       }
 
       .viewer-toolbar {
@@ -937,7 +1053,9 @@ $has_face_image = $safe_face_image !== "";
       }
 
       .audience-area {
-        height: 300px;
+        height: 1000px;
+        min-height: 1000px;
+        flex: 0 0 1000px;
       }
 
       .character {
@@ -997,12 +1115,13 @@ $has_face_image = $safe_face_image !== "";
       }
 
       .chat-form input {
-        height: 58px;
+        height: 56px;
         font-size: 18px;
       }
 
       .chat-form button {
         height: 58px;
+        width: 78px;
         font-size: 18px;
       }
 
@@ -1065,6 +1184,29 @@ $has_face_image = $safe_face_image !== "";
         min-width: 54px;
       }
 
+      .top-viewer-toolbar {
+        width: 100%;
+        grid-template-columns: 1fr;
+      }
+
+      .top-viewer-toolbar input,
+      .top-viewer-toolbar button {
+        width: 100%;
+      }
+
+      .stadium-section {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .viewer-area {
+        border-right: none;
+        border-bottom: 3px solid rgba(52, 122, 70, 0.12);
+        padding: 8px;
+        min-height: 150px;
+      }
+    }
+
     .local-toast {
       position: fixed;
       left: 50%;
@@ -1087,16 +1229,6 @@ $has_face_image = $safe_face_image !== "";
     .local-toast.is-show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
-    }
-
-    .top-viewer-toolbar {
-      width: 100%;
-      grid-template-columns: 1fr;
-    }
-
-    .top-viewer-toolbar input,
-    .top-viewer-toolbar button {
-      width: 100%;
     }
   </style>
 </head>
@@ -1166,6 +1298,14 @@ $has_face_image = $safe_face_image !== "";
         <div class="stand-line line-2"></div>
         <div class="stand-line line-3"></div>
 
+        <div class="goal-post goal-post-top">
+          <div class="goal-net"></div>
+        </div>
+
+        <div class="goal-post goal-post-bottom">
+          <div class="goal-net"></div>
+        </div>
+
         <div class="effect-layer" id="effectLayer"></div>
 
         <div class="characters-layer" id="charactersLayer"></div>
@@ -1176,30 +1316,28 @@ $has_face_image = $safe_face_image !== "";
             <div class="chat-line">방 입장!</div>
           </div>
         </div>
-      </div>
 
-      <div class="stadium-header">
-        <div class="stadium-title">가상 관중석</div>
+        <div class="stadium-header">
+          <div class="stadium-title">관중석</div>
 
-        <div class="stadium-header-actions">
-        
-          <button type="button" class="chat-log-toggle" id="chatLogToggle">
-            채팅 로그 보기
-          </button>
+          <div class="stadium-header-actions">
+            <button type="button" class="chat-log-toggle" id="chatLogToggle">
+              채팅창 보기
+            </button>
 
-          <button type="button" class="controls-toggle-btn" id="controlsToggleBtn">
-            버튼 숨기기
-          </button>
+            <button type="button" class="controls-toggle-btn" id="controlsToggleBtn">
+              버튼 숨기기
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div class="controls">
-        <div class="reaction-row">
-          <button type="button" class="reaction-btn" data-reaction="❤️">❤️</button>
-          <button type="button" class="reaction-btn" data-reaction="🔥">🔥</button>
-          <button type="button" class="reaction-btn" data-reaction="🎉">🎉</button>
-          <button type="button" class="reaction-btn" data-reaction="⚽">⚽</button>
-        </div>
+        <div class="controls">
+          <div class="reaction-row">
+            <button type="button" class="reaction-btn" data-reaction="❤️">❤️</button>
+            <button type="button" class="reaction-btn" data-reaction="🔥">🔥</button>
+            <button type="button" class="reaction-btn" data-reaction="🎉">🎉</button>
+            <button type="button" class="reaction-btn" data-reaction="⚽">⚽</button>
+          </div>
 
         <form class="chat-form" id="chatForm">
           <input
@@ -1213,11 +1351,14 @@ $has_face_image = $safe_face_image !== "";
 
         <div class="move-row">
           <button type="button" class="move-btn" id="moveLeftBtn">◀</button>
+          <button type="button" class="move-btn" id="moveUpBtn">▲</button>
           <button type="button" class="move-btn" id="jumpBtn">점프</button>
+          <button type="button" class="move-btn" id="moveDownBtn">▼</button>
           <button type="button" class="move-btn" id="moveRightBtn">▶</button>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
   </div>
 
   <div class="local-toast" id="localToast"></div>
@@ -1245,6 +1386,8 @@ $has_face_image = $safe_face_image !== "";
 
     const moveLeftBtn = document.getElementById("moveLeftBtn");
     const moveRightBtn = document.getElementById("moveRightBtn");
+    const moveUpBtn = document.getElementById("moveUpBtn");
+    const moveDownBtn = document.getElementById("moveDownBtn");
     const jumpBtn = document.getElementById("jumpBtn");
     const leaveRoomBtn = document.getElementById("leaveRoomBtn");
 
@@ -1268,6 +1411,7 @@ $has_face_image = $safe_face_image !== "";
     const displayNickname = savedNickname || "나";
 
     let myX = 50;
+    let myY = 50;
     let jumpY = 0;
     let fireTimer = null;
     let currentViewerUrl = "";
@@ -1292,6 +1436,8 @@ $has_face_image = $safe_face_image !== "";
 
     let isMovingLeft = false;
     let isMovingRight = false;
+    let isMovingUp = false;
+    let isMovingDown = false;
     let lastMoveDirection = "up";
 
     let isJumping = false;
@@ -1301,13 +1447,17 @@ $has_face_image = $safe_face_image !== "";
 
     let lastPositionSendAt = 0;
     let lastSentX = null;
+    let lastSentY = null;
     const POSITION_SEND_INTERVAL = 80;
 
-    const MOVE_SPEED = 0.18;
-    const REMOTE_SMOOTH_AMOUNT = 0.18;
+    const MOVE_SPEED_X = 0.4; //좌우 이동
+    const MOVE_SPEED_Y = 0.25; //상하 이동
+    const REMOTE_SMOOTH_AMOUNT = 0.25;
 
     const MIN_X = 6;
     const MAX_X = 94;
+    const MIN_Y = 8;
+    const MAX_Y = 88;
 
     const JUMP_DURATION = 520;
     const JUMP_HEIGHT = 58;
@@ -1318,15 +1468,21 @@ $has_face_image = $safe_face_image !== "";
       }
 
       myCharacter.style.left = myX + "%";
+      myCharacter.style.top = myY + "%";
+      myCharacter.style.bottom = "auto";
       myCharacter.style.setProperty("--jump-y", `${jumpY}px`);
     }
-
+    
     function updateRemoteCharactersSmoothly() {
       document.querySelectorAll(".character[data-participant-id]:not(.is-me)").forEach((character) => {
         const targetX = Number(character.dataset.targetX || 50);
+        const targetY = Number(character.dataset.targetY || 50);
+
         let currentX = Number(character.dataset.currentX || targetX);
+        let currentY = Number(character.dataset.currentY || targetY);
 
         const nextX = currentX + (targetX - currentX) * REMOTE_SMOOTH_AMOUNT;
+        const nextY = currentY + (targetY - currentY) * REMOTE_SMOOTH_AMOUNT;
 
         if (targetX < currentX - 0.05) {
           character.dataset.lastMoveDirection = "left";
@@ -1336,14 +1492,23 @@ $has_face_image = $safe_face_image !== "";
           character.dataset.lastMoveDirection = "right";
         }
 
-        if (Math.abs(targetX - nextX) < 0.05) {
-          currentX = targetX;
-        } else {
-          currentX = nextX;
+        if (targetY < currentY - 0.05) {
+          character.dataset.lastMoveDirection = "up";
         }
 
+        if (targetY > currentY + 0.05) {
+          character.dataset.lastMoveDirection = "down";
+        }
+
+        currentX = Math.abs(targetX - nextX) < 0.05 ? targetX : nextX;
+        currentY = Math.abs(targetY - nextY) < 0.05 ? targetY : nextY;
+
         character.dataset.currentX = currentX;
+        character.dataset.currentY = currentY;
+
         character.style.left = currentX + "%";
+        character.style.top = currentY + "%";
+        character.style.bottom = "auto";
       });
     }
     
@@ -1480,15 +1645,22 @@ $has_face_image = $safe_face_image !== "";
         return;
       }
 
-      if (lastSentX !== null && Math.abs(lastSentX - myX) < 0.4) {
+      if (
+        lastSentX !== null &&
+        lastSentY !== null &&
+        Math.abs(lastSentX - myX) < 0.4 &&
+        Math.abs(lastSentY - myY) < 0.4
+      ) {
         return;
       }
 
       lastPositionSendAt = now;
       lastSentX = myX;
+      lastSentY = myY;
 
       const formData = new FormData();
       formData.append("x_position", myX);
+      formData.append("y_position", myY);
 
       fetch("api/update_position.php", {
         method: "POST",
@@ -1624,14 +1796,23 @@ $has_face_image = $safe_face_image !== "";
     }
 
     function updateCharacterMotion(now) {
+      if (isMovingRight && !isMovingLeft) {
+        myX = Math.min(MAX_X, myX + MOVE_SPEED_X);
+        setLastMoveDirection("right");
+      }
       if (isMovingLeft && !isMovingRight) {
-        myX = Math.max(MIN_X, myX - MOVE_SPEED);
+        myX = Math.max(MIN_X, myX - MOVE_SPEED_X);
         setLastMoveDirection("left");
       }
 
-      if (isMovingRight && !isMovingLeft) {
-        myX = Math.min(MAX_X, myX + MOVE_SPEED);
-        setLastMoveDirection("right");
+      if (isMovingUp && !isMovingDown) {
+        myY = Math.max(MIN_Y, myY - MOVE_SPEED_Y);
+        setLastMoveDirection("up");
+      }
+
+      if (isMovingDown && !isMovingUp) {
+        myY = Math.min(MAX_Y, myY + MOVE_SPEED_Y);
+        setLastMoveDirection("down");
       }
 
       if (isJumping) {
@@ -1652,7 +1833,7 @@ $has_face_image = $safe_face_image !== "";
       setMyPosition();
       updateRemoteCharactersSmoothly();
 
-      if (isMovingLeft || isMovingRight) {
+      if (isMovingLeft || isMovingRight || isMovingUp || isMovingDown) {
         sendMyPositionIfNeeded();
       }
 
@@ -1711,9 +1892,8 @@ $has_face_image = $safe_face_image !== "";
 
     function renderParticipants(participants) {
       const aliveIds = new Set();
-      const total = participants.length;
 
-      participants.forEach((participant, index) => {
+      participants.forEach((participant) => {
         const participantId = Number(participant.id);
         const isMe = participantId === Number(myParticipantId);
 
@@ -1748,27 +1928,42 @@ $has_face_image = $safe_face_image !== "";
         }
 
         let displayX = Number(participant.x_position || 50);
+        let displayY = Number(participant.y_position || 50);
 
         if (isMe) {
           if (!myCharacter) {
             myX = displayX;
+            myY = displayY;
           }
 
           displayX = myX;
+          displayY = myY;
 
           myCharacter = character;
           myBubbleStack = character.querySelector(".bubble-stack");
           myNickname = character.querySelector(".nickname");
 
           character.dataset.currentX = displayX;
+          character.dataset.currentY = displayY;
           character.dataset.targetX = displayX;
+          character.dataset.targetY = displayY;
+
           character.style.left = displayX + "%";
+          character.style.top = displayY + "%";
+          character.style.bottom = "auto";
         } else {
           character.dataset.targetX = displayX;
+          character.dataset.targetY = displayY;
 
           if (!character.dataset.currentX) {
             character.dataset.currentX = displayX;
             character.style.left = displayX + "%";
+          }
+
+          if (!character.dataset.currentY) {
+            character.dataset.currentY = displayY;
+            character.style.top = displayY + "%";
+            character.style.bottom = "auto";
           }
         }
       });
@@ -1785,6 +1980,8 @@ $has_face_image = $safe_face_image !== "";
       character.className = isMe ? "character is-me" : "character";
       character.dataset.participantId = participant.id;
       character.style.left = (participant.x_position || 50) + "%";
+      character.style.top = (participant.y_position || 50) + "%";
+      character.style.bottom = "auto";
       character.style.setProperty("--jump-y", "0px");
 
       const fireAura = document.createElement("div");
@@ -2318,6 +2515,14 @@ $has_face_image = $safe_face_image !== "";
         };
       }
 
+      if (direction === "down") {
+        return {
+          x: "0px",
+          y: "130px",
+          rotate: "520deg"
+        };
+      }
+
       return {
         x: "0px",
         y: "-130px",
@@ -2453,6 +2658,16 @@ $has_face_image = $safe_face_image !== "";
           isMovingRight = true;
           setLastMoveDirection("right");
         }
+
+        if (direction === "up") {
+          isMovingUp = true;
+          setLastMoveDirection("up");
+        }
+
+        if (direction === "down") {
+          isMovingDown = true;
+          setLastMoveDirection("down");
+        }
       };
 
       const stop = () => {
@@ -2462,6 +2677,14 @@ $has_face_image = $safe_face_image !== "";
 
         if (direction === "right") {
           isMovingRight = false;
+        }
+
+        if (direction === "up") {
+          isMovingUp = false;
+        }
+
+        if (direction === "down") {
+          isMovingDown = false;
         }
       };
 
@@ -2475,6 +2698,8 @@ $has_face_image = $safe_face_image !== "";
 
     bindHoldButton(moveLeftBtn, "left");
     bindHoldButton(moveRightBtn, "right");
+    bindHoldButton(moveUpBtn, "up");
+    bindHoldButton(moveDownBtn, "down");
 
     jumpBtn.addEventListener("click", jump);
     leaveRoomBtn.addEventListener("click", leaveRoom);
@@ -2489,6 +2714,20 @@ $has_face_image = $safe_face_image !== "";
       }
 
       const key = e.key.toLowerCase();
+
+      if (key === "arrowup") {
+        e.preventDefault();
+        isMovingUp = true;
+        setLastMoveDirection("up");
+        return;
+      }
+
+      if (key === "arrowdown") {
+        e.preventDefault();
+        isMovingDown = true;
+        setLastMoveDirection("down");
+        return;
+      }
 
       if (key === "-" || key === "_") {
         e.preventDefault();
@@ -2562,6 +2801,16 @@ $has_face_image = $safe_face_image !== "";
         e.preventDefault();
 
         if (!e.repeat) {
+          if (isMovingDown) {
+            setLastMoveDirection("down");
+          } else if (isMovingUp) {
+            setLastMoveDirection("up");
+          } else if (isMovingLeft) {
+            setLastMoveDirection("left");
+          } else if (isMovingRight) {
+            setLastMoveDirection("right");
+          }
+
           triggerReaction("⚽");
         }
 
@@ -2579,6 +2828,20 @@ $has_face_image = $safe_face_image !== "";
         e.preventDefault();
         isMovingRight = true;
         setLastMoveDirection("right");
+        return;
+      }
+
+      if (key === "arrowup") {
+        e.preventDefault();
+        isMovingUp = true;
+        setLastMoveDirection("up");
+        return;
+      }
+
+      if (key === "arrowdown") {
+        e.preventDefault();
+        isMovingDown = true;
+        setLastMoveDirection("down");
         return;
       }
     });
@@ -2600,6 +2863,14 @@ $has_face_image = $safe_face_image !== "";
       if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
         isMovingRight = false;
       }
+
+      if (e.key === "ArrowUp") {
+        isMovingUp = false;
+      }
+
+      if (e.key === "ArrowDown") {
+        isMovingDown = false;
+      }
     });
 
     document.querySelectorAll(".reaction-btn").forEach((btn) => {
@@ -2607,6 +2878,15 @@ $has_face_image = $safe_face_image !== "";
         const reaction = btn.dataset.reaction;
         triggerReaction(reaction);
       });
+    });
+
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+
+        chatInput.value = "";
+        chatInput.blur();
+      }
     });
 
     chatForm.addEventListener("submit", (e) => {
@@ -2629,9 +2909,9 @@ $has_face_image = $safe_face_image !== "";
       chatLog.classList.toggle("is-open");
 
       if (chatLog.classList.contains("is-open")) {
-        chatLogToggle.textContent = "채팅 로그 닫기";
+        chatLogToggle.textContent = "채팅창 닫기";
       } else {
-        chatLogToggle.textContent = "채팅 로그 보기";
+        chatLogToggle.textContent = "채팅창 보기";
       }
     });
     controlsToggleBtn.addEventListener("click", toggleControlsVisibility);

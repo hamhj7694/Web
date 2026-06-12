@@ -156,6 +156,7 @@ try {
       - 초기 위치는 50
     */
     $x_position = 50;
+    $y_position = 50;
     $is_host = 0;
 
     /*
@@ -195,8 +196,8 @@ try {
 
     $insert_participant_sql = "
         INSERT INTO stadium_participants
-        (room_id, user_token, nickname, user_color, face_image, x_position, is_host, last_seen, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        (room_id, user_token, nickname, user_color, face_image, x_position, y_position, is_host, last_seen, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     ";
 
     $participant_stmt = mysqli_prepare($db, $insert_participant_sql);
@@ -207,13 +208,14 @@ try {
 
     mysqli_stmt_bind_param(
         $participant_stmt,
-        "issssii",
+        "issssddi",
         $room_id,
         $user_token,
         $nickname,
         $user_color,
         $face_image_path,
         $x_position,
+        $y_position,
         $is_host
     );
 

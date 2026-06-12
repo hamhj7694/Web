@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX fetch2</title>
+
+    <script>
+        function aaa(){
+            //1. CSV 파일 불러와 분석하기
+            fetch('./files/user_data.csv')
+            .then(function(response){
+                return response.text();
+
+            })
+            .then(function(text){
+                // alert(text) //글씨 확인
+                
+                // csv 분석해 각 값들 분리하기
+                // 줄바꿈 문자를 구분자로 분리하고 배열 만들기
+                var users= text.split('\n');
+                // alert(users.length) // 4 (4개의 요소로 갈랐음)
+
+                // 각 줄 마다 , 기준으로 값들 있음. 이것도 분리하기
+                // var values= users[0].split(',');
+
+                // 여러줄이니.. 반복문으로 처리!
+                var age_sum=0;
+                var s='';
+                for(var n=1; n<users.length; n++){
+                    values=users[n].split(',');
+                    
+                    var name=values[0];
+                    var age=values[1];
+                    var address=values[2];
+                    s += '<p>';
+                    s += '이름: ' + name + '<br>';
+                    s += '나이: ' + age + '<br>';
+                    s += '주소: ' + address + '<br>';
+                    s += '<p>';
+
+                    // 나이값 누적
+                    age_sum += parseInt(age);
+                }//----------------------------
+
+                // 누적된 나이 기반으로 평균 나이 계산
+                s+= "평균나이 : " + (age_sum/(users.length-1));
+
+                // 위에서 만들러진 s문자열을 div 요소 안에 넣기(동적 화면 생성)
+                document.getElementById('result').innerHTML= s;
+            })
+        }
+        //###################################################
+
+        function bbb(){
+            //2. XML 파일을 읽어와서 분석하기
+            fetch('./files/user_data.xml')
+            .then(function(res){
+                return res.text();
+            })
+            .then(function(text){
+                //alert(text);
+
+                //XML 분석하기.. 
+                //xml을 DOM tree 구조로 만들어서 요소들을 찾기 편하게 해주는 내장 객체 생성
+                var parser= new DOMParser();
+                // [ XML문자열 --> DOM객체(작은 document객체)]
+                var doc= parser.parseFromString(text, 'application/xml');
+
+                //태그 이름이 'user'인 요소들을 찾기
+                var users= doc.getElementsByTagName('user');
+                //alert(users.length);
+                
+                //name, age, address 태그들을 사용하는 요소들을 각각 찾기
+                var names= doc.getElementsByTagName('name');
+                var ages= doc.getElementsByTagName('age');
+                var addresses= doc.getElementsByTagName('address');
+
+                //alert(names.length);
+                //alert(ages.length);
+                //alert(addresses.length);
+
+                //alert(names[0]); //요소
+                // alert(names[0].textContent); //요소의 글씨데이터
+
+                //각 요소들의 개수만큼 반복하면서..이름,나이,주소 정보를 추출
+                var s="";
+                for(var n=0; n<users.length; n++){
+                    s += "<p>";
+                    s += names[n].textContent + " : " + ages[n].textContent + " - " + addresses[n].textContent;
+                    s += "</p>"
+                }
+
+                document.getElementById('result').innerHTML=s;
+            })
+        }
+
+        // ######################################
+
+        function ccc(){
+            // json파일 읽어와서 분석하기
+            fetch('./files/user_data.json')
+            .then(function(res){return res.text()})
+            .then(function(text){
+                // alert(text);
+
+                // json 형식 문자열 js언어의 리터럴 객체로 변환해주는 내장 기능
+                var json= JSON.parse(text);
+                // alert(json.users.length)
+
+                var users=json.users
+                // users 배열의 개수만큼 반복하며 [이름, 나이, 주소] 추출
+                var s="";
+                for(var n=0; n<users.length; n++){
+                    s += users[n].name + ", ";
+                    s += users[n].age + ", ";
+                    s += users[n].address + "<br>";
+                }
+                document.getElementById('result').innerHTML= s;
+            })
+        }
+
+    </script>
+</head>
+<body>
+
+    <button onclick="aaa()">csv 파일 분석하기</button>
+    <button onclick="bbb()">xml 파일 분석하기</button>
+    <button onclick="ccc()">json 파일 분석하기</button>
+    <hr>
+    <div id="result"></div>
+    
+</body>
+</html>

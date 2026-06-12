@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ajax fetch</title>
+
+    <script>
+        function aaa(){
+            //input요소를 찾아와서 그 안에 써있는 글씨를 얻어오기(서버에 보낼 데이터)
+            var name= document.querySelector('#in1').value;
+            var password= document.querySelector('#in2').value;
+
+            //GET방식으로 데이터를 보내기 위해 URL 뒤에 값들을 추가한 경로 만들기
+            var url= './getTest.php?name=' + name +'&pw=' + password;
+
+            //JS에 내장된 ajax 기능 함수 - fetch() 를 이용하여 XMLHttpRequest를 대체하기
+            fetch(url).then( function(response){ 
+                //응답결과를 파라미터인 response가 받음. 근데. 이 데이터를 2진수로 가지고 있음.
+                //그래서 응답결과를 글씨로 바꿔달라고 요청한 후 결과를 리턴
+                return response.text();
+             } ).then( function(text){ //변환된 글씨데이터...
+                document.getElementById('result_area').innerHTML= text;
+             })
+        }
+
+        function bbb(){
+            //POST방식으로 데이터를 전송해보기
+            var name= document.querySelector('#in1').value;
+            var password= document.querySelector('#in2').value;
+
+            //보낼데이터를 key=value&key=value 형태로 만들기
+            var data= `name=${name}&pw=${password}`; //문자열 탬플릿(빽틱)
+
+            //fetch()기능으로 post 방식의 ajax를 수행
+            fetch('./postTest.php', {
+                method:'POST',
+                headers:{'Content-Type':'application/x-www-form-urlencoded; charset=utf-8'},
+                body:data,
+            }).then(function(response){
+                return response.text();
+            }).then(function(text){
+                document.getElementById('result_area').innerHTML= text;
+            })
+
+        }
+    </script>
+</head>
+<body>
+
+    <input type="text" placeholder="이름 입력" id="in1">
+    <input type="text" placeholder="비밀번호 입력" id="in2">
+    <br>
+    <button onclick="aaa()">GET방식으로 데이터 전송 by fetch()</button>
+    <button onclick="bbb()">POST방식으로 데이터 전송 by fetch()</button>
+
+    <hr>
+    <div id="result_area"></div>
+    
+</body>
+</html>

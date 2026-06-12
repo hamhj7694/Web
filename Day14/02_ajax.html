@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ajax</title>
+
+    <script>
+        function aaa(){
+            //AJAX 기술을 수행하는 내장된 객체를 생성
+            var xhr= new XMLHttpRequest();
+
+            //서버로부터 데이터를 받으면 자동으로 발동하는 함수를 등록
+            xhr.onreadystatechange= function(){
+                if(xhr.readyState==4 && xhr.status==200){
+                    document.getElementById('kk').innerHTML= xhr.responseText;
+                }
+            }
+
+            //xhr.open('GET', './aaa.txt', true); //세번째 파라미터: 비동기 방식 여부
+            //xhr.open('GET', './01_no_ajax.html', true);
+            //GET방식으로 서버의 백엔드 프로그램에 데이터를 전송하고 응답결과를 받기
+            xhr.open('GET', './getTest.php?name=SAM&pw=1234', true);
+
+            xhr.send();//요청 보내기
+        }
+
+        function bbb(){
+            // ajax를 수행하는 객체 생성
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange= function(){
+                if(xhr.readyState==4 && xhr.status==200){
+                    document.getElementById('kk').innerHTML= xhr.responseText;
+                }
+            }
+
+            xhr.open('POST','./postTest.php',true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('name=ROBIN&pw=2222'); //요청 보내기 -- post 방식으로 보낼 데이터를 파라미터로 전달          
+        }
+
+    </script>
+</head>
+<body>
+
+    <p>
+        <button onclick="aaa()">GET 방식으로 데이터 요청</button>
+        <button onclick="bbb()">GET 방식으로 데이터 요청</button>
+    </p>
+    <hr>
+    <div id="kk"></div>
+    
+</body>
+</html>

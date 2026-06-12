@@ -1,0 +1,7 @@
+{
+    "users":[
+        {"name":"sam", "age":20, "address":"seoul"},
+        {"name":"roibn", "age":25, "address":"busan"},
+        {"name":"hong", "age":30, "address":"incheon"}
+    ]
+}

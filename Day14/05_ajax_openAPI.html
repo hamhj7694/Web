@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05_ajax_openAPI</title>
+</head>
+<body>
+    
+    <button onclick="aaa()">다른 서버의 xml 데이터를 읽어오기</button>
+    <script>
+        function aaa(){
+            // 다른 서버의 유용한 정보 읽어오기..
+            // 테스트용 음반 목록 정보 받기
+            fetch('https://www.w3schools.com/xml/cd_catalog.xml')
+            // 내 서버 아니라 다른 서버 열면 CORS 정책 에러 발생!
+            // 다른 서버의 데이터를 클라이언트측의 JS로 직접 요청하는 것을 금지함.(보안 문제)
+
+            .then(function(res){return res.text()})
+            .then(function(text){
+                alert(text);
+            })
+
+            // 클라이언트의 JS에서는 다른 서버에 오픈된 Open API 정보를 받을 수 없음.
+            // 그래서.. 내 서버의 백엔드에게 대신 요청해달라고 해야 함. (중계 브로커 활용)
+        }
+    </script>
+
+    <hr>
+    <h2>다른 서버 데이터 읽어오기 (내 서버를 중계 서버로 활용)</h2>
+    <button onclick="bbb()">영화진흥위원회 OPEN API - 오늘의 박스오피스</button>
+    <p id="pp"></p>
+    <script>
+        function bbb(){
+            fetch('./openapi.php')
+            .then(function(res){return res.text()})
+            .then(function(text){
+                document.getElementById('pp').innerHTML= text;
+            })
+        }
+    </script>
+
+</body>
+</html>

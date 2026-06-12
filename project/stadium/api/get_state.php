@@ -77,7 +77,7 @@ try {
       3. 내 참여자 정보 확인 + last_seen 갱신
     */
     $me_sql = "
-        SELECT id, room_id, user_token, nickname, user_color, face_image, x_position, is_host, last_seen
+        SELECT id, room_id, user_token, nickname, user_color, face_image, x_position, y_position, is_host, last_seen
         FROM stadium_participants
         WHERE id = ?
           AND room_id = ?
@@ -146,6 +146,7 @@ try {
             user_color,
             face_image,
             x_position,
+            y_position,
             is_host,
             last_seen,
             created_at
@@ -175,6 +176,7 @@ try {
             "user_color" => $participant["user_color"],
             "face_image" => $participant["face_image"] ?? "",
             "x_position" => (int)$participant["x_position"],
+            "y_position" => (float)$participant["y_position"],
             "is_host" => (int)$participant["is_host"],
             "last_seen" => $participant["last_seen"],
             "created_at" => $participant["created_at"]
@@ -269,6 +271,7 @@ try {
             "nickname" => $me["nickname"],
             "face_image" => $me["face_image"] ?? "",
             "x_position" => (int)$me["x_position"],
+            "y_position" => (float)$me["y_position"],
             "is_host" => (int)$me["is_host"]
         ],
         "participants" => $participants,
