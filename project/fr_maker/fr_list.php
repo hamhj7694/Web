@@ -10,7 +10,7 @@ if(isset($_POST['comment_submit'])){
     $cmt = $_POST['cmt'];
     $parent_no = isset($_POST['parent_no']) ? $_POST['parent_no'] : 0;
 
-    $sql = "INSERT INTO comment(nickname, cmt, `now`, fr_no, parent_no)
+    $sql = "INSERT INTO fr_maker_comment(nickname, cmt, `now`, fr_no, parent_no)
             VALUES('$nickname', '$cmt', NOW(), '$fr_no', '$parent_no')";
     mysqli_query($db, $sql);
 
@@ -23,7 +23,7 @@ if(isset($_POST['comment_delete_submit'])){
     $delete_word = $_POST['delete_word'];
 
     if($delete_word == '댓글 삭제'){
-        $sql = "DELETE FROM comment WHERE no='$comment_no' OR parent_no='$comment_no'";
+        $sql = "DELETE FROM fr_maker_comment WHERE no='$comment_no' OR parent_no='$comment_no'";
         mysqli_query($db, $sql);
     }
 
@@ -36,7 +36,7 @@ if(isset($_POST['reply_delete_submit'])){
     $delete_word = $_POST['delete_word'];
 
     if($delete_word == '댓글 삭제'){
-        $sql = "DELETE FROM comment WHERE no='$reply_no' AND parent_no != 0";
+        $sql = "DELETE FROM fr_maker_comment WHERE no='$reply_no' AND parent_no != 0";
         mysqli_query($db, $sql);
     }
 
@@ -894,7 +894,7 @@ echo "<style>
 
         echo "<div class='comment-area'>";
 
-        $count_sql = "SELECT COUNT(*) AS cnt FROM comment WHERE fr_no='$no'";
+        $count_sql = "SELECT COUNT(*) AS cnt FROM fr_maker_comment WHERE fr_no='$no'";
         $count_result = mysqli_query($db, $count_sql);
         $count_row = mysqli_fetch_array($count_result, MYSQLI_ASSOC);
         $comment_count = $count_row['cnt'];
@@ -957,7 +957,7 @@ echo "<style>
 
         echo "<div class='comment-list'>";
 
-        $comment_sql = "SELECT * FROM comment WHERE fr_no='$no' AND parent_no=0 ORDER BY no DESC";
+        $comment_sql = "SELECT * FROM fr_maker_comment WHERE fr_no='$no' AND parent_no=0 ORDER BY no DESC";
         $comment_result = mysqli_query($db, $comment_sql);
 
         if($comment_count == 0){
@@ -988,41 +988,39 @@ echo "<style>
             echo "<input type='submit' name='comment_delete_submit' value='댓글 삭제'>";
             echo "</form>";
 
-            $reply_sql = "SELECT * FROM comment WHERE parent_no='$comment_no' ORDER BY no ASC";
+            $reply_sql = "SELECT * FROM fr_maker_comment WHERE parent_no='$comment_no' ORDER BY no ASC";
             $reply_result = mysqli_query($db, $reply_sql);
+            $reply_count = mysqli_num_rows($reply_result);
+
+            if($reply_count > 0){
+                echo "<button type='button' class='reply-list-toggle'>대댓글 열기($reply_count)</button>";
+            }
+
+            echo "<div class='reply-list'>";
 
             while($reply = mysqli_fetch_array($reply_result, MYSQLI_ASSOC)){
-                $reply_sql = "SELECT * FROM comment WHERE parent_no='$comment_no' ORDER BY no ASC";
-                $reply_result = mysqli_query($db, $reply_sql);
-                $reply_count = mysqli_num_rows($reply_result);
+                $reply_no = $reply['no'];
 
-                if($reply_count > 0){
-                    echo "<button type='button' class='reply-list-toggle'>대댓글 열기($reply_count)</button>";
-                }
+                echo "<div class='reply-box'>";
+                echo "<strong>".$reply['nickname']."</strong>";
+                echo "<p>".nl2br($reply['cmt'])."</p>";
+                echo "<small>".$reply['now']."</small>";
 
-                echo "<div class='reply-list'>";
+                echo "<br>";
+                echo "<button type='button' class='reply-delete-open'>삭제</button>";
 
-                while($reply = mysqli_fetch_array($reply_result, MYSQLI_ASSOC)){
-                    $reply_no = $reply['no'];
-
-                    echo "<div class='reply-box'>";
-                    echo "<strong>ㄴ ".$reply['nickname']."</strong>";
-                    echo "<p>".nl2br($reply['cmt'])."</p>";
-                    echo "<small>".$reply['now']."</small>";
-
-                    echo "<br>";
-                    echo "<button type='button' class='reply-delete-open'>삭제</button>";
-
-                    echo "<form class='reply-delete-form' action='fr_list.php' method='post'>";
-                    echo "<input type='hidden' name='reply_no' value='$reply_no'>";
-                    echo "<input type='text' name='delete_word' placeholder=\"'댓글 삭제'를 입력하세요\">";
-                    echo "<input type='submit' name='reply_delete_submit' value='삭제'>";
-                    echo "</form>";
-
-                    echo "</div>";
-                }
+                echo "<form class='reply-delete-form' action='fr_list.php' method='post'>";
+                echo "<input type='hidden' name='reply_no' value='$reply_no'>";
+                echo "<input type='text' name='delete_word' placeholder=\"'댓글 삭제'를 입력하세요\">";
+                echo "<input type='submit' name='reply_delete_submit' value='삭제'>";
+                echo "</form>";
 
                 echo "</div>";
+            }
+
+            echo "</div>";
+
+            echo "</div>";
         }
 
         echo "</div>";
@@ -1033,6 +1031,7 @@ echo "<style>
     echo "</div>";
 
     echo "<div id='cardView' class='mini-grid'>";
+
     echo $mini_cards;
     echo "</div>";
 
@@ -1043,6 +1042,8 @@ echo "<style>
 }
 
 mysqli_close($db);
+
+echo "<div style='width: 100%; height: 600;'></div>";
 
 echo "<script>
     const fullView = document.getElementById('fullView');

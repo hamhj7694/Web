@@ -48,6 +48,7 @@
         // echo "<h2>$name 님과 저의 나이 차이는 $gab 살 이네요. 잘 부탁 드려요 ㅎㅎ</h2>";        
         echo "<h2>$name 님에게 관심 있는 사람이 있다면 <br>입력하신 $phone 으로 연락 드리겠습니다!</h2><hr>";
         // echo "<h4>문의 사항: 010-5616-7694 함형준</h4>";
+        echo "<a href='./fr_list.php'><button type='button'>구조 대기 명단</bustton></a>";
 
     }else{
         echo "지원 실패. 다시 시도해 주세요.";
