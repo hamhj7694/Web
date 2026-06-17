@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자유 게시판</title>
+
+    <!-- 외부 스타일시트 연결 -->
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+
+    <!-- 콘텐츠가 표시되는 영역 -->
+    <div class="board_wrap">
+
+        <!-- 1. 게시판 제목 영역 -->
+        <div class="board_title">
+            <h2>자유 게시판</h2>
+            <p>자유롭게 게시글을 작성하며 이야기를 나누세요.</p>
+        </div>
+
+        <!-- 2. 게시판 테이블이 그려질 메인 영역 (테이블, 페이지네이션, 등록버튼) -->
+        <div class="board_list_wrap">
+
+            <!-- 2.1 테이블 영역 -->
+            <table class="board_list">
+                <!-- 1) 컬룸 제목줄 -->
+                <tr class="column_title">
+                    <th class="col_no">번호</th>
+                    <th class="col_title">제목</th>
+                    <th class="col_writer">글쓴이</th>
+                    <th class="col_date">작성일</th>
+                    <th class="col_hits">조회</th>
+                </tr>
+
+                <!-- 2) 게시글 데이터들 표시영역(php나 JS 반복문으로 구현예정) ~ 우선 디자인 목적으로 가짜 데이터 구성 -->
+                <tr>
+                    <td class="col_no">1</td>
+                    <td class="col_title"><a href="./board/view.html?no=1">글제목#1</a></td>
+                    <td class="col_writer">sam</td>
+                    <td class="col_date">2026.06.15</td>
+                    <td class="col_hits">10</td>
+                </tr>
+                <tr>
+                    <td class="col_no">2</td>
+                    <td class="col_title"><a href="./board/view.html?no=2">글제목#2</a></td>
+                    <td class="col_writer">robin</td>
+                    <td class="col_date">2026.06.14</td>
+                    <td class="col_hits">15</td>
+                </tr>
+                <tr>
+                    <td class="col_no">3</td>
+                    <td class="col_title"><a href="./board/view.html?no=3">글제목#3</a></td>
+                    <td class="col_writer">hong</td>
+                    <td class="col_date">2026.06.13</td>
+                    <td class="col_hits">20</td>
+                </tr>
+
+            </table>
+
+            <!-- 2.2 페이지 네이션 영역 (원래는 php나 JS로 동적 구성해야 함) -->
+            <div class="board_pagination">
+                <a href="" class="btn">&lt;&lt;</a>
+                <a href="" class="btn">&lt;</a>
+                <a href="" class="btn selected">1</a> <!-- 클래스 명 2개 설정 (썬택된 페이지 스타일 적용 위해서! 다른 버튼 누르면 js로 적용 대상 변경시킴!) -->
+                <a href="" class="btn">2</a>
+                <a href="" class="btn">3</a>
+                <a href="" class="btn">4</a>
+                <a href="" class="btn">5</a>
+                <a href="" class="btn">&gt;</a>
+                <a href="" class="btn">&gt;&gt;</a>
+            </div>
+
+            <!-- 2.3 등록 버튼 영역 -->
+            <div class="btn_wrap">
+                <a href="./board/write.html">등록</a>
+            </div>
+
+        </div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,83 @@
+/* 공통 스타일 적용 */
+@import url('../css/common.css');
+
+/* 공통영역 제외 고유 스타일 */
+
+/* 글작성 영역 너비 */
+.board_write_wrap{
+    width: 100%;
+    border-top: 2px solid black;
+}  
+
+/* 제목, 글쓴이, 비밀번호 작성영역 안쪽 여백 주기 */
+.board_write .title, .board_write .info{
+    padding: 1.5rem;
+}
+
+/* 제목 영역의 라벨과 input 요소의 가로배치.. */
+.board_write .title{
+    display: flex;
+    flex-direction: row;/*가로 방향*/
+    border-bottom: 1px dashed #dddddd;
+}
+.board_write .col_label{
+    width: 6rem;
+    font-size: 1.4rem;
+    padding: 1rem;
+}
+.board_write .col_input{
+    flex-grow: 1;
+}
+.board_write .col_input input{
+    box-sizing: border-box; /* 그냥 100%로하면 마진 등 주면 영역 넘어감! 그래서 box를 경계선 기준으로 변경 필요! */
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+.board_write .info{
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid black;
+    justify-content: space-between;
+}
+.board_write .info .writer{
+    width: 50%;
+    display: flex;
+}
+.board_write .info .password{
+    width: 45%;
+    display: flex;
+}
+
+/* 글 내용 작성 영역 스타일 */
+.board_write .content{
+    border-bottom: 1px solid black;
+}
+
+.board_write .content textarea{
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    height: 30rem;
+    padding: 1.5rem;
+    border: 0;
+    /* 요소 크기 조절을 허용 안함 */
+    resize: none;
+    font-size: 1.2rem;
+}
+
+/* 저장 버튼 스타일링 */
+.btn_wrap input{
+    min-width: 100px;
+    border: 1px solid black;
+    background-color: black;
+    color: white;
+    padding: 10PX;
+    font-size: 1.2rem;
+    box-sizing: border-box;
+    border-radius: 8px;
+
+    /* 마우스를 올렸을때.. 커서모양을 손가락 모양으로 변경 */
+    cursor: pointer;
+}

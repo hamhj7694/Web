@@ -1,0 +1,48 @@
+/* 공통 스타일 적용 */
+@import url('../css/common.css');
+
+/* 상세 게시글 페이지만의 고유 스타일링 */
+
+.board_view_wrap{
+    width: 100%;
+    border-top: 2px solid black;
+}
+.board_view_wrap .title{
+    padding: 2rem 1.5rem;
+    font-size: 2rem;
+    border-bottom: 1px dashed #ddd;
+}
+.board_view_wrap .info{
+    padding: 1.5rem 0rem;
+    border-bottom: 1px solid gray;
+}
+/* 정보들 옆으로 표시해보기(이번엔 플랙스 말고 다른거 써보기) */
+.board_view_wrap .info dl{
+    display: inline-block;
+    padding: 0rem 2rem;
+    border-right: 1px solid #ccc;
+}
+/* 마지막 요소(조회)의 오른쪽 구분선 제거 */
+.board_view_wrap .info dl:last-child{
+    border-right: 0px;
+}
+/* 라벨과 글씨들 옆으로 */
+.board_view_wrap .info dl dt, .board_view_wrap dl dd{
+    display: inline-block;
+    font-size: 1.4rem;
+}
+
+.board_view_wrap dl dd{
+    margin-left: 1rem;
+    color: gray;
+}
+
+/* 글 내용 영역 */
+.board_view_wrap .content{
+    padding: 1.5rem;
+    font-size: 1.4rem;
+    line-height: 160%;
+    border-bottom: 1px solid black;
+
+    min-height: 20rem;
+}

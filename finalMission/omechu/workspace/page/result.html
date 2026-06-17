@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오메추 결과</title>
+
+    <link rel="stylesheet" href="../css/result.css">
+    <script defer src="../js/result.js"></script>
+</head>
+<body>
+    <div class="wrap">
+        <header class="header">
+            <a href="../index.html">
+                <h1 class="logo"><img src="../assets/logo/logo.png" alt="말랑곰 얼굴"> 오메추</h1>
+            </a>
+            <a href="./login.html" class="login-link">👤 로그인</a>
+        </header>
+
+        <main class="main">
+            <section class="result_title">
+                <p>오늘의 오메추!</p>
+                <h1>이 메뉴 어때요?</h1>
+            </section>
+
+            <section class="result_card">
+                <div class="result_char">
+                    <img src="../assets/logo/logo.png" alt="말랑곰">
+                    <p>짜잔! 오늘은 이거예요</p>
+                </div>
+
+                <div class="food_img_box">
+                    <img class="result_food_img" src="../assets/food/jeyuk.png" alt="추천 음식">
+                </div>
+
+                <h2 class="result_menu_name">제육볶음</h2>
+
+                <div class="tag_list">
+                    <span>#한식</span>
+                    <span>#점심</span>
+                    <span>#혼밥</span>
+                    <span>#든든함</span>
+                </div>
+
+                <div class="comment">
+                    <h3 class="nickname">햄스터님:</h4>
+                    <p class="result_comment">“점심에 실패 없는 든든한 메뉴!”</p>
+                </div>
+
+                <div class="result_like">
+                    <p class="result_count">추천 842</p>
+                    <button class="heart">♡</button>
+                </div>
+                
+            </section>
+
+            <section class="result_actions">
+                <button type="button" class="btn_again">다시추천</button>
+                <button type="button" class="btn_map">식당 찾기</button>
+                <button type="button" class="btn_wiki">음식 자세히 보기</button>
+                <button type="button" class="btn_share">공유하기</button>
+            </section>
+        </main>
+
+        <!-- ===========================
+            오버레이 영역
+        --=========================== -->
+        <div class="roulette_overlay hidden">
+            <div class="roulette">
+                <p>다시 고르는 중...</p>
+                <img class="result_roulette_img" src="../assets/home/roulette.png" alt="룰렛판">
+            </div>
+        </div>
+
+        <div class="share_overlay hidden">
+            <div class="share_modal">
+                <button type="button" class="share_close_btn">x</button>
+
+                <h2>오메추 결과 공유하기</h2>
+                <p class="share_menu_name">오늘의 추천 메뉴는 제육볶음!</p>
+                <img class="share_food_img" src="" alt="제육볶음">
+
+                <button type="button" class="copy_link_btn">링크 복사하기</button>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <ul>
+                <li>
+                    <a class="home" href="../index.html">
+                        <span>홈</span>
+                        <img src="../assets/icon/home.png" alt="홈">
+                    </a>
+                </li>
+                <li>
+                    <a class="food" href="./wiki.html">
+                        <span>푸드 위키</span>
+                        <img src="../assets/icon/food.png" alt="푸드">
+                    </a>
+                </li>
+                <li>
+                    <a class="map" href="./map.html">
+                        <span>지도</span>
+                        <img src="../assets/icon/map.png" alt="지도">
+                    </a>
+                </li>
+                <li>
+                    <a class="my" href="./mypage.html">
+                        <span>마이</span>
+                        <img src="../assets/icon/my.png" alt="마이">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>

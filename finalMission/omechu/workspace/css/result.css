@@ -1,0 +1,305 @@
+@import url('./common.css');
+
+.result_title {
+    text-align: center;
+    padding-top: 16px;
+}
+
+.result_title p {
+    display: inline-block;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    border-radius: var(--radius-lg);
+    background: var(--color-sub);
+    color: var(--color-main);
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.result_title h1 {
+    font-family: var(--font-point);
+    font-size: 3rem;
+}
+
+.result_card {
+    margin-top: 24px;
+    padding: 22px 16px;
+    border-radius: var(--radius-lg);
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    text-align: center;
+}
+
+.result_char {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    color: var(--color-main);
+    font-weight: 900;
+}
+
+.result_char img {
+    width: 70px;
+    height: 52px;
+    margin-left: -30px;
+}
+
+.food_img_box {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    background: var(--color-sub);
+    overflow: hidden;
+}
+
+.result_food_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.result_menu_name {
+    margin-top: 20px;
+    font-family: var(--font-point);
+    font-size: 3rem;
+}
+
+.tag_list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag_list span {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: #6b4226;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-top: 16px;
+}
+
+.comment{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.result_comment {
+    margin-left: 10px;
+    color: var(--color-text-sub);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.result_like {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.result_count {
+    margin: 0;
+    color: var(--color-main);
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.result_like .heart {
+    margin-top: 7px;
+    line-height: 1;
+}
+
+/* =============================
+    하단 버튼
+============================= */
+
+.result_actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.result_actions button {
+    height: 50px;
+    border-radius: var(--radius-sm);
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.btn_again {
+    background: #fff;
+    color: var(--color-main);
+    border: 2px solid var(--color-sub);
+}
+
+.btn_map {
+    background: #fff;
+    color: var(--color-main);
+    border: 2px solid var(--color-sub);
+}
+
+.btn_wiki {
+    background: #fff;
+    color: var(--color-main);
+    border: 2px solid var(--color-sub);
+}
+
+.btn_share {
+    background: #fff;
+    color: var(--color-main);
+    border: 2px solid var(--color-sub);
+}
+
+.btn_again:hover{
+    background: var(--color-sub);
+    color: var(--color-main);
+}
+
+.btn_map:hover{
+    background: var(--color-sub);
+    color: var(--color-main);
+}
+
+.btn_wiki:hover{
+    background: var(--color-sub);
+    color: var(--color-main);
+}
+
+.btn_share:hover{
+    background: var(--color-sub);
+    color: var(--color-main);
+}
+
+/* =============================
+    룰렛 오버레이
+============================= */
+
+.roulette_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(255, 246, 233, 0.9);
+}
+
+.roulette {
+    text-align: center;
+}
+
+.roulette p {
+    margin-bottom: 16px;
+    color: var(--color-main);
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.result_roulette_img {
+    width: 260px;
+    height: 260px;
+}
+
+.result_roulette_img.spin {
+    animation: spinRoulette 0.9s ease-in-out;
+}
+
+@keyframes spinRoulette {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(720deg);
+    }
+}
+
+/* =============================
+    공유 오버레이
+============================= */
+
+.share_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+    background: rgba(34, 34, 34, 0.45);
+}
+
+.share_modal {
+    position: relative;
+
+    width: 100%;
+    max-width: 360px;
+    padding: 24px 18px 18px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-card);
+    text-align: center;
+    box-shadow: var(--shadow-card);
+}
+
+.share_close_btn {
+    position: absolute;
+    right: 14px;
+    top: 10px;
+
+    width: 32px;
+    height: 32px;
+
+    color: var(--color-text-sub);
+    font-size: 2.4rem;
+    font-weight: 900;
+}
+
+.share_modal h2 {
+    font-family: var(--font-point);
+    font-size: 2.2rem;
+}
+
+.share_menu_name {
+    margin-top: 12px;
+    color: var(--color-main);
+    font-size: 1.6rem;
+    font-weight: 900;
+}
+
+.share_food_img {
+    width: 220px;
+    height: 220px;
+    margin: 18px auto 16px;
+    border-radius: var(--radius-lg);
+    background: var(--color-sub);
+    object-fit: cover;
+}
+
+.copy_link_btn{
+    width: 100%;
+    height: 46px;
+    margin-top: 10px;
+    border-radius: var(--radius-sm);
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.copy_link_btn {
+    background: var(--color-main);
+    color: #fff;
+}

@@ -1,0 +1,400 @@
+/* 공통 스타일 import [마진, 패딩, 폰트사이즈, 리스트, 앵커 스타일 ... 등] */
+@import url('./common.css');
+
+/* ================================
+   index.css
+   홈 화면 전용 스타일
+================================ */
+
+/* title */
+.title_text {
+    text-align: center;
+    padding-top: 12px;
+}
+
+.title_text>div {
+    display: inline-block;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    border-radius: var(--radius-lg);
+    background: var(--color-sub);
+    color: var(--color-main);
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.title_text h1 {
+    margin-bottom: 8px;
+    font-family: var(--font-point);
+    font-size: 3.2rem;
+    font-weight: 900;
+}
+
+.title_text>p {
+    color: var(--color-text-sub);
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+/* roulette */
+.char_roulette {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    height: clamp(430px, 95vw, 500px);
+    margin: 2.4rem auto 0;
+}
+
+.roulette_wrap {
+    position: absolute;
+    left: 50%;
+    top: 95px;
+    z-index: 2;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    transform: translateX(-50%);
+}
+
+/* 1층: 곰 얼굴/몸통 */
+.char_img {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    transform: translateX(-30%) translateY(-13%) rotate(10deg);
+}
+
+/* 2층: 룰렛 */
+.roulette_img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 룰렛 위 고정 장식이 있다면 */
+/* .roulette_top_img {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+} */
+
+/* 3층: 곰 손 */
+.char_hand {
+    position: absolute;
+    left: 50%;
+    top: 86px;
+    z-index: 4;
+    width: 50%;
+    transform: translateX(-18%) translateY(40%) rotate(20deg);
+    pointer-events: none;
+}
+
+/* 4층: 중앙 버튼 */
+.omech_btn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 5;
+    transform: translate(-50%, -50%);
+
+    width: 110px;
+    height: 110px;
+    border-radius: var(--radius-circle);
+    background: var(--color-main);
+    color: #fff;
+    font-family: var(--font-point);
+    font-size: 2.1rem;
+    font-weight: 900;
+    line-height: 1.2;
+    box-shadow: 0 7px 0 var(--color-main-dark);
+}
+
+.omech_btn:active {
+    transform: translate(-50%, -50%) translateY(0.4rem);
+    box-shadow: 0 3px 0 var(--color-main-dark);
+}
+
+.roulette_img.spin {
+    animation: spinRoulette 0.9s ease-in-out;
+}
+
+@keyframes spinRoulette {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(720deg);          
+    }
+}
+
+/* option */
+
+.omechu_option {
+    position: fixed;
+    left: 50%;
+    bottom: var(--bottom-nav-height);
+    z-index: 90;
+    transform: translateX(-50%);
+
+    width: 100%;
+    max-width: var(--layout-mobile-max);
+    background: transparent;
+}
+
+/* 홈 화면은 하단 고정 옵션 버튼 때문에 여백 추가 */
+.wrap {
+    padding-bottom: calc(var(--bottom-nav-height) + 58px);
+}
+
+/* 맞춤 추천 받기 버튼 */
+.omechu_option .option_panel_btn {
+    width: 100%;
+    height: 48px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: var(--color-main);
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 900;
+    border-top: 3px solid #fff;
+    border-left: 3px solid #fff;
+    border-right: 3px solid #fff;
+}
+
+/* 옵션창 */
+.omechu_option>div {
+    max-height: 0;
+    overflow-y: auto;
+    overflow-x: visible;
+
+    padding: 0 18px;
+    background: var(--color-card);
+    box-shadow: var(--shadow-card);
+
+    transition: max-height 0.32s ease, padding 0.32s ease;
+}
+
+.option_text {
+    margin-bottom: 16px;
+    color: var(--color-main);
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.option1,
+.option2,
+.option3,
+.option4 {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    gap:24px
+}
+
+.omechu_option .subtitle { width: 44px; flex: 0 0 44px; white-space: nowrap; }
+
+.omechu_option ul {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 0 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.omechu_option ul li:first-child{
+    margin-right: 10px;
+}
+
+.option4 ul{
+    display: flex;
+    margin: 0 auto;
+}
+
+.option4 ul li:first-child{
+    margin: 0;
+}
+
+.omechu_option li {
+    flex: 0 0 auto;
+}
+
+.omechu_option li button {
+    min-width: 72px;
+    height: 38px;
+    padding: 0 14px;
+    border: 1px solid #ffd39a;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: #6b4226;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.omechu_option li button.selected {
+    border-color: var(--color-main);
+    background: var(--color-main);
+    color: #fff;
+}
+
+.option_submit_btn {
+    display: block;
+    width: 90%;
+    height: 48px;
+    margin: 18px auto 0;
+
+    border-radius: var(--radius-sm);
+    background: #fff;
+    color: var(--color-main);
+    border: 2px solid var(--color-main);
+
+    font-size: 1.6rem;
+    font-weight: 900;
+}
+
+/* 열렸을 때 */
+.omechu_option.open>div {
+    max-height: 60vh;
+    padding: 18px;
+}
+
+/* top menu */
+.top_menu {
+    position: relative;
+    z-index: 1;
+    margin-top: 18px;
+    padding: 10px 5px 5px 5px;
+    background-color: var(--color-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-line);
+}
+
+.bar {
+    padding: 0 4px;
+    margin-bottom: 12px;
+}
+
+.bar button {
+    color: var(--color-main);
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.top_menu .rank_top3 {
+    display: flex;
+    gap: 5px;
+}
+
+.top_menu .rank {
+    position: relative;
+
+    flex: 1;
+    min-width: 0;
+
+    min-height: 178px;
+    padding: 0 10px 12px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+}
+
+.rank_no {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+
+    width: 32px;
+    height: 32px;
+    border-radius: 8px 0 8px 0;
+    background: var(--color-main);
+    color: #fff;
+
+    font-size: 1.8rem;
+    line-height: 32px;
+    text-align: center;
+}
+
+.rank_img {
+    width: 100%;
+    height: 120px;
+    margin-top: 10px;
+    border-radius: var(--radius-md);
+    background: var(--color-sub);
+    object-fit: cover;
+}
+
+.rank_menu {
+    margin-top: 10px;
+    font-size: 1.6rem;
+    font-weight: 900;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.rank_count {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    white-space: nowrap;
+}
+
+.heart {
+    float: right;
+    width: 28px;
+    height: 28px;
+    margin-top: 4px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 2.2rem;
+}
+
+.heart.is-liked {
+    color: var(--color-heart);
+}
+
+html,
+body,
+.wrap {
+    overflow-x: hidden;
+}
+
+/* PC */
+@media (min-width: 768px) {
+    .main {
+        padding: 32px;
+    }
+
+    .char_roulette {
+        max-width: 420px;
+    }
+
+    .title_text h1 {
+        font-size: 4rem;
+    }
+
+    .top_menu {
+        margin-top: 14px;
+    }
+
+    .omechu_option {
+        max-width: 720px;
+    }
+}

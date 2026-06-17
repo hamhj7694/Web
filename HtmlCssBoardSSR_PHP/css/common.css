@@ -1,0 +1,59 @@
+/* 전체 요소들의 기본 마진, 패딩 제거 */
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+/* 리스트 블릿기호 제거 */
+ul{ list-style: none; }
+
+/* anchor 요소의 밑줄 제거 */
+a{
+    text-decoration: none;
+    color: inherit; /* 부모요소의 색상을 그대로 상속 받음 */
+}
+
+/* 요소들의 폰트 사이즈 기준 크기를 정하기 위해.. */
+body{
+    font-size: 10px; /* 초기값을 10px로 설정해서! 자손 요소들 중에 1.4 rem 이면 14px로 계산하기 쉽게 함!*/
+}
+
+/* 게시판 페이지의 공통 스타일 */
+
+/* 0. 게시판 페이지 콘텐츠 표시될 영역 너비, 가운데 정렬 */
+.board_wrap{
+    width: 860px;
+    margin: 100px auto;
+}
+
+/* 1. 각 페이지의 제목 영역 스타일 */
+.board_title{
+    margin-bottom: 30px;
+}
+
+.board_title h2{
+    font-size: 3rem;
+}
+
+.board_title p{
+    margin-top: 1rem;
+    font-size: 1.4rem;
+}
+
+/* 페이지 가장 하단에 위치할 (등록, 수정 등) 버튼들 */
+.btn_wrap{
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* 버튼 모양으로 스타일링 */
+.btn_wrap a{
+    display: inline-block;
+    min-width: 80px; /* 최소 80px 확보하고, 내부 글씨가 많아지면 늘려라! */
+    border: 1px solid black;
+    background-color: black;
+    padding: 10px;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 8px;
+}

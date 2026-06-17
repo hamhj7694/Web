@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 등록</title>
+
+    <style>
+        #wrap{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            height: 100vh; /* viewport height 보이는 화면 사이즈 만큼*/
+        }
+
+        #img1{
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid black;
+        }
+        #in1{
+            display: none;
+        }
+
+        #in2{
+            padding: .5rem 1rem;
+            text-align: center;
+            margin: 1rem;
+        }
+
+        #btn1{
+            padding: .5rem 1rem;
+            background-color: cadetblue;
+            border: none;
+            border-radius: 8px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="wrap">
+        <h2>프로필 등록 페이지</h2>
+        <p>프로필 사진을 등록하고 닉네임을 설정하세요.</p>
+
+        <div>
+            <img id="img1" src="../Day01/image/penguins.jpg" alt="profile image">
+            <!-- 이미지를 선택했을때 파일 탐색기가 보여지도록..  -->
+            <input id="in1" type="file" accept="image/*">
+        </div>
+        <div>
+            <input type="text" placeholder="닉네임" id="in2">
+        </div>
+        <div>
+            <button id="btn1">프로필 등록</button>
+        </div>
+    </div>
+    
+</body>
+
+    <script>
+        // 요소들 참조
+        var img1= document.getElementById('img1')
+        var in1= document.getElementById('in1')
+        var in2= document.getElementById('in2')
+        var btn1= document.getElementById('btn1')
+
+        // 이미지 요소 클릭 이벤트 처리
+        img1.addEventListener('click', function(){
+            in1.click(); //숨겨있던 input 요소를 강제로 클릭 실행
+        });
+
+        // 파일 선택기 이미지 선택이 완료되면..
+        in1.addEventListener('change', function(){
+            // 선택한 파일 객체 취득
+            var file= in1.files[0]; //여러개 선택일 수 있어서 배열이 첫번째
+            
+            if(file){
+                var fr= new FileReader();
+                fr.onload= function(){
+                    img1.src= fr.result;
+                }
+                fr.readAsDataURL(file);
+            }
+        })
+
+        // 전송 버튼 클릭 이벤트 처리
+        btn1.addEventListener('click', function(){
+
+            // 선택한 파일 정보 얻기
+            var file=in1.files[0];
+
+            // 파일 없으면 전송 안하게함
+            if(file){
+                // 파일과 문자열 데이터를 동시에 서버에 전달하려면 특별한 택배상자 필요!
+                var formData= new FormData();
+                formData.append('img', file); // 식별자와 파일
+                formData.append('nickname', in2.value); // 식별자와 값
+
+                // 닉네임+프로필 사진을 서버로 전송(ajax)
+                fetch('./profileUpload.php',{
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(res){return res.text()})
+                .then(function(text){alert(text)})
+
+            } else{
+                alert('사진 변경이 없어서 전송 안함!')
+            }
+        })
+    </script>
+    
+</html>

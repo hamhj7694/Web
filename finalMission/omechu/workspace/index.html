@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오메추! 오늘 메뉴 추천!</title>
+
+    <link rel="stylesheet" href="./css/index.css"/>
+    <script defer src="./js/index.js"></script>
+</head>
+<body>
+    <div class="wrap">
+        <header class="header">
+            <a href="./index.html">
+                <h1 class="logo"><img src="./assets/logo/logo.png" alt="말랑곰 얼굴"> 오메추</h1>
+            </a>
+            <a href="./page/login.html" class="login-link">👤 로그인</a>
+        </header>
+
+        <main class="main">
+            <div class="title_text">
+                <div>
+                    <!-- 배경에 말풍선 넣기 -->
+                    <p>고민하지 말고 오메추!</p>
+                </div>
+                <h1>오늘 뭐 먹지?</h1>
+                <p>맛있는 메뉴를 추천해 줄게요!</p>
+            </div>
+
+            <div class="char_roulette">
+                <img class="char_img" src="./assets/home/char_main.png" alt="말랑곰">
+
+                <div class="roulette_wrap">
+                    <img class="roulette_img" src="./assets/home/roulette.png" alt="룰렛판">
+                    <!-- <img class="roulette_top_img" src="./assets/home/roulette_top.png" alt="룰렛판 상단"> -->
+                    <button type="button" class="omech_btn">오메추<br>받기</button>
+                </div>
+
+                <img class="char_hand" src="./assets/home/char_hand.png" alt="말랑곰 손">
+            </div>
+            
+            <div class="top_menu">
+                <div class="bar">
+                    <h2 class="subtitle">오늘의 인기 메뉴</h2>
+                    <button type="button">더보기 &gt;</button>
+                </div>
+                <div class="rank_top3">
+                    <div class="rank">
+                        <h3 class="rank_no">1</h3>
+                        <img class="rank_img" src="" alt="top1 음식">
+                        <h4 class="rank_menu">제육볶음</h4>
+                        <p class="rank_count">추천 842</p>
+                        <button type="button" class="heart is-liked">🧡</button>
+                    </div>
+                    <div class="rank">
+                        <h3 class="rank_no">2</h3>
+                        <img class="rank_img" src="" alt="top2 음식">
+                        <h4 class="rank_menu">김치찌개</h4>
+                        <p class="rank_count">추천 842</p>
+                        <button type="button" class="heart">♡</button>
+                    </div>
+                    <div class="rank">
+                        <h3 class="rank_no">3</h3>
+                        <img class="rank_img" src="" alt="top3 음식">
+                        <h4 class="rank_menu">치킨</h4>
+                        <p class="rank_count">추천 842</p>
+                        <button type="button" class="heart">♡</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- [맞춤 추천 받기] 버튼 누르면 해당 옵션 선택 창이 올라오는 구조.. 다시 누르면 닫힘 -->
+        <div class="omechu_option">
+            <button type="button" class="option_panel_btn">맞춤 추천 받기 ▲</button>
+            <div>
+                <p class="option_text">원하는 조건을 선택하세요!</p>
+                <div class="option1">
+                    <h3 class="subtitle">무엇?</h3>
+                    <!-- 리스트 선택지가 좌우로 나열되고, 좌우로 스크롤하며 볼 수 있는 구조 -->
+                    <ul>
+                        <li><button type="button">전체</button></li>
+                        <li><button type="button">한식</button></li>
+                        <li><button type="button">일식</button></li>
+                        <li><button type="button">중식</button></li>
+                        <li><button type="button">양식</button></li>
+                        <li><button type="button">분식</button></li>
+                        <li><button type="button">디저트</button></li>
+                        <li><button type="button">기타</button></li>
+                    </ul>
+                </div>
+                <div class="option2">
+                    <h3 class="subtitle">상황?</h3>
+                    <ul>
+                        <li><button type="button">전체</button></li>
+                        <li><button type="button">혼밥</button></li>
+                        <li><button type="button">데이트</button></li>
+                        <li><button type="button">친목</button></li>
+                        <li><button type="button">회식</button></li>
+                        <li><button type="button">해장</button></li>
+                    </ul>
+                </div>
+                <div class="option3">
+                    <h3 class="subtitle">어디?</h3>
+                    <ul>
+                        <li><button type="button">전체</button></li>
+                        <li><button type="button">500m</button></li>
+                        <li><button type="button">1km</button></li>
+                        <li><button type="button">2km</button></li>
+                        <li><button type="button">3km+</button></li>
+                    </ul>
+                </div>
+                <div class="option4">
+                    <h3 class="subtitle">언제?</h3>
+                    <ul>
+                        <li><button type="button">아침</button></li>
+                        <li><button type="button">점심</button></li>
+                        <li><button type="button">저녁</button></li>
+                        <li><button type="button">야식</button></li>
+                    </ul>
+                </div>
+                <button type="button" class="option_submit_btn">선택 조건으로 오메추 받기</button>
+            </div>
+        </div>
+        
+        <nav class="nav">
+            <ul>
+                <li>
+                <a class="home" href="./index.html">
+                    <span>홈</span>
+                    <img src="./assets/icon/home.png" alt="홈">
+                </a>
+                </li>
+                <li>
+                <a class="food" href="./page/wiki.html">
+                    <span>푸드 위키</span>
+                    <img src="./assets/icon/food.png" alt="푸드">
+                </a>
+                </li>
+                <li>
+                <a class="map" href="./page/map.html">
+                    <span>지도</span>
+                    <img src="./assets/icon/map.png" alt="지도">
+                </a>
+                </li>
+                <li>
+                <a class="my" href="./page/mypage.html">
+                    <span>마이</span>
+                    <img src="./assets/icon/my.png" alt="마이">
+                </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>
