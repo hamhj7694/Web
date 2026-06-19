@@ -6,6 +6,7 @@
     <title>오메추! 오늘 메뉴 추천!</title>
 
     <link rel="stylesheet" href="./css/index.css"/>
+    <script defer src="./js/login/login_common.js"></script>
     <script defer src="./js/index.js"></script>
 </head>
 <body>
@@ -14,7 +15,7 @@
             <a href="./index.html">
                 <h1 class="logo"><img src="./assets/logo/logo.png" alt="말랑곰 얼굴"> 오메추</h1>
             </a>
-            <a href="./page/login.html" class="login-link">👤 로그인</a>
+            <a href="./page/login/login.html" class="login-link">👤 로그인</a>
         </header>
 
         <main class="main">
@@ -42,24 +43,24 @@
             <div class="top_menu">
                 <div class="bar">
                     <h2 class="subtitle">오늘의 인기 메뉴</h2>
-                    <button type="button">더보기 &gt;</button>
+                    <a href="./page/wiki.html"><button type="button" class="wikiMoreBtn">더보기 &gt;</button></a>
                 </div>
                 <div class="rank_top3">
-                    <div class="rank">
+                    <div class="rank1 top_rank_item" data-food-id="1">
                         <h3 class="rank_no">1</h3>
                         <img class="rank_img" src="" alt="top1 음식">
                         <h4 class="rank_menu">제육볶음</h4>
                         <p class="rank_count">추천 842</p>
-                        <button type="button" class="heart is-liked">🧡</button>
+                        <button type="button" class="heart">♡</button>
                     </div>
-                    <div class="rank">
+                    <div class="rank2 top_rank_item" data-food-id="2">
                         <h3 class="rank_no">2</h3>
                         <img class="rank_img" src="" alt="top2 음식">
                         <h4 class="rank_menu">김치찌개</h4>
                         <p class="rank_count">추천 842</p>
                         <button type="button" class="heart">♡</button>
                     </div>
-                    <div class="rank">
+                    <div class="rank3 top_rank_item" data-food-id="3">
                         <h3 class="rank_no">3</h3>
                         <img class="rank_img" src="" alt="top3 음식">
                         <h4 class="rank_menu">치킨</h4>
@@ -67,7 +68,17 @@
                         <button type="button" class="heart">♡</button>
                     </div>
                 </div>
+                <button type="button" class="wiki_write">
+                    <h2>나도 음식 추천 할래요!</h2>
+                    <p>추천 음식을 등록하거나 코멘트를 작성해보세요!</p>
+                </button>
             </div>
+
+            <footer class="footer">
+                &copy 2026 함형준 <br>
+                ☎ 010-56616-7694 <br>
+                ✉ hambrojun@naver.com
+            </footer>
         </main>
 
         <!-- [맞춤 추천 받기] 버튼 누르면 해당 옵션 선택 창이 올라오는 구조.. 다시 누르면 닫힘 -->
@@ -81,8 +92,8 @@
                     <ul>
                         <li><button type="button">전체</button></li>
                         <li><button type="button">한식</button></li>
-                        <li><button type="button">일식</button></li>
                         <li><button type="button">중식</button></li>
+                        <li><button type="button">일식</button></li>
                         <li><button type="button">양식</button></li>
                         <li><button type="button">분식</button></li>
                         <li><button type="button">디저트</button></li>
@@ -98,19 +109,10 @@
                         <li><button type="button">친목</button></li>
                         <li><button type="button">회식</button></li>
                         <li><button type="button">해장</button></li>
+                        <li><button type="button">배달</button></li>
                     </ul>
                 </div>
                 <div class="option3">
-                    <h3 class="subtitle">어디?</h3>
-                    <ul>
-                        <li><button type="button">전체</button></li>
-                        <li><button type="button">500m</button></li>
-                        <li><button type="button">1km</button></li>
-                        <li><button type="button">2km</button></li>
-                        <li><button type="button">3km+</button></li>
-                    </ul>
-                </div>
-                <div class="option4">
                     <h3 class="subtitle">언제?</h3>
                     <ul>
                         <li><button type="button">아침</button></li>
@@ -119,6 +121,28 @@
                         <li><button type="button">야식</button></li>
                     </ul>
                 </div>
+                <div class="option4">
+                    <h3 class="subtitle">어디?</h3>
+
+                    <div class="distance_box">
+                        <input
+                            type="range"
+                            class="distance_range"
+                            min="0"
+                            max="3"
+                            step="1"
+                            value="1"
+                        >
+
+                        <div class="distance_labels">
+                            <span>500m</span>
+                            <span>1km</span>
+                            <span>2km</span>
+                            <span>3km+</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <button type="button" class="option_submit_btn">선택 조건으로 오메추 받기</button>
             </div>
         </div>
@@ -126,7 +150,7 @@
         <nav class="nav">
             <ul>
                 <li>
-                <a class="home" href="./index.html">
+                <a class="home active" href="./index.html">
                     <span>홈</span>
                     <img src="./assets/icon/home.png" alt="홈">
                 </a>

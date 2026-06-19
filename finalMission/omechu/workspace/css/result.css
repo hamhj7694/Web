@@ -47,8 +47,8 @@
 }
 
 .food_img_box {
-    width: 220px;
-    height: 220px;
+    width: 260px;
+    height: 260px;
     margin: 0 auto;
     border-radius: var(--radius-lg);
     background: var(--color-sub);
@@ -113,9 +113,76 @@
     font-weight: 900;
 }
 
-.result_like .heart {
-    margin-top: 7px;
+.result_like {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+.recommend_btn {
+    position: relative;
+    overflow: visible;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    height: 36px;
+    padding: 0 12px;
+
+    border: 2px solid var(--color-main);
+    border-radius: var(--radius-lg);
+    background: #fff;
+    color: var(--color-main);
+
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.heart_particle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    pointer-events: none;
+
+    font-size: 1.6rem;
     line-height: 1;
+
+    transform: translate(-50%, -50%);
+    animation: heartParticle 0.8s ease-out forwards;
+
+    z-index: 10;
+}
+
+@keyframes heartParticle {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(
+                calc(-50% + var(--x)),
+                calc(-50% + var(--y))
+            )
+            scale(1.2)
+            rotate(var(--r));
+    }
+}
+
+.recommend_btn .heart {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.recommend_btn.is-liked {
+    background: var(--color-main);
+    color: #fff;
 }
 
 /* =============================

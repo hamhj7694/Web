@@ -1,0 +1,314 @@
+@import url('../common.css');
+
+/* ================================
+   ID / PW 찾기 페이지 공통
+================================ */
+
+.login_wrap {
+    min-height: 100dvh;
+    padding-bottom: 0;
+}
+
+.login_header {
+    position: relative;
+    z-index: 2;
+}
+
+.login_main {
+    min-height: calc(100dvh - var(--header-height));
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px 16px 40px;
+}
+
+.login_card {
+    width: 100%;
+    max-width: var(--layout-mobile-max);
+
+    padding: 24px 18px 22px;
+
+    border-radius: 28px;
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
+}
+
+.find_card {
+    max-width: var(--layout-mobile-max);
+}
+
+
+/* ================================
+   상단 타이틀
+================================ */
+
+.find_title_box {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.find_bear_img {
+    display: block;
+
+    width: 110px;
+    margin: 0 auto 8px;
+}
+
+.login_badge {
+    display: inline-block;
+
+    margin-bottom: 10px;
+    padding: 6px 12px;
+
+    border-radius: 999px;
+    background: var(--color-sub);
+    color: var(--color-main);
+
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.find_title_box h1 {
+    color: var(--color-text);
+    font-family: var(--font-point);
+    font-size: 2.8rem;
+    font-weight: 900;
+}
+
+.find_title_box > p:last-child {
+    margin-top: 6px;
+
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+
+/* ================================
+   탭 버튼
+================================ */
+
+.find_tab_area {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+
+    margin-bottom: 18px;
+    padding: 5px;
+
+    border-radius: 999px;
+    background: #fffaf2;
+    border: 1px solid #f3dfbd;
+}
+
+.find_tab_btn {
+    height: 38px;
+
+    border-radius: 999px;
+    background: transparent;
+    color: #8a5a2b;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.find_tab_btn.is-active {
+    background: var(--color-main);
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(255, 122, 0, 0.22);
+}
+
+.find_tab_btn:active {
+    transform: scale(0.97);
+}
+
+
+/* ================================
+   입력 폼
+================================ */
+
+.find_form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.find_box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input_box label {
+    display: inline-block;
+
+    margin-bottom: 6px;
+
+    color: var(--color-text);
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.input_box p {
+    display: inline-block;
+}
+
+.input_box input {
+    width: 100%;
+    height: 44px;
+
+    padding: 0 13px;
+
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line);
+    background: #ffffff;
+    color: var(--color-text);
+
+    font-size: 1.35rem;
+    font-weight: 800;
+    outline: none;
+}
+
+.input_box input:focus {
+    border-color: var(--color-main);
+    box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.12);
+}
+
+.input_box input::placeholder {
+    color: #b7b0a8;
+}
+
+.input_hint {
+    margin-left: 4px;
+
+    color: var(--color-text-sub);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+hr {
+    width: 100%;
+    border: 1px dashed var(--color-line);
+}
+
+
+/* ================================
+   버튼
+================================ */
+
+.login_submit_btn {
+    width: 100%;
+    height: 48px;
+
+    margin-top: 8px;
+
+    border-radius: var(--radius-md);
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.55rem;
+    font-weight: 900;
+}
+
+.login_submit_btn:hover {
+    background: #ffffff;
+    color: var(--color-main);
+    border: 2px solid var(--color-main);
+}
+
+.login_submit_btn:active {
+    transform: scale(0.97);
+}
+
+.guest_btn {
+    width: 100%;
+    height: 42px;
+
+    margin-top: 18px;
+
+    border-radius: var(--radius-md);
+    background: #fffaf2;
+    border: 1px solid #ffd39a;
+    color: #8a5a2b;
+
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.guest_btn:active {
+    transform: scale(0.97);
+}
+
+
+/* ================================
+   결과 박스
+================================ */
+
+.find_result {
+    padding: 14px 12px;
+
+    border-radius: var(--radius-md);
+    background: #fffaf2;
+    border: 1px solid #ffd39a;
+    color: #6b4226;
+
+    font-size: 1.3rem;
+    font-weight: 900;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.find_result strong {
+    color: var(--color-main);
+    font-size: 1.5rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* ================================
+   하단 링크
+================================ */
+
+.login_link_area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 18px;
+
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.login_link_area a {
+    color: var(--color-main);
+    font-weight: 900;
+}
+
+.login_link_area span {
+    width: 1px;
+    height: 12px;
+    background: var(--color-line);
+}
+
+
+/* ================================
+   PC 보정
+================================ */
+
+@media (min-width: 768px) {
+    .login_main {
+        padding: 40px 24px;
+    }
+
+    .login_card {
+        max-width: 420px;
+    }
+}

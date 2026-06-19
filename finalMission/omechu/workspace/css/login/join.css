@@ -1,0 +1,256 @@
+@import url('../common.css');
+
+.join_wrap {
+    min-height: 100dvh;
+    padding-bottom: 0;
+}
+
+.join_header {
+    position: relative;
+    z-index: 2;
+}
+
+.join_main {
+    min-height: calc(100dvh - var(--header-height));
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px 16px 40px;
+}
+
+.join_card {
+    width: 100%;
+    max-width: var(--layout-mobile-max);
+
+    padding: 24px 18px 22px;
+
+    border-radius: 28px;
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
+}
+
+.join_title_box {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.join_bear_img {
+    width: 120px;
+    margin-bottom: 8px;
+    margin: auto;
+}
+
+.join_badge {
+    display: inline-block;
+
+    margin-bottom: 10px;
+    padding: 6px 12px;
+
+    border-radius: 999px;
+    background: var(--color-sub);
+    color: var(--color-main);
+
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.join_title_box h1 {
+    color: var(--color-text);
+    font-family: var(--font-point);
+    font-size: 3rem;
+    font-weight: 900;
+}
+
+.join_title_box > p:last-child {
+    margin-top: 6px;
+
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+
+/* ================================
+   회원가입 입력 폼
+================================ */
+
+.join_form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input_box:first-child {
+    display: flex;
+    align-items: end;
+}
+
+.input_box label {
+    display: inline;
+
+    margin-bottom: 6px;
+
+    color: var(--color-text);
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.input_box p{
+    display: inline;
+}
+
+.input_box input {
+    width: 100%;
+    height: 44px;
+
+    padding: 0 13px;
+
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line);
+    background: #ffffff;
+    color: var(--color-text);
+
+    font-size: 1.35rem;
+    font-weight: 800;
+    outline: none;
+}
+
+.input_box input:focus {
+    border-color: var(--color-main);
+    box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.12);
+}
+
+.input_box input::placeholder {
+    color: #b7b0a8;
+}
+
+.input_hint {
+    margin-top: 5px;
+
+    color: var(--color-text-sub);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+hr{ border: 1px dashed var(--color-line);}
+/* ================================
+   약관 동의
+================================ */
+
+.agree_box {
+    margin-top: 4px;
+    padding: 12px;
+
+    border-radius: var(--radius-md);
+    background: #fffaf2;
+    border: 1px solid #f3dfbd;
+}
+
+.agree_box label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    color: #6b4226;
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1.45;
+    cursor: pointer;
+}
+
+.agree_box input {
+    flex-shrink: 0;
+    margin-top: 3px;
+
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-main);
+}
+
+
+/* ================================
+   버튼 / 링크
+================================ */
+
+.id_duplicate_check_btn{
+    width: 80px;
+    height: 38px;
+
+    margin: 0 0 4px 5px;
+
+    border-radius: var(--radius-md);
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.id_duplicate_check_btn.is-checked {
+    background: #ffffff;
+    color: var(--color-main);
+    border: 2px solid var(--color-main);
+}
+
+.join_submit_btn {
+    width: 100%;
+    height: 48px;
+
+    margin-top: 8px;
+
+    border-radius: var(--radius-md);
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.55rem;
+    font-weight: 900;
+}
+
+.join_submit_btn:hover{
+    background: #ffffff;
+    color: var(--color-main);
+    border: 2px solid var(--color-main);
+}
+
+.join_submit_btn:active {
+    transform: scale(0.97);
+}
+
+.join_link_area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 18px;
+
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.join_link_area span {
+    color: var(--color-text-sub);
+}
+
+.join_link_area a {
+    color: var(--color-main);
+    font-weight: 900;
+}
+
+
+/* ================================
+   PC 보정
+================================ */
+
+@media (min-width: 768px) {
+    .join_main {
+        padding: 40px 24px;
+    }
+
+    .join_card {
+        max-width: 420px;
+    }
+}

@@ -1,0 +1,1940 @@
+/* 공통 스타일 import */
+@import url('./common.css');
+
+/* ================================
+   상세 페이지 기본
+================================ */
+
+.detail_main {
+    padding: 18px 16px 28px;
+}
+
+/* 하단 nav 때문에 콘텐츠가 가리지 않도록 여백 확보 */
+.wrap {
+    padding-bottom: var(--bottom-nav-height);
+}
+
+
+/* ================================
+   메뉴 상세 카드
+================================ */
+
+.menu_detail_card {
+    position: relative;
+    overflow: hidden;
+
+    width: 100%;
+
+    border-radius: 22px;
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
+}
+
+
+/* ================================
+   상단 음식 이미지 영역
+================================ */
+
+.menu_image_area {
+    position: relative;
+
+    width: 100%;
+    height: 190px;
+
+    overflow: hidden;
+    background: var(--color-sub);
+}
+
+/* 대표 이미지 */
+.menu_main_img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 이미지 위 버튼 */
+.detail_back_btn,
+.detail_share_btn {
+    position: absolute;
+    top: 12px;
+    z-index: 5;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-circle);
+    background: rgba(255, 255, 255, 0.92);
+    color: #5a4633;
+
+    font-size: 1.8rem;
+    font-weight: 900;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.detail_back_btn {
+    left: 12px;
+}
+
+.detail_share_btn {
+    right: 12px;
+}
+
+.detail_back_btn:active,
+.detail_share_btn:active {
+    transform: scale(0.94);
+}
+
+
+/* ================================
+   메뉴 정보 영역
+================================ */
+
+.menu_info_area {
+    position: relative;
+    z-index: 2;
+
+    padding: 18px 18px 20px;
+}
+
+
+/* 메뉴 이름 */
+.menu_name {
+    margin-bottom: 10px;
+
+    color: var(--color-text);
+    font-family: var(--font-point);
+    font-size: 2.7rem;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+
+/* ================================
+   태그
+================================ */
+
+.menu_tag_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin-bottom: 14px;
+}
+
+.menu_tag_list span {
+    padding: 5px 8px;
+
+    border-radius: 999px;
+    background: var(--color-bg);
+    color: #9a6a32;
+
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+
+
+/* ================================
+   추천 수 영역
+================================ */
+
+.menu_count_area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 18px;
+
+    color: var(--color-text);
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.name_and_tag{
+    display: flex;
+    justify-content: space-between;
+}
+
+.tag_area{
+    display: flex;
+    align-items: center;
+}
+
+.tag_area .section_more_btn {
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 14px;
+    margin-left: 8px;
+
+    width: 24px;
+    height: 24px;
+    padding: 0;
+
+    border-radius: 999px;
+    background-color: var(--color-card);
+    border: 2px dotted var(--color-main);
+    color: var(--color-main);
+
+    font-size: 1.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.heart_icon {
+    color: var(--color-heart);
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+
+/* ================================
+   액션 버튼 3개
+================================ */
+
+.menu_action_area {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+
+    margin-bottom: 18px;
+}
+
+.menu_action_btn {
+    position: relative;
+    overflow: visible;
+
+    min-height: 64px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+
+    border-radius: var(--radius-md);
+    background: #fffaf2;
+    color: #7a5a3c;
+
+    font-size: 1.15rem;
+    font-weight: 900;
+}
+
+.menu_action_btn .action_icon {
+    font-size: 2.1rem;
+    line-height: 1;
+}
+
+.menu_action_btn:active {
+    transform: scale(0.96);
+}
+
+.menu_action_btn.is-liked {
+    color: var(--color-heart);
+}
+
+.heart_particle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    pointer-events: none;
+
+    font-size: 1.4rem;
+    line-height: 1;
+
+    transform: translate(-50%, -50%);
+    animation: heartParticle 0.8s ease-out forwards;
+
+    z-index: 20;
+}
+
+@keyframes heartParticle {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.4) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(
+                calc(-50% + var(--x)),
+                calc(-50% + var(--y))
+            )
+            scale(1.25)
+            rotate(var(--r));
+    }
+}
+
+
+/* ================================
+   메뉴 요약 박스
+================================ */
+
+.menu_summary_box {
+    position: relative;
+    z-index: 2;
+
+    min-height: 72px;
+    padding: 15px 16px;
+
+    border-radius: var(--radius-lg);
+    background: #fff8e8;
+    border: 1px solid #f3dfbd;
+}
+
+.menu_summary_box p {
+    color: #6b4226;
+    font-size: 1.45rem;
+    font-weight: 900;
+    line-height: 1.55;
+}
+
+
+/* ================================
+   하단 말랑곰 장식
+================================ */
+
+.menu_bear_area {
+    position: absolute;
+    right: -8px;
+    bottom: -12px;
+    z-index: 1;
+
+    width: 120px;
+    height: 120px;
+
+    pointer-events: none;
+}
+
+.menu_bear_area::before {
+    content: '';
+
+    position: absolute;
+    right: -24px;
+    bottom: -18px;
+
+    width: 160px;
+    height: 90px;
+
+    border-radius: 80px 0 0 0;
+    background: #efe1a5;
+}
+
+.menu_bear_img {
+    position: absolute;
+    right: 8px;
+    bottom: -18px;
+    z-index: 2;
+
+    width: 92px;
+
+    transform: rotate(-4deg);
+}
+
+
+/* ================================
+   사진 섹션
+================================ */
+.food_img,
+.photo_item img,
+.photo_overlay_item img,
+.menu_main_img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo_section {
+    margin-top: 24px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 12px;
+}
+
+.section-header .subtitle {
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.section-header p {
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.photo_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.photo_item {
+    overflow: hidden;
+
+    height: 96px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-sub);
+    border: 1px solid var(--color-line);
+}
+
+.photo_item img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo_add {
+    height: 96px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-lg);
+    background: #fffaf2;
+    border: 2px dashed #ffd39a;
+    color: var(--color-main);
+
+    font-size: 1.3rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.photo_add:active {
+    transform: scale(0.96);
+}
+
+/* ================================
+   코멘트 섹션
+================================ */
+
+.comment_section {
+    margin-top: 26px;
+}
+
+
+/* 댓글 작성 박스 */
+.comment_write {
+    padding: 14px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
+}
+
+.comment_write textarea {
+    width: 100%;
+    min-height: 94px;
+    resize: none;
+
+    padding: 12px;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    color: var(--color-text);
+
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.5;
+    outline: none;
+}
+
+.comment_write textarea:focus {
+    border-color: var(--color-main);
+}
+
+.comment_write textarea::placeholder {
+    color: #aaaaaa;
+}
+
+.comment_write button {
+    width: 100%;
+    height: 46px;
+
+    margin-top: 10px;
+
+    border-radius: var(--radius-sm);
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.comment_write button:active {
+    transform: translateY(2px);
+}
+
+
+/* 댓글 목록 */
+.comment_list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.comment_item {
+    padding: 14px 14px 0 14px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+}
+
+.comment_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 8px;
+}
+
+.comment_user {
+    color: var(--color-text);
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.comment_date {
+    color: var(--color-text-sub);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.comment_text {
+    color: var(--color-text);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+/* ================================
+   코멘트 의견 달기
+================================ */
+
+.comment_reply_box {
+    margin-top: 10px;
+    padding: 10px;
+
+    border-radius: var(--radius-md);
+    background: #fffaf2;
+    border: 1px solid var(--color-line);
+}
+
+.comment_reply_input {
+    width: 100%;
+    min-height: 64px;
+    resize: none;
+
+    padding: 10px;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+
+    font-size: 1.3rem;
+    font-weight: 700;
+    outline: none;
+}
+
+.comment_reply_input:focus {
+    border-color: var(--color-main);
+}
+
+.comment_reply_submit {
+    width: 100%;
+    height: 36px;
+
+    margin-top: 8px;
+
+    border-radius: var(--radius-sm);
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.comment_reply_list {
+    margin-top: 12px;
+    padding-left: 10px;
+
+    border-left: 3px solid var(--color-sub);
+}
+
+.comment_reply_item {
+    padding: 10px 0;
+}
+
+.comment_reply_user {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--color-main);
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.comment_reply_text {
+    color: var(--color-text);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.comment_reply_date {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--color-text-sub);
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.comment_time_select {
+    width: 100%;
+    height: 38px;
+
+    margin-bottom: 8px;
+    padding: 0 10px;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: #ffffff;
+    color: var(--color-text);
+
+    font-size: 1.3rem;
+    font-weight: 800;
+    outline: none;
+}
+
+.comment_time_select:focus {
+    border-color: var(--color-main);
+}
+
+/* ================================
+   사진 추가 오버레이
+================================ */
+
+.photo_add_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+}
+
+.photo_add_overlay_bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background: rgba(0, 0, 0, 0.58);
+}
+
+.photo_add_panel {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: var(--layout-mobile-max);
+
+    padding: 18px 16px 20px;
+
+    border-radius: 24px;
+    background: var(--color-card);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+
+    animation: photoOverlayPop 0.22s ease;
+}
+
+.photo_add_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 10px;
+}
+
+.photo_add_header h2 {
+    color: var(--color-text);
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.photo_add_close_btn {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-circle);
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.photo_add_desc {
+    margin-bottom: 14px;
+
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.photo_add_upload_box {
+    padding: 14px;
+
+    border-radius: var(--radius-lg);
+    background: #fffaf2;
+    border: 1px dashed #ffd39a;
+
+    text-align: center;
+}
+
+.photo_add_upload_box input[type="file"] {
+    display: none;
+}
+
+.photo_file_btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 40px;
+    padding: 0 16px;
+
+    border-radius: 999px;
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.35rem;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.photo_file_name {
+    margin-top: 10px;
+
+    color: var(--color-text-sub);
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.photo_preview_box {
+    overflow: hidden;
+
+    margin-top: 14px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-sub);
+    border: 1px solid var(--color-line);
+}
+
+.photo_preview_box img {
+    display: block;
+
+    width: 100%;
+    max-height: 260px;
+
+    object-fit: cover;
+}
+
+.photo_add_submit_btn {
+    width: 100%;
+    height: 46px;
+
+    margin-top: 14px;
+
+    border-radius: var(--radius-sm);
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.photo_add_close_btn:active,
+.photo_file_btn:active,
+.photo_add_submit_btn:active {
+    transform: scale(0.96);
+}
+
+/* ================================
+   코멘트 전체보기 오버레이
+================================ */
+
+/* 코멘트 오버레이 작성 영역 */
+.comment_overlay_write {
+    margin-bottom: 14px;
+}
+
+.comment_overlay_write textarea {
+    min-height: 72px;
+}
+/* 코멘트 오버레이 작성 영역 끝 */
+/* ------------------------ */
+
+.comment_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.58);
+}
+
+.comment_overlay_bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background: rgba(0, 0, 0, 0.58);
+}
+
+.comment_overlay .comment_write{
+    margin-bottom: 10px;
+}
+
+.comment_overlay_panel {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: var(--layout-mobile-max);
+
+    /* 모바일 주소창 변화까지 고려 */
+    max-height: calc(100dvh - 40px);
+
+    padding: 18px 16px 20px;
+
+    border-radius: 24px;
+    background: var(--color-card);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    animation: commentOverlayPop 0.22s ease;
+}
+
+.comment_overlay_header,
+.comment_overlay_count,
+.comment_overlay_write {
+    flex-shrink: 0;
+}
+
+
+/* ================================
+   코멘트 하단 태그 / 의견 달기
+================================ */
+
+.comment_bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 12px;
+}
+
+.comment_tag_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    min-width: 0;
+}
+
+.comment_tag_list span {
+    padding: 4px 8px;
+
+    border-radius: 999px;
+    background: var(--color-sub);
+    color: var(--color-main-dark);
+
+    font-size: 1.1rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.comment_reply_btn {
+    flex-shrink: 0;
+
+    color: var(--color-main);
+    font-size: 1.2rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+@keyframes commentOverlayPop {
+    from {
+        transform: scale(0.94);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.comment_overlay_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 8px;
+}
+
+.comment_overlay_header h2 {
+    color: var(--color-text);
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.comment_overlay_close_btn {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-circle);
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.comment_overlay_close_btn:active {
+    transform: scale(0.94);
+}
+
+.comment_overlay_count {
+    margin-bottom: 12px;
+
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+/* 실제 스크롤 영역 */
+.comment_overlay_list {
+    flex: 1;
+    min-height: 0;
+
+    overflow-y: auto;
+    padding-right: 2px;
+    padding-bottom: 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+.comment_overlay_list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.comment_overlay_list::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #ffd39a;
+}
+
+.comment_overlay_empty {
+    padding: 36px 12px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    color: var(--color-text-sub);
+
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+/* ================================
+   섹션 우측 정보 / 더보기 버튼
+================================ */
+
+.section_header_right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section_more_btn {
+    padding: 5px 9px;
+
+    border-radius: 999px;
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.15rem;
+    font-weight: 900;
+}
+
+.section_more_btn:active {
+    transform: scale(0.94);
+}
+
+/* ================================
+   푸터
+================================ */
+
+.footer {
+    margin-top: 28px;
+    padding: 22px 10px;
+
+    color: var(--color-text-sub);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.7;
+    text-align: center;
+}
+
+/* ================================
+   오버레이
+================================ */
+/* ================================
+   사진 전체보기 오버레이
+================================ */
+
+.photo_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+}
+
+/* 어두운 배경 */
+.photo_overlay_bg {
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.58);
+}
+
+/* 중앙 패널 */
+.photo_overlay_panel {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: var(--layout-mobile-max);
+    max-height: 82vh;
+
+    padding: 18px 16px 20px;
+
+    border-radius: 24px;
+    background: var(--color-card);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+
+    overflow: hidden;
+
+    animation: photoOverlayPop 0.22s ease;
+}
+
+/* 패널 등장 애니메이션 */
+@keyframes photoOverlayPop {
+    from {
+        transform: scale(0.94);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 오버레이 상단 */
+.photo_overlay_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 8px;
+}
+
+.photo_overlay_header h2 {
+    color: var(--color-text);
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+/* 닫기 버튼 */
+.photo_overlay_close_btn {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-circle);
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.photo_overlay_close_btn:active {
+    transform: scale(0.94);
+}
+
+/* 사진 개수 */
+.photo_overlay_count {
+    margin-bottom: 12px;
+
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+/* 
+   실제 스크롤 영역
+   사진이 많아지면 이 영역 안에서만 스크롤됨
+*/
+.photo_overlay_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+
+    max-height: calc(82vh - 90px);
+    overflow-y: auto;
+    padding-right: 2px;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 스크롤바 최소화 */
+.photo_overlay_grid::-webkit-scrollbar {
+    width: 4px;
+}
+
+.photo_overlay_grid::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #ffd39a;
+}
+
+.photo_overlay_item {
+    overflow: hidden;
+
+    height: 100px;
+
+    border-radius: var(--radius-md);
+    background: var(--color-sub);
+    border: 1px solid var(--color-line);
+}
+
+.photo_overlay_item img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 사진 없음 */
+.photo_overlay_empty {
+    grid-column: 1 / -1;
+
+    padding: 36px 12px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    color: var(--color-text-sub);
+
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+/* 더 불러오는 중 표시 */
+.photo_overlay_loading {
+    grid-column: 1 / -1;
+
+    padding: 16px 0;
+
+    color: var(--color-main);
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+/* 오버레이 열렸을 때 body 스크롤 막기 */
+body.overlay_open {
+    overflow: hidden;
+}
+
+/* ================================
+   큰 이미지 보기 오버레이
+================================ */
+
+.photo_viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 18px;
+}
+
+.photo_viewer_bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background: rgba(0, 0, 0, 0.78);
+}
+
+.photo_viewer_panel {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: 720px;
+    max-height: 86vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.photo_viewer_panel img {
+    position: relative;
+    z-index: 2;
+
+    max-width: 100%;
+    max-height: 86vh;
+
+    border-radius: var(--radius-lg);
+    object-fit: contain;
+    background: #ffffff;
+}
+
+.photo_viewer_close_btn {
+    position: absolute;
+    right: 8px;
+    top: -48px;
+    z-index: 10;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-circle);
+    background: #ffffff;
+    color: var(--color-text);
+
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.photo_viewer_close_btn:active {
+    transform: scale(0.94);
+}
+
+/* 클릭 가능한 것처럼 보이게 */
+.photo_overlay_item img,
+.photo_item img {
+    cursor: pointer;
+}
+
+/* PC에서도 모바일 앱처럼 중앙 정렬 */
+@media (min-width: 768px) {
+    .photo_overlay_panel {
+        max-width: 720px;
+        border-radius: 24px;
+        margin-bottom: 28px;
+    }
+}
+
+/* 위로 올라오는 애니메이션 */
+@keyframes photoOverlayUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 오버레이 상단 */
+.photo_overlay_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 8px;
+}
+
+.photo_overlay_header h2 {
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+/* 닫기 버튼 */
+.photo_overlay_close_btn {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-circle);
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.photo_overlay_close_btn:active {
+    transform: scale(0.94);
+}
+
+/* 사진 개수 */
+.photo_overlay_count {
+    margin-bottom: 14px;
+
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+/* 오버레이 사진 그리드 */
+.photo_overlay_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.photo_overlay_item {
+    overflow: hidden;
+
+    height: 100px;
+
+    border-radius: var(--radius-md);
+    background: var(--color-sub);
+    border: 1px solid var(--color-line);
+}
+
+.photo_overlay_item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 사진이 없을 때 */
+.photo_overlay_empty {
+    grid-column: 1 / -1;
+
+    padding: 36px 12px;
+
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    color: var(--color-text-sub);
+
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+/* 오버레이 열렸을 때 body 스크롤 방지용 */
+body.overlay_open {
+    overflow: hidden;
+}
+
+/* ================================
+   태그 전체보기 오버레이
+================================ */
+
+.tag_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 960;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+}
+
+.tag_overlay_bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background: rgba(0, 0, 0, 0.58);
+}
+
+.tag_overlay_panel {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: var(--layout-mobile-max);
+    max-height: calc(100dvh - 40px);
+
+    padding: 18px 16px 20px;
+
+    border-radius: 24px;
+    background: var(--color-card);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+
+    overflow-y: auto;
+
+    animation: tagOverlayPop 0.22s ease;
+}
+
+@keyframes tagOverlayPop {
+    from {
+        transform: scale(0.94);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.tag_overlay_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 16px;
+}
+
+.tag_overlay_header h2 {
+    color: var(--color-text);
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.tag_overlay_close_btn {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: var(--radius-circle);
+    background: var(--color-bg);
+    color: var(--color-text);
+
+    font-size: 1.8rem;
+    font-weight: 900;
+}
+
+.tag_overlay_close_btn:active {
+    transform: scale(0.94);
+}
+
+/* ================================
+   태그 추가 창
+================================ */
+
+.tag_add_box {
+    margin-bottom: 10px;
+    padding: 14px;
+
+    border-radius: var(--radius-lg);
+    background: #fffaf2;
+    border: 1px solid #f3dfbd;
+}
+
+.tag_all_box {
+    padding-top: 4px;
+}
+
+.tag_add_title {
+    margin-bottom: 12px;
+
+    color: var(--color-main);
+    font-size: 1.5rem;
+    font-weight: 900;
+}
+
+.tag_select_box {
+    margin-top: 14px;
+}
+
+.tag_select_box:first-of-type {
+    margin-top: 0;
+}
+
+.tag_group_title {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #6b4226;
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.tag_chip_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag_chip {
+    cursor: pointer;
+}
+
+.tag_chip input {
+    display: none;
+}
+
+.tag_chip span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 30px;
+    padding: 0 6px;
+
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #ffd39a;
+    color: #8a5a2b;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.tag_chip input:checked + span {
+    background: var(--color-main);
+    border-color: var(--color-main);
+    color: #ffffff;
+}
+
+.tag_custom_input {
+    width: 100%;
+    height: 32px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    color: var(--color-text);
+
+    font-size: 1.3rem;
+    font-weight: 800;
+    outline: none;
+}
+
+.tag_custom_input:focus {
+    border-color: var(--color-main);
+}
+
+.tag_add_submit_btn {
+    width: 100%;
+    height: 34px;
+
+    margin-top: 12px;
+
+    border-radius: var(--radius-md);
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.45rem;
+    font-weight: 900;
+}
+
+.tag_add_submit_btn:active {
+    transform: scale(0.97);
+}
+
+.form_hint {
+    margin-top: 7px;
+
+    color: var(--color-text-sub);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+/* ================================
+   전체 태그 리스트
+================================ */
+
+.tag_overlay_group {
+    margin-top: 16px;
+}
+
+.tag_overlay_group:first-of-type {
+    margin-top: 0;
+}
+
+.tag_overlay_group h3 {
+    margin-bottom: 8px;
+
+    color: #6b4226;
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.tag_overlay_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag_overlay_list span {
+    padding: 7px 11px;
+
+    border-radius: 999px;
+    background: #fffaf2;
+    border: 1px solid #ffd39a;
+    color: #8a5a2b;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.tag_overlay_list span.is-active {
+    background: var(--color-main);
+    border-color: var(--color-main);
+    color: #ffffff;
+}
+
+.tag_overlay_empty {
+    color: var(--color-text-sub);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+/* ================================
+   태그 삭제 선택 영역
+================================ */
+
+.tag_all_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 12px;
+}
+
+.tag_all_header .tag_add_title {
+    margin-bottom: 0;
+}
+
+.tag_delete_btn {
+    flex-shrink: 0;
+
+    height: 32px;
+    padding: 0 10px;
+
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid var(--color-main);
+    color: var(--color-main);
+
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.tag_delete_btn:active {
+    transform: scale(0.96);
+}
+
+.tag_delete_chip {
+    padding: 7px 11px;
+
+    border-radius: 999px;
+    background: #fffaf2;
+    border: 1px solid #ffd39a;
+    color: #8a5a2b;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.tag_delete_chip.is-active {
+    background: var(--color-main);
+    border-color: var(--color-main);
+    color: #ffffff;
+}
+
+.tag_delete_chip.is-selected {
+    background: #ff4d4d;
+    border-color: #ff4d4d;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.18);
+}
+
+.login_required_box {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px dashed var(--color-line);
+    border-radius: var(--radius-lg);
+    background: #fffaf2;
+    text-align: center;
+}
+
+.login_required_box p {
+    margin-bottom: 4px;
+    color: var(--color-text);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.login_required_btn {
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    background: var(--color-main);
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+/* ================================
+   코멘트 하단 버튼 구조 보정
+================================ */
+
+.comment_item {
+    padding: 14px;
+}
+
+.comment_bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+.comment_tag_list {
+    flex: 1;
+    width: auto;
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    min-width: 0;
+}
+
+.comment_btn_group {
+    width: auto;
+    flex-shrink: 0;
+
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+}
+
+.comment_reply_btn,
+.comment_reply_toggle_btn,
+.comment_delete_btn,
+.comment_reply_delete_btn {
+    width: auto;
+    min-width: auto;
+    height: 30px;
+
+    padding: 0 10px;
+    margin: 0;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    color: var(--color-main);
+
+    font-size: 1.15rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.comment_reply_btn {
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-main);
+}
+
+.comment_reply_toggle_btn {
+    border-color: #f3dfbd;
+    background: #fffaf2;
+    color: #6b4226;
+}
+
+.comment_delete_btn,
+.comment_reply_delete_btn {
+    border-color: #ffd2c8;
+    background: #fff7f5;
+    color: #d94a38;
+}
+
+.comment_reply_list {
+    margin-top: 12px;
+    padding-left: 10px;
+
+    border-left: 3px solid var(--color-sub);
+}
+
+.comment_reply_item {
+    position: relative;
+
+    padding: 10px 0;
+}
+
+.comment_reply_top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+
+    margin-bottom: 4px;
+}
+
+.comment_reply_delete_btn {
+    margin-top: 6px;
+}
+
+
+/* ================================
+   사진 삭제 버튼
+================================ */
+
+.photo_item {
+    position: relative;
+}
+
+.photo_delete_btn {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+
+    width: auto;
+    height: 28px;
+    padding: 0 9px;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #ffd2c8;
+    color: #d94a38;
+
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+
+/* ================================
+   PC 보정
+================================ */
+
+@media (min-width: 768px) {
+    .detail_main {
+        padding: 32px;
+    }
+
+    .menu_image_area {
+        height: 260px;
+    }
+
+    .menu_name {
+        font-size: 3.2rem;
+    }
+    
+    .photo_grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .photo_item,
+    .photo_add {
+        height: 150px;
+    }
+
+    .menu_bear_area {
+        width: 140px;
+        height: 140px;
+    }
+
+    .menu_bear_img {
+        width: 108px;
+    }
+}

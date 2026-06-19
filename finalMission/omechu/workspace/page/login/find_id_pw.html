@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>오메추! ID/PW 찾기</title>
+
+        <link rel="stylesheet" href="../../css/login/find_id_pw.css">
+        <script defer src="../../js/login/find_id_pw.js"></script>
+    </head>
+
+    <body>
+        <div class="wrap login_wrap">
+
+            <header class="header login_header">
+                <a href="../../index.html">
+                    <h1 class="logo">
+                        <img src="../../assets/logo/logo.png" alt="말랑곰 얼굴">
+                        오메추
+                    </h1>
+                </a>
+            </header>
+
+            <main class="login_main">
+                <section class="login_card find_card">
+
+                    <div class="find_title_box">
+                        <img 
+                            src="../../assets/home/char_main.png" 
+                            alt="말랑곰"
+                            class="find_bear_img"
+                        >
+
+                        <p class="login_badge">계정을 찾아드릴게요!</p>
+                        <h1>ID / PW 찾기</h1>
+                        <p>가입할 때 입력한 정보를 입력해주세요.</p>
+                    </div>
+
+                    <div class="find_tab_area">
+                        <button type="button" class="find_tab_btn is-active" data-target="findIdBox">
+                            아이디 찾기
+                        </button>
+                        <button type="button" class="find_tab_btn" data-target="findPwBox">
+                            비밀번호 찾기
+                        </button>
+                    </div>
+
+                    <!-- 아이디 찾기 -->
+                    <form id="findIdForm" class="login_form find_form">
+                        <div id="findIdBox" class="find_box">
+
+                            <div class="input_box">
+                                <label for="findIdEmail">이메일</label>
+                                <input 
+                                    type="text" 
+                                    id="findIdEmail" 
+                                    placeholder="가입한 이메일을 입력해주세요"
+                                >
+                            </div>
+
+                            <button type="submit" class="login_submit_btn">
+                                아이디 찾기
+                            </button>
+
+                            <div id="findIdResult" class="find_result hidden"></div>
+
+                        </div>
+                    </form>
+
+                    <!-- 비밀번호 찾기 -->
+                    <form id="findPwForm" class="login_form find_form hidden">
+                        <div id="findPwBox" class="find_box">
+
+                            <div class="input_box">
+                                <label for="findPwId">아이디</label>
+                                <input 
+                                    type="text" 
+                                    id="findPwId" 
+                                    placeholder="아이디를 입력해주세요"
+                                    autocomplete="username"
+                                >
+                            </div>
+
+                            <div class="input_box">
+                                <label for="findPwEmail">이메일</label>
+                                <input 
+                                    type="text" 
+                                    id="findPwEmail" 
+                                    placeholder="가입한 이메일을 입력해주세요"
+                                >
+                            </div>
+
+                            <hr>
+
+                            <div class="input_box">
+                                <label for="newPw">새 비밀번호</label>
+                                <p class="input_hint">(※ 4자 이상)</p>
+                                <input 
+                                    type="password" 
+                                    id="newPw" 
+                                    placeholder="새 비밀번호를 입력해주세요"
+                                    autocomplete="new-password"
+                                >
+                            </div>
+
+                            <div class="input_box">
+                                <label for="newPwCheck">새 비밀번호 확인</label>
+                                <input 
+                                    type="password" 
+                                    id="newPwCheck" 
+                                    placeholder="새 비밀번호를 다시 입력해주세요"
+                                    autocomplete="new-password"
+                                >
+                            </div>
+
+                            <button type="submit" class="login_submit_btn">
+                                비밀번호 변경
+                            </button>
+
+                            <div id="findPwResult" class="find_result hidden"></div>
+
+                        </div>
+                    </form>
+
+                    <div class="login_link_area">
+                        <a href="./login.html">로그인하기</a>
+                        <span></span>
+                        <a href="./join.html">회원가입</a>
+                    </div>
+
+                    <button type="button" id="guestBtn" class="guest_btn">
+                        비로그인으로 둘러보기
+                    </button>
+
+                </section>
+            </main>
+
+        </div>
+    </body>
+</html>

@@ -107,6 +107,28 @@ optionLists.forEach((list) => {
     });
 });
 
+// 옵션 거리 막대
+const distanceRange = document.querySelector('.distance_range');
+const distanceList = ['500m', '1km', '2km', '3km+'];
+
+if (distanceRange) {
+    function updateDistanceRange() {
+        const percent = (distanceRange.value / distanceRange.max) * 100;
+
+        distanceRange.style.background = `
+            linear-gradient(
+                to right,
+                var(--color-main) 0%,
+                var(--color-main) ${percent}%,
+                var(--color-line) ${percent}%,
+                var(--color-line) 100%
+            )
+        `;
+    }
+
+    distanceRange.addEventListener('input', updateDistanceRange);
+    updateDistanceRange();
+}
 
 // ================================
 // 4. 룰렛 회전
@@ -126,20 +148,44 @@ function spinRoulette() {
 // ================================
 // 5. 오메추 실행
 // ================================
-function startOmechu() {
-    spinRoulette();
+function closeOptionPanel() {
+    if (!optionBox || !optionPanelBtn) return;
 
-    setTimeout(() => {
-        location.href = './page/result.html';
-    }, 900);
+    optionBox.classList.remove('open');
+    optionPanelBtn.textContent = '맞춤 추천 받기 ▼';
+}
+
+function goResultPage() {
+    location.href = './page/result.html';
+}
+
+function startOmechu({ closeOption = false } = {}) {
+    if (closeOption) {
+        closeOptionPanel();
+
+        setTimeout(() => {
+            spinRoulette();
+
+            setTimeout(goResultPage, 900);
+        }, 320);
+
+        return;
+    }
+
+    spinRoulette();
+    setTimeout(goResultPage, 900);
 }
 
 if (omechuBtn) {
-    omechuBtn.addEventListener('click', startOmechu);
+    omechuBtn.addEventListener('click', () => {
+        startOmechu();
+    });
 }
 
 if (optionSubmitBtn) {
-    optionSubmitBtn.addEventListener('click', startOmechu);
+    optionSubmitBtn.addEventListener('click', () => {
+        startOmechu({ closeOption: true });
+    });
 }
 
 
@@ -148,14 +194,78 @@ if (optionSubmitBtn) {
 // ================================
 heartButtons.forEach((heart) => {
     heart.addEventListener('click', () => {
-        heart.classList.toggle('is-liked');
+        // 추천 취소가 아니라, 계속 추천 상태 유지
+        heart.classList.add('is-liked');
 
-        if (heart.classList.contains('is-liked')) {
-            heart.textContent = '🧡';
-            heart.setAttribute('aria-label', '추천 취소');
-        } else {
-            heart.textContent = '♡';
-            heart.setAttribute('aria-label', '추천하기');
+        // 하트 모양 유지
+        heart.textContent = '🧡';
+        heart.setAttribute('aria-label', '추천하기');
+
+        // 추천 수 1 증가
+        const card = heart.closest('.food_card, .result_card, article, section');
+        const countText = card ? card.querySelector('.rank_count, .result_count, .like_count, .food_like_count') : document.querySelector('.result_count');
+
+        if (countText) {
+            const currentCount = Number(countText.textContent.replace(/[^0-9]/g, ''));
+
+            if (isNaN(currentCount)) {
+                countText.textContent = '추천 1';
+            } else {
+                countText.textContent = '추천 ' + (currentCount + 1);
+            }
         }
+
+        // 하트 파티클 효과
+        createHeartParticles(heart);
+    });
+});
+
+function createHeartParticles(target) {
+    const particleCount = 8;
+
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('span');
+
+        particle.classList.add('heart_particle');
+        particle.textContent = '🧡';
+
+        const randomX = Math.random() * 80 - 40;
+        const randomY = Math.random() * -60 - 20;
+        const randomRotate = Math.random() * 60 - 30;
+
+        particle.style.setProperty('--x', randomX + 'px');
+        particle.style.setProperty('--y', randomY + 'px');
+        particle.style.setProperty('--r', randomRotate + 'deg');
+
+        target.appendChild(particle);
+
+        setTimeout(() => {
+            particle.remove();
+        }, 800);
+    }
+}
+
+// ================================
+// 7. 위키 작성하기
+// ================================
+
+// 로그인 여부에 따른 위키 작성 이동은 login_common.js에서 처리
+
+// ================================
+// 8. TOP 위키 상세 가기
+// ================================
+
+const topRankItems = document.querySelectorAll('.top_rank_item');
+
+topRankItems.forEach(function(item) {
+    item.addEventListener('click', function(event) {
+        // 하트 버튼을 누를 때는 상세 페이지로 이동하지 않게 막기
+        if (event.target.closest('.heart')) {
+            return;
+        }
+
+        const foodId = item.dataset.foodId;
+
+        location.href = `./page/wiki_detail.html?id=${foodId}`;
     });
 });

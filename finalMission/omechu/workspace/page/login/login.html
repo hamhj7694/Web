@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>오메추! 로그인</title>
+
+        <link rel="stylesheet" href="../../css/login/login.css">
+        <script defer src="../../js/login/login.js"></script>
+    </head>
+
+    <body>
+        <div class="wrap login_wrap">
+
+            <header class="header login_header">
+                <a href="../../index.html">
+                    <h1 class="logo">
+                        <img src="../../assets/logo/logo.png" alt="말랑곰 얼굴">
+                        오메추
+                    </h1>
+                </a>
+            </header>
+
+            <main class="login_main">
+
+                <section class="login_card">
+
+                    <div class="login_title_box">
+                        <img 
+                            src="../../assets/home/char_main.png" 
+                            alt="말랑곰"
+                            class="login_bear_img"
+                        >
+
+                        <p class="login_badge">고민하지 말고 오메추!</p>
+                        <h1>로그인</h1>
+                        <p>오메추에 오신 걸 환영해요!</p>
+                    </div>
+
+                    <form id="loginForm" class="login_form">
+
+                        <div class="input_box">
+                            <label for="userId">아이디</label>
+                            <input 
+                                type="text" 
+                                id="userId" 
+                                placeholder="아이디를 입력해주세요"
+                                autocomplete="username"
+                            >
+                        </div>
+
+                        <div class="input_box">
+                            <label for="userPw">비밀번호</label>
+                            <input 
+                                type="password" 
+                                id="userPw" 
+                                placeholder="비밀번호를 입력해주세요"
+                                autocomplete="current-password"
+                            >
+                        </div>
+
+                        <button type="submit" class="login_submit_btn">
+                            로그인
+                        </button>
+
+                    </form>
+                    
+                    <div class="login_link_area">
+                        <a href="./find_id_pw.html">ID/PW 찾기</a>
+                        <span></span>
+                        <a href="./join.html">회원가입</a>
+                    </div>
+
+                    <button type="button" id="guestBtn" class="guest_btn">
+                        비로그인으로 둘러보기
+                    </button>
+
+                </section>
+            </main>
+
+        </div>
+    </body>
+</html>

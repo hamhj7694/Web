@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오메추! 푸드 위키</title>
+
+    <!-- wiki.css 안에서 common.css를 import함 -->
+    <link rel="stylesheet" href="../css/wiki.css">
+    <script defer src="../js/login/login_common.js"></script>
+    <script defer src="../js/wiki.js"></script>
+</head>
+<body>
+    <div class="wrap">
+
+        <!-- ================================
+            공통 헤더
+        ================================= -->
+        <header class="header">
+            <a href="../index.html">
+                <h1 class="logo">
+                    <img src="../assets/logo/logo.png" alt="말랑곰 얼굴">
+                    오메추
+                </h1>
+            </a>
+
+            <a href="./login/login.html" class="login-link">👤 로그인</a>
+        </header>
+
+
+        <!-- ================================
+            메인
+        ================================= -->
+        <main class="main wiki_main">
+
+            <!-- 페이지 제목 -->
+            <div class="wiki_title">
+                <div>
+                    <p>맛있는 메뉴 모음집</p>
+                </div>
+                <h1>푸드 위키</h1>
+                <p>먹고 싶은 음식을 검색해보세요!</p>
+            </div>
+
+
+            <!-- 검색창 -->
+            <div class="wiki_search">
+                <input 
+                    type="text" 
+                    id="foodSearchInput" 
+                    placeholder="음식 이름을 검색하세요"
+                >
+            </div>
+
+
+            <!-- 카테고리 필터 -->
+            <div class="wiki_category">
+                <ul id="categoryList">
+                    <li><button type="button" class="category_btn selected" data-category="전체">전체</button></li>
+                    <li><button type="button" class="category_btn" data-category="한식">한식</button></li>
+                    <li><button type="button" class="category_btn" data-category="중식">중식</button></li>
+                    <li><button type="button" class="category_btn" data-category="일식">일식</button></li>
+                    <li><button type="button" class="category_btn" data-category="양식">양식</button></li>
+                    <li><button type="button" class="category_btn" data-category="분식">분식</button></li>
+                    <li><button type="button" class="category_btn" data-category="디저트">디저트</button></li>
+                    <li><button type="button" class="category_btn" data-category="기타">기타</button></li>
+                </ul>
+            </div>
+
+            <!-- 정렬 / 보기 개수 영역 -->
+            <div class="wiki_sort_bar">
+                <div class="wiki_select_group">
+
+                    <!-- 정렬 선택 -->
+                    <select id="sortSelect" aria-label="정렬 선택">
+                        <option value="likes">추천순</option>
+                        <option value="latest">최신순</option>
+                        <option value="comments">댓글순</option>
+                    </select>
+
+                    <!-- 페이지당 몇 개씩 볼지 선택 -->
+                    <select id="perPageSelect" aria-label="페이지당 보기 개수">
+                        <option value="5">5개씩</option>
+                        <option value="10">10개씩</option>
+                    </select>
+
+                    <p>
+                    총 <strong id="foodCount">0</strong>개
+                    </p>
+                </div>
+
+                <button type="button" class="wiki_write">음식 추천하기</button>
+            </div>
+
+            <!-- 음식 카드 리스트 -->
+            <div id="foodListBox" class="food_list">
+                <!-- JS로 음식 카드 생성 -->
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div id="pagination" class="pagination">
+                <!-- JS로 페이지 버튼 생성 -->
+            </div>
+
+            <!-- 검색 결과 없음 -->
+            <div id="emptyMessage" class="empty_message hidden">
+                <p class="empty_bear">ʕ•ᴥ•ʔ</p>
+                <h2>검색 결과가 없어요</h2>
+                <p>다른 음식 이름이나 카테고리로 찾아보세요!</p>
+            </div>
+        </main>
+
+        <!-- ================================
+            공통 하단 네비게이션
+        ================================= -->
+        <nav class="nav">
+            <ul>
+                <li>
+                    <a class="home" href="../index.html">
+                        <span>홈</span>
+                        <img src="../assets/icon/home.png" alt="홈">
+                    </a>
+                </li>
+                <li>
+                    <a class="food active" href="./wiki.html">
+                        <span>푸드 위키</span>
+                        <img src="../assets/icon/food.png" alt="푸드">
+                    </a>
+                </li>
+                <li>
+                    <a class="map" href="./map.html">
+                        <span>지도</span>
+                        <img src="../assets/icon/map.png" alt="지도">
+                    </a>
+                </li>
+                <li>
+                    <a class="my" href="./mypage.html">
+                        <span>마이</span>
+                        <img src="../assets/icon/my.png" alt="마이">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</body>
+</html>

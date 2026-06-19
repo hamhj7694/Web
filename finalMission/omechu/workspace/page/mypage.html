@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오메추! 마이페이지</title>
+
+    <link rel="stylesheet" href="../css/mypage.css">
+    <script defer src="../js/login/login_common.js"></script>
+    <script defer src="../js/mypage.js"></script>
+</head>
+<body>
+    <div class="wrap mypage_wrap">
+
+        <header class="header">
+            <a href="../index.html">
+                <h1 class="logo">
+                    <img src="../assets/logo/logo.png" alt="말랑곰 얼굴">
+                    오메추
+                </h1>
+            </a>
+
+            <button type="button" id="logoutBtn" class="logout_btn">
+                로그아웃
+            </button>
+        </header>
+
+        <main class="mypage_main">
+
+            <!-- 사용자 정보 -->
+            <section class="my_profile_card">
+                <img 
+                    src="../assets/home/char_main.png" 
+                    alt="말랑곰"
+                    class="my_profile_img"
+                >
+
+                <div class="my_profile_text">
+                    <p class="my_badge">마이페이지</p>
+                    <h1>
+                        <span id="myNickname">사용자</span>님!
+                    </h1>
+                    <p id="myUserId">ID: -</p>
+                </div>
+
+                <button type="button" id="editAccountBtn" class="profile_edit_btn">
+                    계정 정보 변경
+                </button>
+            </section>
+
+            <!-- 내 활동 요약 -->
+            <section class="my_summary_area">
+                <div class="summary_card">
+                    <strong id="myJoinFoodCount">0</strong>
+                    <span>참여한 음식</span>
+                </div>
+
+                <div class="summary_card">
+                    <strong id="myLikedFoodCount">0</strong>
+                    <span>추천한 음식</span>
+                </div>
+            </section>
+
+            <!-- 내가 참여한 음식 -->
+            <section class="my_section">
+                <div class="section_title_bar">
+                    <h2>내가 참여한 음식</h2>
+                    <p>태그, 코멘트, 사진 등록 등 1개 이상 참여한 음식</p>
+                </div>
+
+                <div id="myJoinedFoodList" class="my_food_list">
+                    <!-- JS로 출력 -->
+                </div>
+            </section>
+
+            <!-- 내가 추천한 음식 -->
+            <section class="my_section">
+                <div class="section_title_bar">
+                    <h2>내가 추천한 음식</h2>
+                    <p>추천을 누른 음식과 내가 누른 횟수</p>
+                </div>
+
+                <div id="myLikedFoodList" class="my_food_list">
+                    <!-- JS로 출력 -->
+                </div>
+            </section>
+
+            <!-- 계정 탈퇴 -->
+            <section class="danger_zone">
+                <h2>계정 관리</h2>
+                <p>계정 탈퇴 시 내 로그인 정보가 삭제돼요.</p>
+
+                <button type="button" id="deleteAccountBtn" class="delete_account_btn">
+                    계정 탈퇴
+                </button>
+            </section>
+
+        </main>
+
+        <!-- 계정 정보 변경 오버레이 -->
+        <div id="accountOverlay" class="account_overlay hidden">
+            <div id="accountOverlayBg" class="account_overlay_bg"></div>
+
+            <div class="account_overlay_panel">
+                <div class="overlay_header">
+                    <h2>계정 정보 변경</h2>
+                    <button type="button" id="accountOverlayCloseBtn" class="overlay_close_btn">
+                        ✕
+                    </button>
+                </div>
+
+                <form id="accountEditForm" class="account_form">
+
+                    <div class="input_box">
+                        <label for="editNickname">닉네임</label>
+                        <input 
+                            type="text" 
+                            id="editNickname" 
+                            placeholder="새 닉네임을 입력해주세요"
+                        >
+                    </div>
+
+                    <hr>
+
+                    <div class="input_box">
+                        <label for="currentPw">현재 비밀번호</label>
+                        <input 
+                            type="password" 
+                            id="currentPw" 
+                            placeholder="현재 비밀번호를 입력해주세요"
+                        >
+                    </div>
+
+                    <div class="input_box">
+                        <label for="editPw">새 비밀번호</label>
+                        <p class="input_hint">(※ 변경하지 않으려면 비워두기)</p>
+                        <input 
+                            type="password" 
+                            id="editPw" 
+                            placeholder="새 비밀번호를 입력해주세요"
+                        >
+                    </div>
+
+                    <div class="input_box">
+                        <label for="editPwCheck">새 비밀번호 확인</label>
+                        <input 
+                            type="password" 
+                            id="editPwCheck" 
+                            placeholder="새 비밀번호를 다시 입력해주세요"
+                        >
+                    </div>
+
+                    <button type="submit" class="account_save_btn">
+                        변경 저장
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- 계정 탈퇴 오버레이 -->
+        <div id="deleteOverlay" class="delete_overlay hidden">
+            <div id="deleteOverlayBg" class="delete_overlay_bg"></div>
+
+            <div class="delete_overlay_panel">
+                <div class="overlay_header">
+                    <h2>계정 탈퇴</h2>
+                    <button type="button" id="deleteOverlayCloseBtn" class="overlay_close_btn">
+                        ✕
+                    </button>
+                </div>
+
+                <div class="delete_warning_box">
+                    <p>
+                        정말 탈퇴하시겠어요?<br>
+                        탈퇴하면 현재 계정 정보가 삭제돼요.
+                    </p>
+                    <strong>탈퇴하려면 현재 비밀번호를 입력해주세요.</strong>
+                </div>
+
+                <div class="input_box">
+                    <label for="deleteConfirmInput">현재 비밀번호</label>
+                    <input 
+                        type="password" 
+                        id="deletePwInput" 
+                        placeholder="현재 비밀번호를 입력해주세요"
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="button" id="deleteConfirmBtn" class="delete_confirm_btn">
+                    계정 탈퇴하기
+                </button>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <ul>
+                <li>
+                    <a class="home" href="../index.html">
+                        <span>홈</span>
+                        <img src="../assets/icon/home.png" alt="홈">
+                    </a>
+                </li>
+                <li>
+                    <a class="food" href="./wiki.html">
+                        <span>푸드 위키</span>
+                        <img src="../assets/icon/food.png" alt="푸드">
+                    </a>
+                </li>
+                <li>
+                    <a class="map" href="./map.html">
+                        <span>지도</span>
+                        <img src="../assets/icon/map.png" alt="지도">
+                    </a>
+                </li>
+                <li>
+                    <a class="my active" href="./mypage.html">
+                        <span>마이</span>
+                        <img src="../assets/icon/my.png" alt="마이">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</body>
+</html>

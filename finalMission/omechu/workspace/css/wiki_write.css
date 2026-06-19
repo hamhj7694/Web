@@ -1,0 +1,398 @@
+@import url('./common.css');
+
+/* ================================
+   위키 작성 페이지 기본
+================================ */
+
+.wiki_write_main {
+    padding: 22px 18px 28px;
+}
+
+.wrap {
+    padding-bottom: var(--bottom-nav-height);
+}
+
+
+/* ================================
+   페이지 제목
+================================ */
+
+.wiki_write_title {
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.wiki_write_title p {
+    display: inline-block;
+
+    margin-bottom: 10px;
+    padding: 7px 13px;
+
+    border-radius: 999px;
+    background: var(--color-sub);
+    color: var(--color-main);
+
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.wiki_write_title h1 {
+    margin-bottom: 8px;
+
+    color: var(--color-text);
+    font-family: var(--font-point);
+    font-size: 3rem;
+    font-weight: 900;
+}
+
+.wiki_write_title span {
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+
+/* ================================
+   위키 작성 폼
+================================ */
+
+.wiki_write_form {
+    padding: 18px 16px;
+
+    border-radius: 22px;
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
+}
+
+.form_group {
+    margin-bottom: 18px;
+}
+
+.form_group > label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--color-text);
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.form_group input[type="text"],
+.form_group select,
+.form_group textarea {
+    width: 100%;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    color: var(--color-text);
+
+    font-size: 1.4rem;
+    font-weight: 700;
+    outline: none;
+}
+
+.form_group input[type="text"],
+.form_group select {
+    height: 44px;
+    padding: 0 12px;
+}
+
+.form_group textarea {
+    min-height: 120px;
+    resize: none;
+
+    padding: 12px;
+    line-height: 1.5;
+}
+
+.form_group input[type="text"]:focus,
+.form_group select:focus,
+.form_group textarea:focus {
+    border-color: var(--color-main);
+}
+
+.form_group input::placeholder,
+.form_group textarea::placeholder {
+    color: #aaaaaa;
+}
+
+.form_hint {
+    margin-top: 7px;
+
+    color: var(--color-text-sub);
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+
+/* ================================
+   대표 이미지 업로드
+================================ */
+
+.image_upload_box {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+/* ================================
+   파일 선택 버튼 바꾸기
+================================ */
+
+.custom_file_box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px;
+
+    border: 1px dashed #ffd39a;
+    border-radius: var(--radius-md);
+    background: #fffaf2;
+}
+
+/* 실제 파일 input은 숨김 */
+.custom_file_box input[type="file"] {
+    display: none;
+}
+
+/* 사용자가 보는 버튼 */
+.custom_file_btn {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 38px;
+    padding: 0 14px;
+    border: 3px solid var(--color-main);
+
+    border-radius: 999px;
+    background: var(--color-main);
+    color: #ffffff;
+
+    font-size: 1.3rem;
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+.custom_file_btn:hover{
+    background: var(--color-card);
+    color: var(--color-main);
+    border: 3px solid var(--color-main);
+}
+
+.custom_file_btn:active {
+    transform: scale(0.96);
+}
+
+/* 파일명 텍스트 */
+.file_name_text {
+    min-width: 0;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    color: var(--color-text-sub);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+/* ---------------------- */
+
+.image_preview_box {
+    overflow: hidden;
+
+    width: 100%;
+
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+}
+
+.image_preview_box img {
+    display: block;
+
+    width: 100%;
+    height: auto;
+}
+
+
+/* ================================
+   태그 선택 영역
+================================ */
+
+.tag_form_group {
+    padding: 14px;
+
+    border-radius: var(--radius-lg);
+    background: #fffaf2;
+    border: 1px solid #f3dfbd;
+}
+
+.tag_select_box {
+    margin-top: 14px;
+}
+
+.tag_select_box:first-of-type {
+    margin-top: 10px;
+}
+
+.tag_group_title {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #6b4226;
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.tag_chip_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag_chip {
+    cursor: pointer;
+}
+
+.tag_chip input {
+    display: none;
+}
+
+.tag_chip span {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 34px;
+    padding: 0 12px;
+
+    border-radius: 999px;
+    background: #ffffff;
+    border: 1px solid #ffd39a;
+    color: #8a5a2b;
+
+    font-size: 1.25rem;
+    font-weight: 900;
+
+    transition: 0.15s;
+}
+
+.tag_chip input:checked + span {
+    background: var(--color-main);
+    border-color: var(--color-main);
+    color: #ffffff;
+}
+
+.tag_chip span:active {
+    transform: scale(0.94);
+}
+
+#foodCustomTagsInput {
+    margin-top: 2px;
+}
+
+/* 상황 태그만 4개씩 배치 */
+.tag_select_box:nth-of-type(2) .tag_chip_list {
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    gap: 8px;
+}
+
+/* ================================
+   작성 버튼
+================================ */
+
+.wiki_write_btn_area {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 8px;
+
+    margin-top: 22px;
+}
+
+.cancel_btn,
+.submit_btn {
+    height: 48px;
+
+    border-radius: var(--radius-md);
+
+    font-size: 1.45rem;
+    font-weight: 900;
+}
+
+.submit_btn {
+    background: var(--color-main);
+    color: #ffffff;
+}
+
+.cancel_btn {
+    background: var(--color-bg);
+    color: var(--color-text-sub);
+}
+
+.submit_btn:hover {
+    background: var(--color-card);
+    color: var(--color-main);
+    border: 3px solid var(--color-main);
+}
+
+.cancel_btn:hover {
+    background: var(--color-card);
+    color: var(--color-main);
+    border: 3px solid var(--color-main);
+}
+
+.cancel_btn:active,
+.submit_btn:active {
+    transform: scale(0.97);
+}
+
+
+/* ================================
+   푸터
+================================ */
+
+.footer {
+    margin-top: 28px;
+    padding: 22px 10px;
+
+    color: var(--color-text-sub);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.7;
+    text-align: center;
+}
+
+
+/* ================================
+   PC 보정
+================================ */
+
+@media (min-width: 768px) {
+    .wiki_write_main {
+        padding: 32px;
+    }
+
+    .wiki_write_form {
+        padding: 24px;
+    }
+
+    .tag_chip span {
+        min-height: 38px;
+        padding: 0 14px;
+
+        font-size: 1.3rem;
+    }
+}

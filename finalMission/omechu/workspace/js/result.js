@@ -101,6 +101,17 @@ btnWiki.addEventListener('click', () => {
 });
 
 // -------------------------
+// 음식 자세히 보기
+// -------------------------
+const wikiBtn = document.querySelector('.btn_wiki');
+
+if (wikiBtn) {
+    wikiBtn.addEventListener('click', function() {
+        location.href = './wiki_detail.html?id=1';
+    });
+}
+
+// -------------------------
 // 공유하기
 // -------------------------
 
@@ -158,21 +169,63 @@ if (copyLinkBtn) {
 // ================================
 
 // 하트 버튼들 가져오기
-var heartButtons = document.querySelectorAll('.heart');
+var recommendBtn = document.querySelector('.recommend_btn');
 
-heartButtons.forEach(function(heart) {
-    heart.addEventListener('click', function() {
+if (recommendBtn) {
+    recommendBtn.addEventListener('click', function () {
+        var heart = recommendBtn.querySelector('.heart');
+        var text = recommendBtn.querySelector('.recommend_click');
+        var countText = document.querySelector('.result_count');
 
-        // is-liked 클래스 붙였다 뗐다 하기
-        heart.classList.toggle('is-liked');
+        // 추천 버튼은 한 번 누르면 계속 좋아요 상태 유지
+        recommendBtn.classList.add('is-liked');
 
-        // 채워진 하트 상태
-        if (heart.classList.contains('is-liked')) {
-            heart.textContent = '🧡';
-        } 
-        // 빈 하트 상태
-        else {
-            heart.textContent = '♡';
+        // 하트 / 텍스트 변경
+        if (heart) {
+            heart.textContent = '🤍';
         }
+
+        if (text) {
+            text.textContent = '추천 더하기!';
+        }
+
+        // 추천 수치 1 증가
+        if (countText) {
+            var currentCount = Number(countText.textContent.replace(/[^0-9]/g, ''));
+
+            if (isNaN(currentCount)) {
+                currentCount = 0;
+            }
+
+            countText.textContent = '추천 ' + (currentCount + 1);
+        }
+
+        // 하트 파티클 효과 실행
+        createHeartParticles(recommendBtn);
     });
-});
+}
+
+function createHeartParticles(button) {
+    let particleCount = 8;
+
+    for (let i = 0; i < particleCount; i++) {
+        let particle = document.createElement('span');
+
+        particle.classList.add('heart_particle');
+        particle.textContent = '🧡';
+
+        let randomX = Math.random() * 80 - 40;
+        let randomY = Math.random() * -60 - 20;
+        let randomRotate = Math.random() * 60 - 30;
+
+        particle.style.setProperty('--x', randomX + 'px');
+        particle.style.setProperty('--y', randomY + 'px');
+        particle.style.setProperty('--r', randomRotate + 'deg');
+
+        button.appendChild(particle);
+
+        setTimeout(function () {
+            particle.remove();
+        }, 800);
+    }
+}
