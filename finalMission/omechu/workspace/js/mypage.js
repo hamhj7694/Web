@@ -124,6 +124,16 @@
         myJoinedFoodList: $('#myJoinedFoodList'),
         myLikedFoodList: $('#myLikedFoodList'),
 
+        joinedFoodPagination: $('#joinedFoodPagination'),
+        joinedFoodPrevBtn: $('#joinedFoodPrevBtn'),
+        joinedFoodPageInfo: $('#joinedFoodPageInfo'),
+        joinedFoodNextBtn: $('#joinedFoodNextBtn'),
+
+        likedFoodPagination: $('#likedFoodPagination'),
+        likedFoodPrevBtn: $('#likedFoodPrevBtn'),
+        likedFoodPageInfo: $('#likedFoodPageInfo'),
+        likedFoodNextBtn: $('#likedFoodNextBtn'),
+
         logoutBtn: $('#logoutBtn'),
         editAccountBtn: $('#editAccountBtn'),
         deleteAccountBtn: $('#deleteAccountBtn'),
@@ -257,36 +267,42 @@
         return list.slice(startIndex, endIndex);
     }
 
-    function renderPagination(type, currentPage, totalPage) {
-        if (totalPage <= 1) {
-            return '';
+    function updatePagination(type, currentPage, totalPage) {
+        let pagination = null;
+        let prevBtn = null;
+        let pageInfo = null;
+        let nextBtn = null;
+
+        if (type === 'joined') {
+            pagination = el.joinedFoodPagination;
+            prevBtn = el.joinedFoodPrevBtn;
+            pageInfo = el.joinedFoodPageInfo;
+            nextBtn = el.joinedFoodNextBtn;
         }
 
-        return `
-            <div class="my_pagination" data-page-type="${type}">
-                <button 
-                    type="button" 
-                    class="my_page_btn" 
-                    data-page-type="${type}" 
-                    data-page-action="prev"
-                    ${currentPage <= 1 ? 'disabled' : ''}
-                >
-                    이전
-                </button>
+        if (type === 'liked') {
+            pagination = el.likedFoodPagination;
+            prevBtn = el.likedFoodPrevBtn;
+            pageInfo = el.likedFoodPageInfo;
+            nextBtn = el.likedFoodNextBtn;
+        }
 
-                <strong>${currentPage} / ${totalPage}</strong>
+        if (!pagination || !prevBtn || !pageInfo || !nextBtn) {
+            return;
+        }
 
-                <button 
-                    type="button" 
-                    class="my_page_btn" 
-                    data-page-type="${type}" 
-                    data-page-action="next"
-                    ${currentPage >= totalPage ? 'disabled' : ''}
-                >
-                    다음
-                </button>
-            </div>
-        `;
+        if (totalPage <= 1) {
+            pagination.style.display = 'none';
+            pageInfo.textContent = '1 / 1';
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            return;
+        }
+
+        pagination.style.display = 'flex';
+        pageInfo.textContent = `${currentPage} / ${totalPage}`;
+        prevBtn.disabled = currentPage <= 1;
+        nextBtn.disabled = currentPage >= totalPage;
     }
 
     function handlePaginationClick(button) {
@@ -582,6 +598,8 @@
                     태그, 코멘트, 사진을 추가해보세요!
                 </p>
             `;
+
+            updatePagination('joined', 1, 0);
             return;
         }
 
@@ -629,10 +647,9 @@
             `;
         }).join('');
 
-        el.myJoinedFoodList.innerHTML = `
-            ${foodHTML}
-            ${renderPagination('joined', joinedFoodCurrentPage, totalPage)}
-        `;
+        el.myJoinedFoodList.innerHTML = foodHTML;
+
+        updatePagination('joined', joinedFoodCurrentPage, totalPage);
     }
 
     function renderLikedFoods(likedFoods) {
@@ -645,6 +662,8 @@
                     마음에 드는 음식에 추천을 눌러보세요!
                 </p>
             `;
+
+            updatePagination('liked', 1, 0);
             return;
         }
 
@@ -690,10 +709,9 @@
             `;
         }).join('');
 
-        el.myLikedFoodList.innerHTML = `
-            ${foodHTML}
-            ${renderPagination('liked', likedFoodCurrentPage, totalPage)}
-        `;
+        el.myLikedFoodList.innerHTML = foodHTML;
+
+        updatePagination('liked', likedFoodCurrentPage, totalPage);
     }
 
     // ================================
@@ -1153,7 +1171,6 @@
         location.href = '../index.html';
     }
 
-
     // ================================
     // 12. 상세 페이지 이동
     // ================================
@@ -1170,6 +1187,26 @@
         }
 
         location.href = `./wiki_detail.html?id=${foodId}`;
+    }
+
+    function handleJoinedFoodClick(event) {
+        const detailButton = event.target.closest('.go_detail_btn');
+        const deleteButton = event.target.closest('.delete_my_activity_btn');
+
+        const card = event.target.closest('.my_food_card');
+
+        if (!card) {
+            return;
+        }
+
+        if (detailButton) {
+            moveToDetailByCard(card);
+            return;
+        }
+
+        if (deleteButton) {
+            deleteMyActivityByFoodId(card.dataset.foodId);
+        }
     }
 
     function handleLikedFoodClick(event) {
@@ -1204,33 +1241,7 @@
             addMyLikeByFoodId(card.dataset.foodId);
         }
     }
-
-    function handleLikedFoodClick(event) {
-        const detailButton = event.target.closest('.go_detail_btn');
-        const deleteButton = event.target.closest('.delete_my_like_btn');
-        const addLikeButton = event.target.closest('.add_like_btn');
-
-        const card = event.target.closest('.my_food_card');
-
-        if (!card) {
-            return;
-        }
-
-        if (detailButton) {
-            moveToDetailByCard(card);
-            return;
-        }
-
-        if (deleteButton) {
-            deleteMyLikeByFoodId(card.dataset.foodId);
-            return;
-        }
-
-        if (addLikeButton) {
-            addMyLikeByFoodId(card.dataset.foodId);
-        }
-    }
-
+    
     // ================================
     // 13. 이벤트 연결
     // ================================
@@ -1250,6 +1261,30 @@
     el.myJoinedFoodList.addEventListener('click', handleJoinedFoodClick);
     el.myLikedFoodList.addEventListener('click', handleLikedFoodClick);
 
+    if (el.joinedFoodPrevBtn) {
+        el.joinedFoodPrevBtn.addEventListener('click', function () {
+            handlePaginationClick(el.joinedFoodPrevBtn);
+        });
+    }
+
+    if (el.joinedFoodNextBtn) {
+        el.joinedFoodNextBtn.addEventListener('click', function () {
+            handlePaginationClick(el.joinedFoodNextBtn);
+        });
+    }
+
+    if (el.likedFoodPrevBtn) {
+        el.likedFoodPrevBtn.addEventListener('click', function () {
+            handlePaginationClick(el.likedFoodPrevBtn);
+        });
+    }
+
+    if (el.likedFoodNextBtn) {
+        el.likedFoodNextBtn.addEventListener('click', function () {
+            handlePaginationClick(el.likedFoodNextBtn);
+        });
+    }
+
     document.addEventListener('keydown', function (event) {
         if (event.key !== 'Escape') {
             return;
@@ -1264,7 +1299,6 @@
             closeDeleteOverlay();
         }
     });
-
 
     // ================================
     // 14. 실행
