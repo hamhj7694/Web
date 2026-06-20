@@ -308,6 +308,11 @@
     font-weight: 900;
 }
 
+.place_mid{
+    display: flex;
+    margin-left: 10px;
+}
+
 .place_address {
     margin-top: 8px;
     color: var(--color-text-sub);

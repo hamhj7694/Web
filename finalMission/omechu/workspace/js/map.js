@@ -30,20 +30,20 @@ const placeData = [
     {
         title: '오메추 식당',
         category: '한식',
-        address: '서울특별시 어딘가 맛있는 길 12',
+        address: '서울특별시 관악구 신림동 맛있는 길 12',
         placeUrl: 'https://map.kakao.com/',
         food: ['제육', '계란말이', '김치찌개'],
-        lat: 37.5665,
-        lng: 126.9780
+        lat: 37.4843,
+        lng: 126.9299
     },
     {
         title: '말랑 분식',
         category: '분식',
-        address: '서울특별시 맛동산로 24',
+        address: '서울특별시 관악구 신림동 맛동산로 24',
         placeUrl: 'https://map.kakao.com/',
         food: ['떡볶이', '김밥', '튀김'],
-        lat: 37.5651,
-        lng: 126.9895
+        lat: 37.4838,
+        lng: 126.9305
     }
 ];
 
@@ -65,7 +65,6 @@ let myLocationMarker = null;
 // 거리 막대
 // ================================
 
-if (distanceRange) {
     function updateDistanceRange() {
         const min = Number(distanceRange.min);
         const max = Number(distanceRange.max);
@@ -84,6 +83,7 @@ if (distanceRange) {
         `;
     }
 
+if (distanceRange) {
     distanceRange.addEventListener('input', function() {
         updateDistanceRange();
 
@@ -403,18 +403,20 @@ function renderPlaceList(places) {
                 <span>${escapeHTML(place.category)}</span>
             </div>
 
-            <p class="place_address">
-                ${escapeHTML(place.address)}
-            </p>
+            <div class="place_mid">
+                <p class="place_address">
+                    ${escapeHTML(place.address)}
+                </p>
 
-            <div class="place_meta">
-                <span>${escapeHTML(distanceText)}</span>
-                <span>${escapeHTML(place.category)}</span>
+                <div class="place_meta">
+                    (<span >${escapeHTML(distanceText)}</span>)
+                </div>
+                
             </div>
 
             <div class="location_btn">
                 <button type="button" class="place_food_btn" data-index="${index}">
-                    메뉴
+                    추천 푸드
                 </button>
 
                 <button type="button" class="place_search_btn" data-index="${index}">
@@ -422,7 +424,7 @@ function renderPlaceList(places) {
                 </button>
 
                 <button type="button" class="place_detail_btn" data-index="${index}">
-                    상세
+                    카카오맵 보기
                 </button>
             </div>
 
