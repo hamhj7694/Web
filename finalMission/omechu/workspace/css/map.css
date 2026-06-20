@@ -310,7 +310,7 @@
 
 .place_mid{
     display: flex;
-    margin-left: 10px;
+    align-items: center;
 }
 
 .place_address {
@@ -324,8 +324,8 @@
 .place_meta {
     display: flex;
     flex-wrap: wrap;
+    margin: 4px 0 0 6px;
     gap: 8px;
-    margin-top: 5px;
     color: var(--color-main);
     font-size: 1.3rem;
     font-weight: 900;
@@ -374,6 +374,10 @@
 
     font-size: 1.2rem;
     font-weight: 900;
+}
+
+.related_food_box.is-hidden {
+    display: none;
 }
 
 /* =============================

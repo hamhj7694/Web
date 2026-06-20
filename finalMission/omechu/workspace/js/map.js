@@ -117,25 +117,9 @@ mapFilterBtns.forEach(function(button) {
 // ================================
 
 function getNowLocation() {
-    if (!navigator.geolocation) {
-        alert('현재 위치 기능을 지원하지 않는 브라우저입니다.');
-        createMap();
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            nowLat = position.coords.latitude;
-            nowLng = position.coords.longitude;
-
-            createMap();
-        },
-        function(error) {
-            alert('위치 정보를 가져오지 못했습니다: ' + error.message);
-
-            createMap();
-        }
-    );
+    // 1단계 테스트용: GPS 대신 기본 위치 사용
+    // 실제 GPS는 나중에 카카오 검색 붙일 때 다시 연결
+    createMap();
 }
 
 // ================================
@@ -158,7 +142,6 @@ function createMap() {
     placeMarkers = [];
 
     renderMyLocationMarker(nowPosition);
-    renderPlaceMarkers(placeData);
     renderPlaceList(placeData);
 
     setMapBoundsByCurrentLocation();
@@ -175,15 +158,37 @@ function renderMyLocationMarker(position) {
         myLocationMarker.setMap(null);
     }
 
+    const baseMarkerSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="48" viewBox="0 0 38 48">
+            <path 
+                d="M19 0C8.5 0 0 8.5 0 19c0 13.5 19 29 19 29s19-15.5 19-29C38 8.5 29.5 0 19 0z" 
+                fill="#ff7a00"
+            />
+            <circle cx="19" cy="19" r="11" fill="#ffffff"/>
+            <circle cx="19" cy="19" r="6" fill="#18b957"/>
+        </svg>
+    `;
+
+    const baseMarkerImage = new kakao.maps.MarkerImage(
+        'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(baseMarkerSvg),
+        new kakao.maps.Size(38, 48),
+        {
+            offset: new kakao.maps.Point(19, 48)
+        }
+    );
+
     myLocationMarker = new kakao.maps.Marker({
         map: kakaoMap,
-        position: position
+        position: position,
+        image: baseMarkerImage,
+        zIndex: 1
     });
 
     const myInfoWindow = new kakao.maps.InfoWindow({
         content: `
             <div style="padding:8px 10px;font-size:13px;line-height:1.5;white-space:nowrap;">
-                <strong>현재 위치</strong>
+                <strong>기준 위치</strong><br>
+                현재 위치 또는 검색한 위치
             </div>
         `
     });
@@ -205,7 +210,7 @@ function renderMyLocationMarker(position) {
 function getSelectedRadiusMeter() {
     if (!distanceRange) return 300;
 
-    const distanceMeterList = [100, 300, 500, 1000];
+    const distanceMeterList = [100, 250, 500, 1000];
 
     return distanceMeterList[Number(distanceRange.value)] || 300;
 }
@@ -279,7 +284,8 @@ function renderPlaceMarkers(places) {
 
         const marker = new kakao.maps.Marker({
             map: kakaoMap,
-            position: position
+            position: position,
+            zIndex: 5
         });
 
         const infoWindow = new kakao.maps.InfoWindow({
@@ -388,8 +394,13 @@ function renderPlaceList(places) {
                 검색 결과가 없어요!
             </p>
         `;
+
+        clearPlaceMarkers();
         return;
     }
+
+    // 카드에 보이는 식당만 지도 마커로 표시
+    renderPlaceMarkers(filteredPlaces);
 
     filteredPlaces.forEach(function(place, index) {
         const card = document.createElement('article');
@@ -409,14 +420,13 @@ function renderPlaceList(places) {
                 </p>
 
                 <div class="place_meta">
-                    (<span >${escapeHTML(distanceText)}</span>)
+                    <span >(${escapeHTML(distanceText)})</span>
                 </div>
-                
             </div>
-
+                
             <div class="location_btn">
                 <button type="button" class="place_food_btn" data-index="${index}">
-                    추천 푸드
+                    음식 키워드
                 </button>
 
                 <button type="button" class="place_search_btn" data-index="${index}">
@@ -428,7 +438,7 @@ function renderPlaceList(places) {
                 </button>
             </div>
 
-            <div class="related_food_box">
+            <div class="related_food_box is-hidden">
                 ${renderRelatedTags(place)}
             </div>
         `;
@@ -478,19 +488,24 @@ function connectPlaceButtons(places) {
 
     foodBtns.forEach(function(button) {
         button.addEventListener('click', function() {
-            const place = places[Number(button.dataset.index)];
+            const card = button.closest('.place_card');
 
-            if (!place) return;
+            if (!card) return;
 
-            if (!place.food || place.food.length === 0) {
-                alert('등록된 메뉴가 없어요.');
-                return;
+            const foodBox = card.querySelector('.related_food_box');
+
+            if (!foodBox) return;
+
+            foodBox.classList.toggle('is-hidden');
+
+            if (foodBox.classList.contains('is-hidden')) {
+                button.textContent = '음식 키워드';
+            } else {
+                button.textContent = '키워드 닫기';
             }
-
-            alert(`${place.title} 메뉴\n- ${place.food.join('\n- ')}`);
         });
     });
-
+    
     searchBtns.forEach(function(button) {
         button.addEventListener('click', function() {
             const place = places[Number(button.dataset.index)];
@@ -509,27 +524,12 @@ function connectPlaceButtons(places) {
 
             if (!place) return;
 
-            const markerInfo = placeMarkers.find(function(markerData) {
-                return markerData.data.title === place.title &&
-                    markerData.data.address === place.address;
-            });
-
-            if (markerInfo && kakaoMap) {
-                kakaoMap.setCenter(markerInfo.position);
-                kakaoMap.setLevel(4);
-                openPlaceInfo(markerInfo.marker, markerInfo.infoWindow);
-
-                mapContainer.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-
+            if (!place.placeUrl || place.placeUrl === '카카오맵 링크') {
+                alert('카카오맵 링크가 아직 없어요.');
                 return;
             }
 
-            if (place.placeUrl) {
-                window.open(place.placeUrl, '_blank');
-            }
+            window.open(place.placeUrl, '_blank');
         });
     });
 }
