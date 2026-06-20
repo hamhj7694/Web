@@ -138,7 +138,7 @@ function createMap() {
     renderMyLocationMarker(nowPosition);
     renderPlaceMarkers(placeData);
 
-    setMapBoundsByCurrentLocation();ㄴ
+    setMapBoundsByCurrentLocation();
 }
 
 function renderMyLocationMarker(position) {
