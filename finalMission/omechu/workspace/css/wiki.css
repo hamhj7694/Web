@@ -459,6 +459,11 @@
     font-weight: 700;
 }
 
+.tag_more_count {
+    background: var(--color-main) !important;
+    color: #fff !important;
+}
+
 /* ================================
    PC 보정
 ================================ */

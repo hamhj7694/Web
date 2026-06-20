@@ -134,6 +134,7 @@ let myLocationMarker = null;
 
 // 최근 검색 조건 저장
 const LAST_MAP_SEARCH_KEY = 'omechu_last_map_search';
+const RESULT_MAP_KEYWORD_KEY = 'omechu_map_keyword';
 
 // ================================
 // 검색어 해석용 키워드
@@ -440,7 +441,7 @@ function setFallbackLocation() {
     currentBaseLabel = FALLBACK_LABEL;
     currentBaseType = 'fallback';
 
-    currentSearchKeyword = '맛집';
+    currentSearchKeyword = currentSearchKeyword || '맛집';
     currentPage = 1;
 
     if (!kakaoMap) {
@@ -542,7 +543,7 @@ function getNowLocation() {
             currentBaseLabel = '현재 위치';
             currentBaseType = 'gps';
 
-            currentSearchKeyword = '맛집';
+            currentSearchKeyword = currentSearchKeyword || '맛집';
             currentPage = 1;
 
             if (!kakaoMap) {
@@ -580,6 +581,21 @@ function getNowLocation() {
 // ================================
 
 function initMapPage() {
+    const resultKeyword = localStorage.getItem(RESULT_MAP_KEYWORD_KEY);
+
+    if (resultKeyword) {
+        currentSearchKeyword = normalizeFoodKeyword(resultKeyword);
+
+        if (mapSearchInput) {
+            mapSearchInput.value = currentSearchKeyword;
+        }
+
+        localStorage.removeItem(RESULT_MAP_KEYWORD_KEY);
+
+        getNowLocation();
+        return;
+    }
+
     const lastSearchData = loadLastMapSearch();
 
     if (lastSearchData && applyLastMapSearch(lastSearchData)) {
@@ -962,7 +978,7 @@ function renderPlaceList(places) {
                 
             <div class="location_btn">
                 <button type="button" class="place_food_btn" data-index="${index}">
-                    음식 키워드
+                    관련 메뉴
                 </button>
 
                 <button type="button" class="place_search_btn" data-index="${index}">
@@ -970,7 +986,7 @@ function renderPlaceList(places) {
                 </button>
 
                 <button type="button" class="place_detail_btn" data-index="${index}">
-                    정보 상세보기
+                    카카오맵
                 </button>
             </div>
 
@@ -1035,9 +1051,9 @@ function connectPlaceButtons(places) {
             foodBox.classList.toggle('is-hidden');
 
             if (foodBox.classList.contains('is-hidden')) {
-                button.textContent = '음식 키워드';
+                button.textContent = '관련 메뉴';
             } else {
-                button.textContent = '키워드 닫기';
+                button.textContent = '메뉴 닫기';
             }
         });
     });
@@ -1144,10 +1160,15 @@ if (mapSearchInput) {
 
 if (mapResetBtn) {
     mapResetBtn.addEventListener('click', function() {
+        // 최근 검색 조건 삭제
+        localStorage.removeItem(LAST_MAP_SEARCH_KEY);
+
+        // 검색창 비우기
         if (mapSearchInput) {
             mapSearchInput.value = '';
         }
 
+        // 카테고리 전체로 초기화
         mapFilterBtns.forEach(function(btn) {
             btn.classList.remove('selected');
         });
@@ -1156,31 +1177,19 @@ if (mapResetBtn) {
             mapFilterBtns[0].classList.add('selected');
         }
 
+        // 거리 250m로 초기화
         if (distanceRange) {
             distanceRange.value = 1;
             updateDistanceRange();
         }
 
+        // 데이터 초기화
         currentPlaceData = [];
         currentSearchKeyword = '맛집';
         currentPage = 1;
 
+        // 현재 위치 기준으로 다시 검색
         getNowLocation();
-        return;
-        
-        if (kakaoMap) {
-            currentPage = 1;
-            setMapBoundsByCurrentLocation();
-
-            if (placeSearch) {
-                searchFoodPlacesAroundBase(currentSearchKeyword);
-            } else {
-                renderPlaceList(currentPlaceData);
-            }
-        }
-
-        renderPlaceList(currentPlaceData);
-        setMapBoundsByCurrentLocation();
     });
 }
 

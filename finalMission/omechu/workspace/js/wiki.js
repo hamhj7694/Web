@@ -11,7 +11,7 @@
 // 지금은 서버 없이 배열 데이터로 화면을 그림
 // 나중에 DB를 붙이면 이 배열 부분만 서버 데이터로 교체하면 됨
 
-const foodList = [
+let foodList = [
     {
         id: 1,
         name: '제육볶음',
@@ -145,7 +145,24 @@ const foodList = [
         hits: 50
     }
 ];
+// 작성 페이지에서 등록한 음식 불러오기
+function getCustomFoodList() {
+    const savedData = localStorage.getItem('omechu_wiki_custom_foods');
 
+    if (!savedData) return [];
+
+    try {
+        return JSON.parse(savedData);
+    } catch (error) {
+        console.error('등록된 위키 데이터를 불러오지 못했습니다.', error);
+        return [];
+    }
+}
+
+foodList = [
+    ...getCustomFoodList(),
+    ...foodList
+];
 
 // ================================
 // 2. localStorage key
@@ -216,8 +233,8 @@ function getTotalLikeStorageKey(foodId) {
 }
 
 function getMyLikeStorageKey(foodId) {
-    // 현재 로그인한 사용자가 해당 메뉴를 추천했는지
-    return `omechu_wiki_food_${foodId}_my_like_${LOGIN_USER_ID}`;
+    // 현재 로그인한 사용자가 해당 메뉴를 몇 번 추천했는지
+    return `omechu_wiki_food_${foodId}_my_like_count_${LOGIN_USER_ID}`;
 }
 
 function getAddedLikeCount(foodId) {
@@ -238,12 +255,16 @@ function getFoodTotalHitCount(food) {
     return food.hits + getAddedHitCount(food.id);
 }
 
-function isMyLikedFood(foodId) {
+function getMyLikeCount(foodId) {
     if (!IS_LOGIN || !LOGIN_USER_ID) {
-        return false;
+        return 0;
     }
 
-    return localStorage.getItem(getMyLikeStorageKey(foodId)) === 'true';
+    return Number(localStorage.getItem(getMyLikeStorageKey(foodId))) || 0;
+}
+
+function isMyLikedFood(foodId) {
+    return getMyLikeCount(foodId) > 0;
 }
 
 
@@ -252,7 +273,11 @@ function isMyLikedFood(foodId) {
 // ================================
 
 function createFoodCard(food) {
-    const tagHTML = food.tags.map(function(tag) {
+    const MAX_CARD_TAG_COUNT = 6;
+
+    const visibleTags = (food.tags || []).slice(0, MAX_CARD_TAG_COUNT);
+
+    const tagHTML = visibleTags.map(function(tag) {
         return `<span>${tag}</span>`;
     }).join('');
 
@@ -272,8 +297,6 @@ function createFoodCard(food) {
 
             <div class="food_info">
                 <h2 class="food_name">${food.name}</h2>
-
-                <p class="food_desc">${food.description}</p>
 
                 <div class="food_tags">
                     ${tagHTML}
@@ -465,27 +488,24 @@ function handleFoodLikeButton(button) {
         return;
     }
 
-    if (isMyLikedFood(foodId)) {
-        alert('이미 추천한 메뉴예요!');
-        return;
-    }
-
     const totalLikeStorageKey = getTotalLikeStorageKey(foodId);
     const myLikeStorageKey = getMyLikeStorageKey(foodId);
 
     const currentAddedLikeCount = Number(localStorage.getItem(totalLikeStorageKey)) || 0;
     const nextAddedLikeCount = currentAddedLikeCount + 1;
 
+    const currentMyLikeCount = Number(localStorage.getItem(myLikeStorageKey)) || 0;
+    const nextMyLikeCount = currentMyLikeCount + 1;
+
     // 전체 추천 수 증가분 저장
-    // 나중에 DB 연결하면 이 부분은 서버 요청으로 교체
     localStorage.setItem(totalLikeStorageKey, String(nextAddedLikeCount));
 
-    // 내가 추천했다는 상태 저장
-    localStorage.setItem(myLikeStorageKey, 'true');
+    // 내가 추천한 횟수 저장
+    localStorage.setItem(myLikeStorageKey, String(nextMyLikeCount));
 
     button.classList.add('is-liked');
     button.textContent = '🤍';
-    button.setAttribute('aria-label', '추천 완료');
+    button.setAttribute('aria-label', `내 추천 ${nextMyLikeCount}회`);
 
     const card = button.closest('.food_card');
     const likeText = card ? card.querySelector('.food_meta span:first-child') : null;
@@ -503,7 +523,6 @@ function handleFoodLikeButton(button) {
         }, 800);
     }
 }
-
 
 // ================================
 // 14. 하트 파티클
