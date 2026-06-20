@@ -45,6 +45,31 @@
     border: 1px solid var(--color-line);
 }
 
+/* 현재 위치 + 거리 영역 */
+.map_all {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+/* 현재 위치 버튼 */
+.current_location_btn {
+    width: 100%;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    background: #fff;
+    color: var(--color-main);
+    border: 2px solid var(--color-sub);
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.current_location_btn:hover {
+    background: var(--color-sub);
+}
+
+/* 검색창 + 버튼 영역 */
 .map_search_box {
     display: grid;
     grid-template-columns: 1fr 56px 64px;
@@ -84,18 +109,13 @@
     color: var(--color-main);
 }
 
-.map_all {
-    display: grid;
-    gap: 12px;
-    margin-top: 14px;
-}
-
 /* =============================
     거리 range
 ============================= */
 
 .distance_box {
     width: 100%;
+    padding: 2px 2px 0;
 }
 
 .distance_range {
@@ -134,17 +154,6 @@
     margin-top: 8px;
     color: #6b4226;
     font-size: 1.1rem;
-    font-weight: 900;
-}
-
-.current_location_btn {
-    width: 100%;
-    height: 42px;
-    border-radius: var(--radius-sm);
-    background: #fff;
-    color: var(--color-main);
-    border: 2px solid var(--color-sub);
-    font-size: 1.4rem;
     font-weight: 900;
 }
 
@@ -234,27 +243,38 @@
     margin-bottom: 12px;
 }
 
+.page button:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
 .section_header h2 {
     font-family: var(--font-point);
     font-size: 2rem;
 }
 
-.section_header p {
+.page p {
     color: var(--color-text-sub);
     font-size: 1.3rem;
     font-weight: 800;
 }
 
-.section_header strong {
+.page strong {
     color: var(--color-main);
 }
 
-.section_header .page{
+.page{
     display: flex;
     align-items: center;
 }
 
-.section_header .page button{
+.place_section>.page{
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.page button{
     width: 20px;
     display: flex;
     padding: 2px 4px;
@@ -385,6 +405,12 @@
 ============================= */
 
 @media (min-width: 768px) {
+    .map_all {
+        grid-template-columns: 180px 1fr;
+        align-items: center;
+        gap: 16px;
+    }
+
     .map_search_box {
         grid-template-columns: 1fr 80px 80px;
     }

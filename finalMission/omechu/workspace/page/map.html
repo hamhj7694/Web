@@ -43,23 +43,11 @@
 
             <!-- 검색 영역 -->
             <section class="map_search_section">
-                <div class="map_search_box">
-                    <input 
-                        type="text" 
-                        id="mapSearchInput" 
-                        placeholder="음식이나 식당 또는 지역을 검색해보세요"
-                    >
-
-                    <button type="button" id="mapSearchBtn" class="map_search_btn">
-                        검색
-                    </button>
-
-                    <button type="button" id="mapResetBtn" class="map_reset_btn">
-                        초기화
-                    </button>
-                </div>
-
                 <div class="map_all">
+                    <button type="button" id="currentLocationBtn" class="current_location_btn">
+                            📍 현재 위치로 찾기
+                    </button>
+                    
                     <div class="distance_box">
                         <input
                             type="range"
@@ -77,11 +65,22 @@
                             <span>1km</span>
                         </div>
                     </div>
+                </div>
 
-                <button type="button" id="currentLocationBtn" class="current_location_btn">
-                        📍 현재 위치로 찾기
-                </button>
+                <div class="map_search_box">
+                    <input 
+                        type="text" 
+                        id="mapSearchInput" 
+                        placeholder="음식, 식당, 지역명 등"
+                    >
 
+                    <button type="button" id="mapSearchBtn" class="map_search_btn">
+                        검색
+                    </button>
+
+                    <button type="button" id="mapResetBtn" class="map_reset_btn">
+                        초기화
+                    </button>
                 </div>
             </section>
 
@@ -126,6 +125,13 @@
                     </p>
                     <!-- js로 생성 -->
                 </div>
+
+                <div class="page">
+                    <button> ◀ </button>
+                    <p>총 <strong>0</strong>개 - <strong>0/0</strong>페이지</p>
+                    <button> ▶ </button>
+                </div>
+                
             </section>
 
             <!-- 푸터 -->
