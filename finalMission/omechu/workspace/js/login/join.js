@@ -36,7 +36,7 @@ idDuplicateCheckBtn.addEventListener('click', function() {
     }
 
     if (!idRegExp.test(userId)) {
-        alert('아이디는 영문, 숫자 조합 4자 이상으로 입력해주세요!');
+        alert('아이디는 영문 또는 숫자 조합 4자 이상으로 입력해주세요!');
         joinIdInput.focus();
         return;
     }
@@ -138,10 +138,11 @@ joinForm.addEventListener('submit', function(event) {
         return;
     }
 
-    // 닉네임 중복 확인
-    const savedUsersForNickname = getSavedUsers();
+    // 기존 회원 정보 가져오기
+    const savedUsersForCheck = getSavedUsers();
 
-    const isDuplicatedNickname = savedUsersForNickname.some(function(user) {
+    // 닉네임 중복 확인
+    const isDuplicatedNickname = savedUsersForCheck.some(function(user) {
         return user.nickname === nickname;
     });
 
@@ -162,6 +163,16 @@ joinForm.addEventListener('submit', function(event) {
 
     if (!emailRegExp.test(email)) {
         alert('올바른 이메일 형식으로 입력해주세요!');
+        joinEmailInput.focus();
+        return;
+    }
+
+    const isDuplicatedEmail = savedUsersForCheck.some(function(user) {
+        return user.email === email;
+    });
+
+    if (isDuplicatedEmail) {
+        alert('이미 가입된 이메일이에요!');
         joinEmailInput.focus();
         return;
     }
@@ -205,6 +216,17 @@ joinForm.addEventListener('submit', function(event) {
         return;
     }
 
+    // 저장 직전 이메일 중복 방지
+    const isDuplicatedEmailBeforeSave = savedUsers.some(function(user) {
+        return user.email === email;
+    });
+
+    if (isDuplicatedEmailBeforeSave) {
+        alert('이미 가입된 이메일이에요!');
+        joinEmailInput.focus();
+        return;
+    }
+    
     // -----------------------------
     
     const newUser = {
