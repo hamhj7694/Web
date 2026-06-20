@@ -41,8 +41,37 @@
                 <span>현재 위치 근처의 음식점과 추천 메뉴를 찾아보세요.</span>
             </section>
 
+            <!-- 필터 영역 -->
+            <section class="map_filter_section" id="foodCategory">
+                <div class="map_filter_list">
+                    <button type="button" class="map_filter_btn selected">전체</button>
+                    <button type="button" class="map_filter_btn" data-category="한식">한식</button>
+                    <button type="button" class="map_filter_btn" data-category="중식">중식</button>
+                    <button type="button" class="map_filter_btn" data-category="일식">일식</button>
+                    <button type="button" class="map_filter_btn" data-category="양식">양식</button>
+                    <button type="button" class="map_filter_btn" data-category="분식">분식</button>
+                    <button type="button" class="map_filter_btn" data-category="디저트">디저트</button>
+                    <button type="button" class="map_filter_btn" data-category="기타">기타</button>
+                </div>
+            </section>
+            
             <!-- 검색 영역 -->
             <section class="map_search_section">
+                <div class="map_search_box">
+                    <input 
+                        type="text" 
+                        id="mapSearchInput" 
+                        placeholder="음식, 식당, 지역명 등"
+                    >
+
+                    <button type="button" id="mapSearchBtn" class="map_search_btn">
+                        검색
+                    </button>
+
+                    <button type="button" id="mapResetBtn" class="map_reset_btn">
+                        초기화
+                    </button>
+                </div>
                 <div class="map_all">
                     <button type="button" id="currentLocationBtn" class="current_location_btn">
                             📍 현재 위치로 찾기
@@ -66,41 +95,7 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="map_search_box">
-                    <input 
-                        type="text" 
-                        id="mapSearchInput" 
-                        placeholder="음식, 식당, 지역명 등"
-                    >
-
-                    <button type="button" id="mapSearchBtn" class="map_search_btn">
-                        검색
-                    </button>
-
-                    <button type="button" id="mapResetBtn" class="map_reset_btn">
-                        초기화
-                    </button>
-                </div>
             </section>
-
-
-            <!-- 필터 영역 -->
-            <section class="map_filter_section" id="foodCategory">
-                <p class="section_label">음식 카테고리</p>
-
-                <div class="map_filter_list">
-                    <button type="button" class="map_filter_btn selected">전체</button>
-                    <button type="button" class="map_filter_btn" data-category="한식">한식</button>
-                    <button type="button" class="map_filter_btn" data-category="중식">중식</button>
-                    <button type="button" class="map_filter_btn" data-category="일식">일식</button>
-                    <button type="button" class="map_filter_btn" data-category="양식">양식</button>
-                    <button type="button" class="map_filter_btn" data-category="분식">분식</button>
-                    <button type="button" class="map_filter_btn" data-category="디저트">디저트</button>
-                    <button type="button" class="map_filter_btn" data-category="기타">기타</button>
-                </div>
-            </section>
-
 
             <!-- 지도 영역 -->
             <section class="map_area_section">

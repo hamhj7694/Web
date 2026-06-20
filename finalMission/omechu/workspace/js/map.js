@@ -6,6 +6,59 @@ const distanceRange = document.querySelector('.distance_range');
 // ================================
 
 const mapFilterBtns = document.querySelectorAll('.map_filter_btn');
+const mapFilterList = document.querySelector('.map_filter_list');
+
+// ================================
+// 카테고리 리스트 마우스 드래그 스크롤
+// ================================
+
+let isFilterDragMoved = false;
+
+if (mapFilterList) {
+    let isDraggingFilter = false;
+    let startX = 0;
+    let startScrollLeft = 0;
+
+    mapFilterList.addEventListener('mousedown', function(event) {
+        isDraggingFilter = true;
+        isFilterDragMoved = false;
+
+        startX = event.pageX;
+        startScrollLeft = mapFilterList.scrollLeft;
+
+        mapFilterList.classList.add('is-dragging');
+    });
+
+    mapFilterList.addEventListener('mousemove', function(event) {
+        if (!isDraggingFilter) return;
+
+        const moveX = event.pageX - startX;
+
+        if (Math.abs(moveX) > 8) {
+            isFilterDragMoved = true;
+        }
+
+        mapFilterList.scrollLeft = startScrollLeft - moveX;
+    });
+
+    mapFilterList.addEventListener('mouseup', function() {
+        isDraggingFilter = false;
+        mapFilterList.classList.remove('is-dragging');
+
+        setTimeout(function() {
+            isFilterDragMoved = false;
+        }, 0);
+    });
+
+    mapFilterList.addEventListener('mouseleave', function() {
+        isDraggingFilter = false;
+        mapFilterList.classList.remove('is-dragging');
+
+        setTimeout(function() {
+            isFilterDragMoved = false;
+        }, 0);
+    });
+}
 
 // ================================
 // HTML 요소
@@ -52,10 +105,10 @@ let placeMarkers = [];
 let currentPage = 1;
 const ITEMS_PER_PAGE = 10;
 
-// 기본 fallback 위치: 서울역
-const FALLBACK_LAT = 37.5547;
-const FALLBACK_LNG = 126.9706;
-const FALLBACK_LABEL = '서울역';
+// 기본 fallback 위치: 신림역
+const FALLBACK_LAT = 37.484201;
+const FALLBACK_LNG = 126.929715;
+const FALLBACK_LABEL = '신림역';
 
 // 기본 위치
 let nowLat = FALLBACK_LAT;
@@ -199,34 +252,66 @@ function searchFoodPlacesAroundBase(foodKeyword) {
     const radiusMeter = getSelectedRadiusMeter();
     const centerPosition = new kakao.maps.LatLng(currentBaseLat, currentBaseLng);
 
-    placeSearch.keywordSearch(
-        keyword,
-        function(result, status) {
-            if (status !== kakao.maps.services.Status.OK) {
-                currentPlaceData = [];
-                currentPage = 1;
-                renderPlaceList(currentPlaceData);
-                return;
+    const MAX_KAKAO_PAGE = 3; // 카카오 1페이지 최대 15개 × 3 = 최대 45개
+    const KAKAO_PAGE_SIZE = 15;
+
+    let collectedPlaces = [];
+
+    function requestKakaoPage(pageNumber) {
+        placeSearch.keywordSearch(
+            keyword,
+            function(result, status, pagination) {
+                if (status !== kakao.maps.services.Status.OK) {
+                    if (collectedPlaces.length === 0) {
+                        currentPlaceData = [];
+                        currentPage = 1;
+                        renderPlaceList(currentPlaceData);
+                    } else {
+                        applyCollectedKakaoPlaces(collectedPlaces, keyword);
+                    }
+
+                    return;
+                }
+
+                collectedPlaces = collectedPlaces.concat(result);
+
+                const canLoadNextPage =
+                    pagination &&
+                    pagination.hasNextPage &&
+                    pageNumber < MAX_KAKAO_PAGE;
+
+                if (canLoadNextPage) {
+                    requestKakaoPage(pageNumber + 1);
+                    return;
+                }
+
+                applyCollectedKakaoPlaces(collectedPlaces, keyword);
+            },
+            {
+                location: centerPosition,
+                radius: radiusMeter,
+                sort: kakao.maps.services.SortBy.ACCURACY,
+                page: pageNumber,
+                size: KAKAO_PAGE_SIZE
             }
+        );
+    }
 
-            currentPlaceData = result.map(function(kakaoPlace) {
-                return convertKakaoPlace(kakaoPlace);
-            });
+    requestKakaoPage(1);
+}
 
-            currentSearchKeyword = keyword;
-            currentPage = 1;
+function applyCollectedKakaoPlaces(kakaoPlaces, keyword) {
+    currentPlaceData = kakaoPlaces.map(function(kakaoPlace) {
+        return convertKakaoPlace(kakaoPlace);
+    });
 
-            saveLastMapSearch();
+    currentSearchKeyword = keyword;
+    currentPage = 1;
 
-            renderPlaceList(currentPlaceData);
-            setMapBoundsByCurrentLocation();
-        },
-        {
-            location: centerPosition,
-            radius: radiusMeter,
-            sort: kakao.maps.services.SortBy.ACCURACY
-        }
-    );
+    saveLastMapSearch();
+
+    renderPlaceList(currentPlaceData);
+    setMapBoundsByCurrentLocation();
 }
 
 function convertKakaoPlace(kakaoPlace) {
@@ -308,7 +393,12 @@ if (distanceRange) {
         if (kakaoMap) {
             currentPage = 1;
             setMapBoundsByCurrentLocation();
-            renderPlaceList(currentPlaceData);
+
+            if (placeSearch) {
+                searchFoodPlacesAroundBase(currentSearchKeyword);
+            } else {
+                renderPlaceList(currentPlaceData);
+            }
         }
     });
 
@@ -321,14 +411,22 @@ if (distanceRange) {
 
 mapFilterBtns.forEach(function(button) {
     button.addEventListener('click', function() {
+        if (isFilterDragMoved) return;
+
         mapFilterBtns.forEach(function(btn) {
             btn.classList.remove('selected');
         });
 
         button.classList.add('selected');
 
+        currentSearchKeyword = getCategorySearchKeyword();
         currentPage = 1;
-        renderPlaceList(currentPlaceData);
+
+        if (placeSearch) {
+            searchFoodPlacesAroundBase(currentSearchKeyword);
+        } else {
+            renderPlaceList(currentPlaceData);
+        }
     });
 });
 
@@ -432,7 +530,7 @@ function applyLastMapSearch(lastSearchData) {
 
 function getNowLocation() {
     if (!navigator.geolocation) {
-        alert('현재 위치를 가져올 수 없어 서울역 기준으로 검색할게요.');
+        alert('현재 위치를 가져올 수 없어 신림역 기준으로 검색할게요.');
         setFallbackLocation();
         return;
     }
@@ -466,7 +564,7 @@ function getNowLocation() {
             }
         },
         function() {
-            alert('현재 위치를 가져오지 못했어요. 서울역 기준으로 검색할게요.');
+            alert('현재 위치를 가져오지 못했어요. 신림역 기준으로 검색할게요.');
             setFallbackLocation();
         },
         {

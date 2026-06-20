@@ -38,7 +38,7 @@
 ============================= */
 
 .map_search_section {
-    margin-top: 22px;
+    margin-top: 10px;
     padding: 14px;
     border-radius: var(--radius-lg);
     background: #fff;
@@ -47,10 +47,10 @@
 
 /* 현재 위치 + 거리 영역 */
 .map_all {
+    margin-top: 10px;
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    margin-bottom: 14px;
 }
 
 /* 현재 위치 버튼 */
@@ -115,7 +115,6 @@
 
 .distance_box {
     width: 100%;
-    padding: 2px 2px 0;
 }
 
 .distance_range {
@@ -162,7 +161,10 @@
 ============================= */
 
 .map_filter_section {
+    display: block;
     margin-top: 18px;
+    padding-top: 18px;
+    border-top: 2px dashed var(--color-line);
 }
 
 .section_label {
@@ -177,6 +179,15 @@
     overflow-x: auto;
     padding-bottom: 4px;
     scrollbar-width: none;
+}
+
+.map_filter_list {
+    cursor: grab;
+    user-select: none;
+}
+
+.map_filter_list.is-dragging {
+    cursor: grabbing;
 }
 
 .map_filter_list::-webkit-scrollbar {
