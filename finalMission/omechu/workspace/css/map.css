@@ -202,12 +202,21 @@
 }
 
 .map_box {
+    display: flex;
     width: 100%;
-    height: 280px;
+    height: 240px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-line);
     background: var(--color-sub);
     overflow: hidden;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.map_box P{
+    font-weight: 500;
+    color: #6b4226;
 }
 
 /* =============================
@@ -240,9 +249,34 @@
     color: var(--color-main);
 }
 
+.section_header .page{
+    display: flex;
+    align-items: center;
+}
+
+.section_header .page button{
+    width: 20px;
+    display: flex;
+    padding: 2px 4px;
+    margin: 0 6px;
+    border-radius: 3px;
+    color: var(--color-main);
+    text-align: center;
+}
+
 .place_list {
     display: grid;
     gap: 12px;
+}
+
+.empty_place_text{
+    border: 2px dashed var(--color-line);
+    border-radius: var(--radius-lg);
+    background-color: white;
+    text-align: center;
+    font-weight: 500;
+    color: #6b4226;
+    padding: 20px 0;
 }
 
 .place_card {
@@ -286,7 +320,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 5px;
     color: var(--color-main);
     font-size: 1.3rem;
     font-weight: 900;
@@ -294,11 +328,13 @@
 
 .location_btn {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin-top: 12px;
 }
 
+.place_food_btn,
+.place_search_btn,
 .place_detail_btn {
     height: 40px;
     border-radius: var(--radius-sm);
@@ -309,22 +345,30 @@
     font-weight: 900;
 }
 
+.place_food_btn:hover,
+.place_search_btn:hover,
 .place_detail_btn:hover {
     background: var(--color-sub);
 }
 
-.place_search_btn {
-    height: 40px;
-    border-radius: var(--radius-sm);
-    background: #fff;
-    color: var(--color-main);
-    border: 2px solid var(--color-sub);
-    font-size: 1.3rem;
-    font-weight: 900;
+.related_food_box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-line);
 }
 
-.place_search_btn:hover {
-    background: var(--color-sub);
+.related_food_box span {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: #6b4226;
+
+    font-size: 1.2rem;
+    font-weight: 900;
 }
 
 /* =============================
@@ -337,7 +381,7 @@
     }
 
     .map_box {
-        height: 280px;
+        height: 300px;
     }
 
     .place_list {

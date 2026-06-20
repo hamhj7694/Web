@@ -71,14 +71,14 @@
                         >
 
                         <div class="distance_labels">
+                            <span>100m</span>
+                            <span>300m</span>
                             <span>500m</span>
                             <span>1km</span>
-                            <span>2km</span>
-                            <span>3km+</span>
                         </div>
                     </div>
 
-                <button type="button" id="currentLocationBtn" class="current_location_btn" onclick="location.href='#foodCategory'">
+                <button type="button" id="currentLocationBtn" class="current_location_btn">
                         📍 현재 위치로 찾기
                 </button>
 
@@ -105,7 +105,7 @@
 
             <!-- 지도 영역 -->
             <section class="map_area_section">
-                <div id="map" class="map_box"></div>
+                <div id="map" class="map_box"><p>로딩중...</p></div>
             </section>
 
 
@@ -113,49 +113,27 @@
             <section class="place_section">
                 <div class="section_header">
                     <h2>주변 맛집</h2>
-                    <p>총 <strong>0</strong>개</p>
+                    <div class="page">
+                        <button> ◀ </button>
+                        <p>총 <strong>0</strong>개 - <strong>0/0</strong>페이지</p>
+                        <button> ▶ </button>
+                    </div>
                 </div>
 
                 <div class="place_list">
-
-                    <!-- 임시 카드 1 -->
-                    <article class="place_card">
-                        <div class="place_info">
-                            <div class="place_top">
-                                <h3>오메추 식당</h3>
-                                <span>한식</span>
-                            </div>
-
-                            <p class="place_address">
-                                서울특별시 어딘가 맛있는 길 12
-                            </p>
-
-                            <div class="place_meta">
-                                <span>📞 02-123-4567</span>
-                                <span>🗺️ 428m</span>
-                            </div>
-                        </div>
-
-                        <div class="location_btn">
-                            <button type="button" id="locationView" class="place_detail_btn">
-                                위치 보기
-                            </button>
-
-                            <button type="button" id="locationFind" class="place_search_btn">
-                                장소 찾기
-                            </button>
-                        </div>
-                    </article>
-
+                    <p class="empty_place_text">
+                        검색 결과가 없어요!
+                    </p>
+                    <!-- js로 생성 -->
                 </div>
             </section>
 
             <!-- 푸터 -->
-            <!-- <footer class="footer">
+            <footer class="footer">
                 &copy; 2026 함형준 <br>
                 ☎ 010-56616-7694 <br>
                 ✉ hambrojun@naver.com
-            </footer> -->
+            </footer>
 
         </main>
 
