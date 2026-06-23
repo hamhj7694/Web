@@ -1,305 +1,107 @@
-(function () {
+(async function () {
     // ================================
     // 1. 기본 설정
     // ================================
 
-    const DEFAULT_IMAGE = '../assets/food/default.png';
+    const DEFAULT_IMAGE = '../assets/home/char_main.png';
+    const WIKI_DETAIL_API_URL = '../backend/api/wiki/detail.php';
+    const WIKI_LIKE_API_URL = '../backend/api/wiki/like.php';
+
+    const COMMENT_LIST_API_URL = '../backend/api/wiki/comment_list.php';
+    const COMMENT_ADD_API_URL = '../backend/api/wiki/comment_add.php';
+    const COMMENT_DELETE_API_URL = '../backend/api/wiki/comment_delete.php';
+
+    const COMMENT_EDIT_API_URL = '../backend/api/wiki/comment_edit.php';
+    const REPLY_ADD_API_URL = '../backend/api/wiki/reply_add.php';
+    const REPLY_EDIT_API_URL = '../backend/api/wiki/reply_edit.php';
+    const REPLY_DELETE_API_URL = '../backend/api/wiki/reply_delete.php';
+
+    const PHOTO_LIST_API_URL = '../backend/api/wiki/photo_list.php';
+    const PHOTO_ADD_API_URL = '../backend/api/wiki/photo_add.php';
+    const PHOTO_DELETE_API_URL = '../backend/api/wiki/photo_delete.php';
+
+    const TAG_UPDATE_API_URL = '../backend/api/wiki/tag_update.php';
+
     const MAX_VISIBLE_PHOTO_COUNT = 5;
     const COMMENT_PAGE_SIZE = 10;
     const PHOTO_OVERLAY_PAGE_SIZE = 12;
 
     const IS_LOGIN = localStorage.getItem('omechu_is_login') === 'true';
+    const LOGIN_USER_NO = localStorage.getItem('omechu_user_no') || '';
     const LOGIN_USER_ID = localStorage.getItem('omechu_user_id') || '';
     const LOGIN_USER_NICKNAME = localStorage.getItem('omechu_user_nickname') || '익명';
-
+    const IS_ADMIN = localStorage.getItem('omechu_is_admin') === 'true';
+    
     const $ = function (selector) {
         return document.querySelector(selector);
     };
 
     const foodId = Number(new URLSearchParams(location.search).get('id')) || 1;
 
-
     // ================================
-    // 2. 기본 음식 데이터
+    // 2. DB 음식 상세 불러오기
     // ================================
 
-    function makeTestPhotos(imagePath) {
-        return [imagePath, imagePath, imagePath, imagePath, imagePath, imagePath];
+    let currentFood = null;
+
+    function normalizeFoodFromDB(food) {
+        return {
+            id: Number(food.id),
+            name: food.name || '이름 없는 음식',
+            category: food.category || '기타',
+            image: food.image || DEFAULT_IMAGE,
+            summary:
+                food.summary ||
+                food.description ||
+                '오늘 메뉴로 괜찮은 선택이에요.',
+            description:
+                food.description ||
+                food.summary ||
+                '',
+            tags: Array.isArray(food.tags) ? food.tags : [],
+            situations: Array.isArray(food.situations) ? food.situations : [],
+            times: Array.isArray(food.times) ? food.times : [],
+            likes: Number(food.likes || 0),
+            myLikeCount: Number(food.myLikeCount || 0),
+            hits: Number(food.hits || 0),
+            photos: [],
+            commentList: [],
+            comments: Number(food.comments || 0),
+            photosCount: Number(food.photos || 0),
+            createdBy: Number(food.createdBy || 0),
+            createdAt: food.createdAt || '',
+            isMine: food.isMine === true
+        };
     }
 
-    function makeTestComments(foodName) {
-        return [
-            {
-                id: `default_comment_${foodName}_1`,
-                userId: '',
-                user: '맛잘알',
-                text: `${foodName}은 오늘 메뉴로 실패 확률이 낮아요.`,
-                date: '2026.06.18',
-                timePeriod: '점심',
-                tags: ['#추천', '#든든함']
-            },
-            {
-                id: `default_comment_${foodName}_2`,
-                userId: '',
-                user: '혼밥러',
-                text: '혼자 먹기에도 부담 없는 메뉴예요.',
-                date: '2026.06.17',
-                timePeriod: '저녁',
-                tags: ['#혼밥', '#가성비']
-            },
-            {
-                id: `default_comment_${foodName}_3`,
-                userId: '',
-                user: '오메추러버',
-                text: `고민될 때 ${foodName} 고르면 꽤 안정적이에요.`,
-                date: '2026.06.16',
-                timePeriod: '야식',
-                tags: ['#안정픽', '#점심']
-            }
-        ];
-    }
-
-    let foodList = [
-        {
-            id: 1,
-            name: '제육볶음',
-            category: '한식',
-            image: '../assets/food/jeyuk.png',
-            summary: '매콤달콤한 양념! 제육볶음!\n밥 한 공기 뚝딱!',
-            tags: ['#한식', '#점심', '#혼밥', '#매운맛'],
-            likes: 842,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/jeyuk.png'),
-            commentList: makeTestComments('제육볶음')
-        },
-        {
-            id: 2,
-            name: '김치찌개',
-            category: '한식',
-            image: '../assets/food/kimchi.png',
-            summary: '얼큰한 국물에 밥 한 공기!\n실패 없는 집밥 메뉴!',
-            tags: ['#한식', '#국물', '#집밥'],
-            likes: 812,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/kimchi.png'),
-            commentList: makeTestComments('김치찌개')
-        },
-        {
-            id: 3,
-            name: '치킨',
-            category: '야식',
-            image: '../assets/food/chicken.png',
-            summary: '바삭한 치킨 한 마리!\n야식 고민 끝!',
-            tags: ['#야식', '#배달', '#주말'],
-            likes: 1052,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/chicken.png'),
-            commentList: makeTestComments('치킨')
-        },
-        {
-            id: 4,
-            name: '짜장면',
-            category: '중식',
-            image: '../assets/food/jajang.png',
-            summary: '달달하고 고소한 짜장면!\n탕수육까지 있으면 완벽!',
-            tags: ['#중식', '#배달', '#가성비'],
-            likes: 765,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/jajang.png'),
-            commentList: makeTestComments('짜장면')
-        },
-        {
-            id: 5,
-            name: '마라탕',
-            category: '중식',
-            image: '../assets/food/maratang.png',
-            summary: '얼얼하고 매콤한 마라탕!\n재료 고르는 재미까지!',
-            tags: ['#중식', '#매운맛', '#친구랑'],
-            likes: 998,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/maratang.png'),
-            commentList: makeTestComments('마라탕')
-        },
-        {
-            id: 6,
-            name: '초밥',
-            category: '일식',
-            image: '../assets/food/sushi.png',
-            summary: '깔끔하고 산뜻한 초밥!\n특별한 한 끼로 추천!',
-            tags: ['#일식', '#데이트', '#깔끔'],
-            likes: 691,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/sushi.png'),
-            commentList: makeTestComments('초밥')
-        },
-        {
-            id: 7,
-            name: '파스타',
-            category: '양식',
-            image: '../assets/food/pasta.png',
-            summary: '부드럽고 고소한 파스타!\n기분 내고 싶은 날 딱!',
-            tags: ['#양식', '#데이트', '#저녁'],
-            likes: 634,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/pasta.png'),
-            commentList: makeTestComments('파스타')
-        },
-        {
-            id: 8,
-            name: '떡볶이',
-            category: '분식',
-            image: '../assets/food/tteokbokki.png',
-            summary: '매콤달콤 떡볶이!\n간식도 식사도 가능!',
-            tags: ['#분식', '#매콤', '#간식'],
-            likes: 913,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/tteokbokki.png'),
-            commentList: makeTestComments('떡볶이')
-        },
-        {
-            id: 9,
-            name: '라면',
-            category: '분식',
-            image: '../assets/food/ramen.png',
-            summary: '간단하지만 강력한 라면!\n혼밥 메뉴로 최고!',
-            tags: ['#분식', '#혼밥', '#간단'],
-            likes: 720,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/ramen.png'),
-            commentList: makeTestComments('라면')
-        },
-        {
-            id: 10,
-            name: '샐러드',
-            category: '기타',
-            image: '../assets/food/salad.png',
-            summary: '가볍고 산뜻한 샐러드!\n부담 없는 한 끼!',
-            tags: ['#기타', '#가벼움', '#건강'],
-            likes: 356,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/salad.png'),
-            commentList: makeTestComments('샐러드')
-        },
-        {
-            id: 11,
-            name: '돈까스',
-            category: '일식',
-            image: '../assets/food/donkatsu.png',
-            summary: '바삭한 튀김과 든든함!\n점심 메뉴로 안정적!',
-            tags: ['#일식', '#점심', '#든든함'],
-            likes: 678,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/donkatsu.png'),
-            commentList: makeTestComments('돈까스')
-        },
-        {
-            id: 12,
-            name: '피자',
-            category: '양식',
-            image: '../assets/food/pizza.png',
-            summary: '여럿이 나눠 먹기 좋은 피자!\n친구랑 먹기 딱!',
-            tags: ['#양식', '#배달', '#친구랑'],
-            likes: 884,
-            hits: 100,
-            photos: makeTestPhotos('../assets/food/pizza.png'),
-            commentList: makeTestComments('피자')
-        }
-    ];
-
-
-    // ================================
-    // 3. 저장/불러오기 유틸
-    // ================================
-
-    function readStorage(key, fallbackValue) {
-        const savedData = localStorage.getItem(key);
-
-        if (!savedData) return fallbackValue;
-
+    async function loadCurrentFoodFromDB() {
         try {
-            return JSON.parse(savedData);
+            const response = await fetch(`${WIKI_DETAIL_API_URL}?id=${foodId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (!data.success || !data.food) {
+                alert(data.message || '존재하지 않는 메뉴입니다.');
+                location.href = './wiki.html';
+                return null;
+            }
+
+            return normalizeFoodFromDB(data.food);
+
         } catch (error) {
-            console.error(`${key} 불러오기 실패`, error);
-            return fallbackValue;
+            console.error('음식 상세 불러오기 실패:', error);
+            alert('음식 상세 정보를 불러오지 못했어요.');
+            location.href = './wiki.html';
+            return null;
         }
     }
 
-    function saveStorage(key, value) {
-        localStorage.setItem(key, JSON.stringify(value));
-    }
-
-    function readNumber(key) {
-        return Number(localStorage.getItem(key)) || 0;
-    }
-
-    function saveNumber(key, value) {
-        localStorage.setItem(key, String(value));
-    }
-
-    function todayText() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const date = String(today.getDate()).padStart(2, '0');
-
-        return `${year}.${month}.${date}`;
-    }
-
-    function currentMealTime() {
-        const hour = new Date().getHours();
-
-        if (hour >= 5 && hour < 11) return '아침';
-        if (hour >= 11 && hour < 16) return '점심';
-        if (hour >= 16 && hour < 21) return '저녁';
-
-        return '야식';
-    }
-
-    function selectedMealTime(inputElement) {
-        if (inputElement === el.commentOverlayInput && el.commentOverlayTimeSelect) {
-            return el.commentOverlayTimeSelect.value || currentMealTime();
-        }
-
-        if (inputElement === el.commentInput && el.commentTimeSelect) {
-            return el.commentTimeSelect.value || currentMealTime();
-        }
-
-        return currentMealTime();
-    }
-
-    function escapeHTML(value) {
-        return String(value || '')
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
-    }
-
-    function makeTag(value) {
-        const cleanValue = String(value || '').trim();
-
-        if (!cleanValue) return '';
-
-        return cleanValue.startsWith('#') ? cleanValue : `#${cleanValue}`;
-    }
-
-    function getCustomFoodList() {
-        return readStorage('omechu_wiki_custom_foods', []);
-    }
-
-    foodList = [
-        ...getCustomFoodList(),
-        ...foodList
-    ];
-
-    const currentFood = foodList.find(function (food) {
-        return food.id === foodId;
-    });
+    currentFood = await loadCurrentFoodFromDB();
 
     if (!currentFood) {
-        alert('존재하지 않는 메뉴입니다.');
-        location.href = './wiki.html';
         return;
     }
 
@@ -381,51 +183,85 @@
     // 5. 상태값
     // ================================
 
-    const CUSTOM_FOOD_STORAGE_KEY = 'omechu_wiki_custom_foods';
+    let myLikeCount = Number(currentFood.myLikeCount || 0);
 
-    const STORAGE = {
-        comments: `omechu_food_${foodId}_comments`,
-        replies: `omechu_food_${foodId}_replies`,
-        photos: `omechu_food_${foodId}_photos`,
-        customTags: `omechu_food_${foodId}_tags`,
-        myTags: IS_LOGIN && LOGIN_USER_ID
-            ? `omechu_food_${foodId}_my_tags_${LOGIN_USER_ID}`
-            : '',
-        hits: `omechu_wiki_food_${foodId}_hits`,
-        totalLike: `omechu_wiki_food_${foodId}_like_count`,
-        myLike: IS_LOGIN && LOGIN_USER_ID
-            ? `omechu_wiki_food_${foodId}_my_like_count_${LOGIN_USER_ID}`
-            : ''
-    };
-
-    let addedLikeCount = readNumber(STORAGE.totalLike);
-    let myLikeCount = STORAGE.myLike ? readNumber(STORAGE.myLike) : 0;
-    let addedHitsCount = readNumber(STORAGE.hits);
-
-    let savedComments = readStorage(STORAGE.comments, []);
-    let savedReplies = readStorage(STORAGE.replies, {});
-    let savedPhotos = readStorage(STORAGE.photos, []);
-    let savedCustomTags = readStorage(STORAGE.customTags, []);
-    let savedMyTags = STORAGE.myTags ? readStorage(STORAGE.myTags, []) : [];
+    let savedComments = [];
+    let savedReplies = {};
+    let savedPhotos = [];
 
     let selectedPhotoData = '';
+    let selectedPhotoFile = null;
     let photoOverlayVisibleCount = PHOTO_OVERLAY_PAGE_SIZE;
 
     let currentCommentPage = 1;
     let currentOverlayCommentPage = 1;
 
     const selectedTagSet = new Set();
-    const selectedMyTagSet = new Set();
 
     const timeTagOptions = ['#아침', '#점심', '#저녁', '#야식'];
     const situationTagOptions = ['#혼밥', '#데이트', '#친목', '#회식', '#해장', '#배달'];
 
-    currentFood.tags = Array.from(new Set([
-        ...(currentFood.tags || []),
-        ...savedCustomTags
-    ]));
+    currentFood.tags = Array.from(new Set(currentFood.tags || []));
 
+    function escapeHTML(value) {
+        return String(value || '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
 
+    function makeTag(value) {
+        const cleanValue = String(value || '').trim();
+
+        if (!cleanValue) {
+            return '';
+        }
+
+        return cleanValue.startsWith('#') ? cleanValue : `#${cleanValue}`;
+    }
+
+    function isMyData(data) {
+        if (!IS_LOGIN || !LOGIN_USER_NO || !data) {
+            return false;
+        }
+
+        if (data.isMine === true) {
+            return true;
+        }
+
+        if (data.userNo && String(data.userNo) === String(LOGIN_USER_NO)) {
+            return true;
+        }
+
+        if (data.userId && String(data.userId) === String(LOGIN_USER_ID)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function canManageData(data) {
+        return IS_ADMIN || isMyData(data);
+    }
+
+    function selectedMealTime(inputElement) {
+        if (!inputElement) {
+            return '';
+        }
+
+        if (inputElement === el.commentOverlayInput && el.commentOverlayTimeSelect) {
+            return el.commentOverlayTimeSelect.value || '';
+        }
+
+        if (el.commentTimeSelect) {
+            return el.commentTimeSelect.value || '';
+        }
+
+        return '';
+    }
+    
     // ================================
     // 6. 공통 렌더
     // ================================
@@ -473,7 +309,7 @@
     function renderLike() {
         const icon = el.likeBtn.querySelector('.action_icon');
         const text = el.likeBtn.querySelector('span:last-child');
-        const totalLike = currentFood.likes + addedLikeCount;
+        const totalLike = Number(currentFood.likes || 0);
 
         if (IS_LOGIN && myLikeCount > 0) {
             el.likeBtn.classList.add('is-liked');
@@ -489,24 +325,51 @@
             ? `🧡추천 ${totalLike} / 내 추천 ${myLikeCount}`
             : `🧡추천 ${totalLike}`;
 
-        el.hitsCount.textContent = `| 👀조회 ${currentFood.hits + addedHitsCount}`;
+        el.hitsCount.textContent = `| 👀조회 ${Number(currentFood.hits || 0)}`;
     }
 
     function handleLikeClick() {
-        if (!IS_LOGIN || !LOGIN_USER_ID) {
+        if (!IS_LOGIN || !LOGIN_USER_NO) {
             alert('추천은 로그인 후 이용할 수 있어요!');
             location.href = './login/login.html';
             return;
         }
 
-        addedLikeCount += 1;
-        myLikeCount += 1;
+        el.likeBtn.disabled = true;
 
-        saveNumber(STORAGE.totalLike, addedLikeCount);
-        saveNumber(STORAGE.myLike, myLikeCount);
+        fetch(WIKI_LIKE_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                food_id: currentFood.id
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '추천에 실패했어요.');
+                    return;
+                }
 
-        renderLike();
-        createHeartParticles(el.likeBtn);
+                currentFood.likes = Number(data.like_count || currentFood.likes || 0);
+                currentFood.myLikeCount = Number(data.my_like_count || 0);
+                myLikeCount = currentFood.myLikeCount;
+
+                renderLike();
+                createHeartParticles(el.likeBtn);
+            })
+            .catch(function(error) {
+                console.error('추천 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            })
+            .finally(function() {
+                el.likeBtn.disabled = false;
+            });
     }
 
     function createHeartParticles(target) {
@@ -533,11 +396,66 @@
     // 8. 사진
     // ================================
 
+    function normalizePhotoFromDB(photo) {
+        return {
+            id: String(photo.id),
+            src: photo.src || photo.image || DEFAULT_IMAGE,
+            userNo: String(photo.userNo || ''),
+            userId: photo.userId || '',
+            user: photo.user || '익명',
+            date: photo.date || photo.createdAt || '',
+            isDefault: false,
+            source: 'db',
+            isMine: photo.isMine === true
+        };
+    }
+
+    function loadPhotosFromDB() {
+        return fetch(`${PHOTO_LIST_API_URL}?food_id=${foodId}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '사진 목록을 불러오지 못했어요.');
+                    savedPhotos = [];
+                    return;
+                }
+
+                savedPhotos = Array.isArray(data.photos)
+                    ? data.photos.map(normalizePhotoFromDB)
+                    : [];
+
+                if (currentFood) {
+                    currentFood.photos = savedPhotos;
+                    currentFood.image = savedPhotos[0] && savedPhotos[0].src
+                        ? savedPhotos[0].src
+                        : currentFood.image;
+                }
+            })
+            .catch(function(error) {
+                console.error('사진 목록 불러오기 실패:', error);
+                savedPhotos = [];
+            });
+    }
+
+    function refreshPhotosFromDB() {
+        return loadPhotosFromDB().then(function() {
+            renderPhotos();
+            renderPhotoOverlay();
+            renderMyOverlayIfOpen();
+        });
+    }
+
     function normalizeFoodPhoto(photo, index) {
         if (typeof photo === 'object' && photo !== null) {
             return {
                 id: photo.id || `custom_photo_${currentFood.id}_${index}`,
                 src: photo.src || DEFAULT_IMAGE,
+                userNo: photo.userNo || '',
                 userId: photo.userId || '',
                 user: photo.user || '익명',
                 date: photo.date || '',
@@ -558,15 +476,15 @@
     }
 
     function getDefaultPhotos() {
-        return (currentFood.photos || []).map(normalizeFoodPhoto);
+        return [];
     }
-    
+
     function getAllPhotos() {
-        return [...savedPhotos, ...getDefaultPhotos()];
+        return savedPhotos;
     }
 
     function makePhotoHTML(photo) {
-        const isMine = photo.userId === LOGIN_USER_ID && photo.userId !== '';
+        const canManage = canManageData(photo);
 
         return `
             <div class="photo_item" data-photo-id="${escapeHTML(photo.id)}">
@@ -578,7 +496,7 @@
                 >
 
                 ${
-                    isMine
+                    canManageData(photo)
                     ? `<button type="button" class="photo_delete_btn">삭제</button>`
                     : ''
                 }
@@ -624,7 +542,7 @@
                     >
 
                     ${
-                        photo.userId === LOGIN_USER_ID && photo.userId !== ''
+                        isMyData(photo)
                         ? `<button type="button" class="photo_delete_btn">삭제</button>`
                         : ''
                     }
@@ -663,7 +581,7 @@
     }
 
     function openPhotoAddOverlay() {
-        if (!IS_LOGIN || !LOGIN_USER_ID) {
+        if (!IS_LOGIN || !LOGIN_USER_NO) {
             alert('사진 추가는 로그인 후 이용할 수 있어요!');
             location.href = './login/login.html';
             return;
@@ -681,6 +599,7 @@
 
     function resetPhotoAddForm() {
         selectedPhotoData = '';
+        selectedPhotoFile = null;
 
         el.photoFileInput.value = '';
         el.photoFileName.textContent = '선택된 사진이 없어요.';
@@ -695,6 +614,8 @@
             resetPhotoAddForm();
             return;
         }
+
+        selectedPhotoFile = file;
 
         if (!file.type.startsWith('image/')) {
             alert('이미지 파일만 등록할 수 있어요!');
@@ -716,188 +637,106 @@
     }
 
     function submitPhoto() {
-        if (!selectedPhotoData) {
+        if (!IS_LOGIN || !LOGIN_USER_NO) {
+            alert('사진 추가는 로그인 후 이용할 수 있어요!');
+            location.href = './login/login.html';
+            return;
+        }
+
+        if (!selectedPhotoFile) {
             alert('추가할 사진을 선택해주세요!');
             return;
         }
 
-        savedPhotos.unshift({
-            id: `user_photo_${Date.now()}`,
-            src: selectedPhotoData,
-            userId: LOGIN_USER_ID,
-            user: LOGIN_USER_NICKNAME,
-            date: todayText()
-        });
+        const formData = new FormData();
 
-        saveStorage(STORAGE.photos, savedPhotos);
+        formData.append('food_id', currentFood.id);
+        formData.append('image', selectedPhotoFile);
 
-        renderPhotos();
-        renderPhotoOverlay();
-        renderMyOverlayIfOpen();
-        closePhotoAddOverlay();
-    }
+        el.photoAddSubmitBtn.disabled = true;
+        el.photoAddSubmitBtn.textContent = '등록 중...';
 
-    function saveCurrentCustomFood() {
-        const customFoodList = readStorage(CUSTOM_FOOD_STORAGE_KEY, []);
-
-        const targetFood = customFoodList.find(function(food) {
-            return Number(food.id) === Number(currentFood.id);
-        });
-
-        if (!targetFood) return false;
-
-        targetFood.image = currentFood.image || DEFAULT_IMAGE;
-        targetFood.photos = currentFood.photos || [];
-        targetFood.commentList = currentFood.commentList || [];
-        targetFood.tags = currentFood.tags || [];
-        targetFood.summary = currentFood.summary || targetFood.summary || '';
-        targetFood.description = currentFood.summary || targetFood.description || '';
-        targetFood.comments = (currentFood.commentList || []).length + savedComments.length;
-
-        saveStorage(CUSTOM_FOOD_STORAGE_KEY, customFoodList);
-
-        return true;
-    }
-
-    function editPhoto(photoId) {
-        let targetPhoto = savedPhotos.find(function(photo) {
-            return photo.id === photoId;
-        });
-
-        let photoSource = 'savedPhotos';
-        let beforeSrc = targetPhoto ? targetPhoto.src : '';
-
-        if (!targetPhoto) {
-            targetPhoto = (currentFood.photos || []).find(function(photo, index) {
-                if (typeof photo !== 'object' || photo === null) return false;
-
-                const id = photo.id || `custom_photo_${currentFood.id}_${index}`;
-
-                return id === photoId;
-            });
-
-            photoSource = 'customFood';
-            beforeSrc = targetPhoto ? targetPhoto.src : '';
-        }
-
-        if (!targetPhoto || targetPhoto.userId !== LOGIN_USER_ID) {
-            alert('내가 등록한 사진만 수정할 수 있어요.');
-            return;
-        }
-
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-
-        input.addEventListener('change', function() {
-            const file = input.files[0];
-
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                alert('이미지 파일만 등록할 수 있어요!');
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.addEventListener('load', function(event) {
-                const nextSrc = event.target.result;
-
-                targetPhoto.src = nextSrc;
-                targetPhoto.date = todayText();
-
-                if (photoSource === 'savedPhotos') {
-                    saveStorage(STORAGE.photos, savedPhotos);
+        fetch(PHOTO_ADD_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '사진 등록에 실패했어요.');
+                    return;
                 }
 
-                if (photoSource === 'customFood') {
-                    if (currentFood.image === beforeSrc) {
-                        currentFood.image = nextSrc;
-                    }
-
-                    saveCurrentCustomFood();
+                if (data.thumbnail) {
+                    currentFood.image = data.thumbnail;
+                    el.detailImage.src = data.thumbnail;
                 }
 
-                renderDetail();
-                renderPhotoOverlay();
-                renderMyOverlayIfOpen();
+                resetPhotoAddForm();
+                closePhotoAddOverlay();
+
+                refreshPhotosFromDB();
+            })
+            .catch(function(error) {
+                console.error('사진 등록 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            })
+            .finally(function() {
+                el.photoAddSubmitBtn.disabled = false;
+                el.photoAddSubmitBtn.textContent = '사진 등록';
             });
-
-            reader.readAsDataURL(file);
-        });
-
-        input.click();
     }
 
     function deletePhoto(photoId) {
-        const savedPhoto = savedPhotos.find(function(photo) {
-            return photo.id === photoId;
+        const targetPhoto = savedPhotos.find(function(photo) {
+            return String(photo.id) === String(photoId);
         });
 
-        if (savedPhoto) {
-            if (savedPhoto.userId !== LOGIN_USER_ID) {
-                alert('내가 등록한 사진만 삭제할 수 있어요.');
-                return;
-            }
+        if (!targetPhoto) {
+            alert('삭제할 사진을 찾을 수 없어요.');
+            return;
+        }
 
-            if (!confirm('이 사진을 삭제할까요?')) return;
+        if (!canManageData(targetPhoto)) {
+            alert('삭제 권한이 없어요.');
+            return;
+        }
 
-            savedPhotos = savedPhotos.filter(function(photo) {
-                return photo.id !== photoId;
+        if (!confirm('이 사진을 삭제할까요?')) {
+            return;
+        }
+
+        fetch(PHOTO_DELETE_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                photo_id: photoId
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '사진 삭제에 실패했어요.');
+                    return;
+                }
+
+                currentFood.image = data.thumbnail || DEFAULT_IMAGE;
+                el.detailImage.src = currentFood.image;
+
+                refreshPhotosFromDB();
+            })
+            .catch(function(error) {
+                console.error('사진 삭제 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
             });
-
-            saveStorage(STORAGE.photos, savedPhotos);
-
-            renderPhotos();
-            renderPhotoOverlay();
-            renderMyOverlayIfOpen();
-            return;
-        }
-
-        const customPhoto = (currentFood.photos || []).find(function(photo, index) {
-            if (typeof photo !== 'object' || photo === null) return false;
-
-            const id = photo.id || `custom_photo_${currentFood.id}_${index}`;
-
-            return id === photoId;
-        });
-
-        if (!customPhoto) {
-            alert('삭제할 수 없는 사진이에요.');
-            return;
-        }
-
-        if (customPhoto.userId !== LOGIN_USER_ID) {
-            alert('내가 등록한 사진만 삭제할 수 있어요.');
-            return;
-        }
-
-        if (!confirm('이 사진을 삭제할까요?')) return;
-
-        currentFood.photos = (currentFood.photos || []).filter(function(photo, index) {
-            if (typeof photo !== 'object' || photo === null) return true;
-
-            const id = photo.id || `custom_photo_${currentFood.id}_${index}`;
-
-            return id !== photoId;
-        });
-
-        if (currentFood.image === customPhoto.src) {
-            const nextPhoto = (currentFood.photos || [])[0];
-
-            if (typeof nextPhoto === 'object' && nextPhoto !== null) {
-                currentFood.image = nextPhoto.src || DEFAULT_IMAGE;
-            } else {
-                currentFood.image = nextPhoto || DEFAULT_IMAGE;
-            }
-        }
-
-        saveCurrentCustomFood();
-
-        renderDetail();
-        renderPhotoOverlay();
-        renderMyOverlayIfOpen();
     }
 
     function openPhotoViewer(src, alt) {
@@ -920,11 +759,11 @@
     // ================================
 
     function getDefaultComments() {
-        return currentFood.commentList || [];
+        return [];
     }
 
     function getAllComments() {
-        return [...savedComments, ...getDefaultComments()];
+        return savedComments;
     }
 
     function getCommentId(comment, index) {
@@ -957,10 +796,10 @@
     function makeCommentHTML(comment, index) {
         const commentId = getCommentId(comment, index);
         const replies = savedReplies[commentId] || [];
-        const isMyComment = comment.userId === LOGIN_USER_ID && comment.userId !== '';
+        const canManageComment = canManageData(comment);
 
         const repliesHTML = replies.map(function (reply) {
-            const isMyReply = reply.userId === LOGIN_USER_ID && reply.userId !== '';
+            const canManageReply = canManageData(reply);
 
             return `
                 <div class="comment_reply_item" data-reply-id="${escapeHTML(reply.id)}">
@@ -972,11 +811,20 @@
                     <p class="comment_reply_text">${escapeHTML(reply.text)}</p>
 
                     ${
-                        isMyReply
+                        isMyData(reply) || canManageData(reply)
                         ? `
                             <div class="comment_reply_btn_group">
-                                <button type="button" class="comment_reply_edit_btn">수정</button>
-                                <button type="button" class="comment_reply_delete_btn">삭제</button>
+                                ${
+                                    isMyData(reply)
+                                    ? `<button type="button" class="comment_reply_edit_btn">수정</button>`
+                                    : ''
+                                }
+
+                                ${
+                                    canManageData(reply)
+                                    ? `<button type="button" class="comment_reply_delete_btn">삭제</button>`
+                                    : ''
+                                }
                             </div>
                         `
                         : ''
@@ -1009,11 +857,14 @@
                         }
 
                         ${
-                            isMyComment
-                            ? `
-                                <button type="button" class="comment_edit_btn">수정</button>
-                                <button type="button" class="comment_delete_btn">삭제</button>
-                            `
+                            isMyData(comment)
+                            ? `<button type="button" class="comment_edit_btn">수정</button>`
+                            : ''
+                        }
+
+                        ${
+                            canManageData(comment)
+                            ? `<button type="button" class="comment_delete_btn">삭제</button>`
                             : ''
                         }
                     </div>
@@ -1164,7 +1015,7 @@
     }
 
     function addComment(inputElement) {
-        if (!IS_LOGIN || !LOGIN_USER_ID) {
+        if (!IS_LOGIN || !LOGIN_USER_NO) {
             alert('코멘트 작성은 로그인 후 이용할 수 있어요!');
             location.href = './login/login.html';
             return;
@@ -1177,44 +1028,48 @@
             return;
         }
 
-        savedComments.unshift({
-            id: `user_comment_${Date.now()}`,
-            userId: LOGIN_USER_ID,
-            user: LOGIN_USER_NICKNAME,
-            text: text,
-            date: todayText(),
-            timePeriod: selectedMealTime(inputElement),
+        const mealTime = selectedMealTime(inputElement);
+
+        const submitData = {
+            food_id: foodId,
+            content: text,
+            meal_time: mealTime,
             tags: []
-        });
+        };
 
-        saveStorage(STORAGE.comments, savedComments);
+        fetch(COMMENT_ADD_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(submitData)
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '코멘트 등록에 실패했어요.');
+                    return;
+                }
 
-        inputElement.value = '';
+                inputElement.value = '';
 
-        currentCommentPage = 1;
-        currentOverlayCommentPage = 1;
-
-        renderComments();
-        renderCommentOverlay();
-        renderMyOverlayIfOpen();
+                refreshCommentsFromDB();
+            })
+            .catch(function(error) {
+                console.error('코멘트 등록 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
 
     function editComment(commentId) {
-        let targetComment = savedComments.find(function(comment) {
-            return comment.id === commentId;
+        const targetComment = savedComments.find(function(comment) {
+            return String(comment.id) === String(commentId);
         });
 
-        let commentSource = 'storage';
-
-        if (!targetComment) {
-            targetComment = (currentFood.commentList || []).find(function(comment) {
-                return comment.id === commentId;
-            });
-
-            commentSource = 'customFood';
-        }
-
-        if (!targetComment || targetComment.userId !== LOGIN_USER_ID) {
+        if (!targetComment || !isMyData(targetComment)) {
             alert('내가 작성한 코멘트만 수정할 수 있어요.');
             return;
         }
@@ -1230,81 +1085,82 @@
             return;
         }
 
-        targetComment.text = cleanText;
+        fetch(COMMENT_EDIT_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment_id: commentId,
+                content: cleanText
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '코멘트 수정에 실패했어요.');
+                    return;
+                }
 
-        if (commentSource === 'storage') {
-            saveStorage(STORAGE.comments, savedComments);
-        }
-
-        if (commentSource === 'customFood') {
-            saveCurrentCustomFood();
-        }
-
-        renderComments();
-        renderCommentOverlay();
-        renderMyOverlayIfOpen();
+                refreshCommentsFromDB();
+            })
+            .catch(function(error) {
+                console.error('코멘트 수정 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
 
     function deleteComment(commentId) {
-        const savedComment = savedComments.find(function(comment) {
-            return comment.id === commentId;
+        const targetComment = savedComments.find(function(comment) {
+            return String(comment.id) === String(commentId);
         });
 
-        if (savedComment) {
-            if (savedComment.userId !== LOGIN_USER_ID) {
-                alert('내가 작성한 코멘트만 삭제할 수 있어요.');
-                return;
-            }
+        if (!targetComment) {
+            alert('삭제할 코멘트를 찾을 수 없어요.');
+            return;
+        }
 
-            if (!confirm('이 코멘트를 삭제할까요?')) return;
+        if (!canManageData(targetComment)) {
+            alert('삭제 권한이 없어요.');
+            return;
+        }
 
-            savedComments = savedComments.filter(function(comment) {
-                return comment.id !== commentId;
+        if (!confirm('이 코멘트를 삭제할까요?')) {
+            return;
+        }
+
+        fetch(COMMENT_DELETE_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment_id: commentId
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '코멘트 삭제에 실패했어요.');
+                    return;
+                }
+
+                refreshCommentsFromDB();
+            })
+            .catch(function(error) {
+                console.error('코멘트 삭제 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
             });
-
-            delete savedReplies[commentId];
-
-            saveStorage(STORAGE.comments, savedComments);
-            saveStorage(STORAGE.replies, savedReplies);
-
-            renderComments();
-            renderCommentOverlay();
-            renderMyOverlayIfOpen();
-            return;
-        }
-
-        const customComment = (currentFood.commentList || []).find(function(comment) {
-            return comment.id === commentId;
-        });
-
-        if (!customComment) {
-            alert('삭제할 수 없는 코멘트예요.');
-            return;
-        }
-
-        if (customComment.userId !== LOGIN_USER_ID) {
-            alert('내가 작성한 코멘트만 삭제할 수 있어요.');
-            return;
-        }
-
-        if (!confirm('이 코멘트를 삭제할까요?')) return;
-
-        currentFood.commentList = (currentFood.commentList || []).filter(function(comment) {
-            return comment.id !== commentId;
-        });
-
-        delete savedReplies[commentId];
-
-        saveCurrentCustomFood();
-        saveStorage(STORAGE.replies, savedReplies);
-
-        renderComments();
-        renderCommentOverlay();
-        renderMyOverlayIfOpen();
     }
 
     function addReply(commentId, inputElement) {
-        if (!IS_LOGIN || !LOGIN_USER_ID) {
+        if (!IS_LOGIN || !LOGIN_USER_NO) {
             alert('의견 작성은 로그인 후 이용할 수 있어요!');
             location.href = './login/login.html';
             return;
@@ -1317,34 +1173,45 @@
             return;
         }
 
-        if (!savedReplies[commentId]) {
-            savedReplies[commentId] = [];
-        }
+        fetch(REPLY_ADD_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment_id: commentId,
+                content: text
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '의견 등록에 실패했어요.');
+                    return;
+                }
 
-        savedReplies[commentId].unshift({
-            id: `user_reply_${Date.now()}`,
-            userId: LOGIN_USER_ID,
-            user: LOGIN_USER_NICKNAME,
-            text: text,
-            date: todayText()
-        });
-
-        saveStorage(STORAGE.replies, savedReplies);
-
-        inputElement.value = '';
-
-        renderComments();
-        renderCommentOverlay();
-        renderMyOverlayIfOpen();
+                inputElement.value = '';
+                refreshCommentsFromDB();
+            })
+            .catch(function(error) {
+                console.error('의견 등록 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
 
     function editReply(commentId, replyId) {
-        const replies = savedReplies[commentId] || [];
-        const targetReply = replies.find(function (reply) {
-            return reply.id === replyId;
+        const replies = savedReplies[String(commentId)] || [];
+        const targetReply = replies.find(function(reply) {
+            return String(reply.id) === String(replyId);
         });
 
-        if (!targetReply || targetReply.userId !== LOGIN_USER_ID) return;
+        if (!targetReply || !canManageData(targetReply)) {
+            alert('삭제 권한이 없어요.');
+            return;
+        }
 
         const nextText = prompt('의견을 수정해주세요.', targetReply.text);
 
@@ -1357,41 +1224,76 @@
             return;
         }
 
-        targetReply.text = cleanText;
+        fetch(REPLY_EDIT_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment_id: commentId,
+                reply_id: replyId,
+                content: cleanText
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '의견 수정에 실패했어요.');
+                    return;
+                }
 
-        saveStorage(STORAGE.replies, savedReplies);
-
-        renderComments();
-        renderCommentOverlay();
-        renderMyOverlayIfOpen();
+                refreshCommentsFromDB();
+            })
+            .catch(function(error) {
+                console.error('의견 수정 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
 
     function deleteReply(commentId, replyId) {
-        const replies = savedReplies[commentId] || [];
-        const targetReply = replies.find(function (reply) {
-            return reply.id === replyId;
+        const replies = savedReplies[String(commentId)] || [];
+        const targetReply = replies.find(function(reply) {
+            return String(reply.id) === String(replyId);
         });
 
-        if (!targetReply || targetReply.userId !== LOGIN_USER_ID) {
-            alert('내가 작성한 의견만 삭제할 수 있어요.');
+        if (!targetReply || !canManageData(targetReply)) {
+            alert('삭제 권한이 없어요.');
             return;
         }
 
-        if (!confirm('이 의견을 삭제할까요?')) return;
-
-        savedReplies[commentId] = replies.filter(function (reply) {
-            return reply.id !== replyId;
-        });
-
-        if (savedReplies[commentId].length === 0) {
-            delete savedReplies[commentId];
+        if (!confirm('이 의견을 삭제할까요?')) {
+            return;
         }
 
-        saveStorage(STORAGE.replies, savedReplies);
+        fetch(REPLY_DELETE_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment_id: commentId,
+                reply_id: replyId
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '의견 삭제에 실패했어요.');
+                    return;
+                }
 
-        renderComments();
-        renderCommentOverlay();
-        renderMyOverlayIfOpen();
+                refreshCommentsFromDB();
+            })
+            .catch(function(error) {
+                console.error('의견 삭제 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
 
     function handleCommentClick(event) {
@@ -1474,11 +1376,153 @@
         setOverlayOpenState();
     }
 
+    function normalizeReplyFromDB(reply) {
+        return {
+            id: reply.id || `reply_${Date.now()}`,
+            userNo: reply.userNo || '',
+            userId: reply.userId || '',
+            user: reply.user || '익명',
+            text: reply.text || '',
+            date: reply.date || '',
+            timePeriod: reply.timePeriod || '',
+            tags: Array.isArray(reply.tags) ? reply.tags : []
+        };
+    }
+
+    function normalizeCommentFromDB(comment) {
+        return {
+            id: String(comment.id),
+            userNo: String(comment.userNo || ''),
+            userId: comment.userId || '',
+            user: comment.user || '익명',
+            text: comment.text || '',
+            date: comment.date || '',
+            timePeriod: comment.timePeriod || comment.mealTime || '',
+            tags: Array.isArray(comment.tags) ? comment.tags : [],
+            replies: Array.isArray(comment.replies) ? comment.replies.map(normalizeReplyFromDB) : [],
+            isMine: comment.isMine === true
+        };
+    }
+
+    function loadCommentsFromDB() {
+        return fetch(`${COMMENT_LIST_API_URL}?food_id=${foodId}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '코멘트 목록을 불러오지 못했어요.');
+                    savedComments = [];
+                    savedReplies = {};
+                    return;
+                }
+
+                savedComments = Array.isArray(data.comments)
+                    ? data.comments.map(normalizeCommentFromDB)
+                    : [];
+
+                savedReplies = {};
+
+                savedComments.forEach(function(comment) {
+                    if (Array.isArray(comment.replies) && comment.replies.length > 0) {
+                        savedReplies[String(comment.id)] = comment.replies;
+                    }
+                });
+
+                if (currentFood) {
+                    currentFood.comments = savedComments.length;
+                }
+            })
+            .catch(function(error) {
+                console.error('코멘트 목록 불러오기 실패:', error);
+                savedComments = [];
+                savedReplies = {};
+            });
+    }
+
+    function refreshCommentsFromDB() {
+        return loadCommentsFromDB().then(function() {
+            currentCommentPage = 1;
+            currentOverlayCommentPage = 1;
+
+            renderComments();
+            renderCommentOverlay();
+            renderMyOverlayIfOpen();
+        });
+    }
 
     // ================================
     // 10. 태그
     // ================================
 
+    function splitTagsByType(tagList) {
+        const times = [];
+        const situations = [];
+        const customTags = [];
+
+        tagList.forEach(function(tag) {
+            if (timeTagOptions.includes(tag)) {
+                times.push(tag.replace(/^#/, ''));
+                return;
+            }
+
+            if (situationTagOptions.includes(tag)) {
+                situations.push(tag.replace(/^#/, ''));
+                return;
+            }
+
+            customTags.push(tag);
+        });
+
+        return {
+            tags: tagList,
+            times: Array.from(new Set(times)),
+            situations: Array.from(new Set(situations)),
+            customTags: Array.from(new Set(customTags))
+        };
+    }
+
+    function saveTagsToDB() {
+        const grouped = splitTagsByType(currentFood.tags || []);
+
+        return fetch(TAG_UPDATE_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                food_id: currentFood.id,
+                tags: grouped.tags,
+                times: grouped.times,
+                situations: grouped.situations
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '태그 저장에 실패했어요.');
+                    return false;
+                }
+
+                currentFood.tags = Array.isArray(data.tags) ? data.tags : currentFood.tags;
+                currentFood.times = Array.isArray(data.times) ? data.times : currentFood.times;
+                currentFood.situations = Array.isArray(data.situations) ? data.situations : currentFood.situations;
+
+                return true;
+            })
+            .catch(function(error) {
+                console.error('태그 저장 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+                return false;
+            });
+    }
+    
     function groupTags() {
         const tags = currentFood.tags || [];
 
@@ -1570,7 +1614,7 @@
     }
 
     function addTags() {
-        if (!IS_LOGIN || !LOGIN_USER_ID) {
+        if (!IS_LOGIN || !LOGIN_USER_NO) {
             alert('태그 추가는 로그인 후 이용할 수 있어요!');
             location.href = './login/login.html';
             return;
@@ -1587,37 +1631,32 @@
             return;
         }
 
-        const actuallyAddedTags = [];
+        let isChanged = false;
 
-        newTags.forEach(function (tag) {
+        newTags.forEach(function(tag) {
             if (!currentFood.tags.includes(tag)) {
                 currentFood.tags.push(tag);
-                actuallyAddedTags.push(tag);
+                isChanged = true;
             }
         });
 
-        if (actuallyAddedTags.length > 0) {
-            savedCustomTags = Array.from(new Set([
-                ...savedCustomTags,
-                ...actuallyAddedTags
-            ]));
-
-            savedMyTags = Array.from(new Set([
-                ...savedMyTags,
-                ...actuallyAddedTags
-            ]));
-
-            saveStorage(STORAGE.customTags, savedCustomTags);
-
-            if (STORAGE.myTags) {
-                saveStorage(STORAGE.myTags, savedMyTags);
-            }
+        if (!isChanged) {
+            alert('이미 추가된 태그예요.');
+            return;
         }
 
-        resetTagForm();
-        renderDetail();
-        renderTagOverlay();
-        renderMyOverlayIfOpen();
+        saveTagsToDB().then(function(success) {
+            if (!success) {
+                return;
+            }
+
+            resetTagForm();
+            renderDetail();
+            renderTagOverlay();
+            renderMyOverlayIfOpen();
+
+            alert('태그가 추가됐어요.');
+        });
     }
 
     function toggleTagSelection(tag) {
@@ -1636,35 +1675,30 @@
             return;
         }
 
-        if (!confirm('선택한 태그를 삭제할까요?')) return;
+        if (!confirm('선택한 태그를 삭제할까요?')) {
+            return;
+        }
 
         const deleteTags = Array.from(selectedTagSet);
 
-        currentFood.tags = currentFood.tags.filter(function (tag) {
+        currentFood.tags = currentFood.tags.filter(function(tag) {
             return !deleteTags.includes(tag);
         });
 
-        savedCustomTags = savedCustomTags.filter(function (tag) {
-            return !deleteTags.includes(tag);
+        saveTagsToDB().then(function(success) {
+            if (!success) {
+                return;
+            }
+
+            selectedTagSet.clear();
+
+            renderDetail();
+            renderTagOverlay();
+            renderMyOverlayIfOpen();
+
+            alert('태그가 삭제됐어요.');
         });
-
-        savedMyTags = savedMyTags.filter(function (tag) {
-            return !deleteTags.includes(tag);
-        });
-
-        saveStorage(STORAGE.customTags, savedCustomTags);
-
-        if (STORAGE.myTags) {
-            saveStorage(STORAGE.myTags, savedMyTags);
-        }
-
-        selectedTagSet.clear();
-
-        renderDetail();
-        renderTagOverlay();
-        renderMyOverlayIfOpen();
     }
-
 
     // ================================
     // 11. 내 작성 정보 모아보기
@@ -1695,7 +1729,7 @@
 
     function getMyComments() {
         return getAllComments().filter(function(comment) {
-            return comment.userId === LOGIN_USER_ID;
+            return isMyData(comment);
         });
     }
 
@@ -1714,7 +1748,7 @@
             const replies = savedReplies[commentId] || [];
 
             replies.forEach(function (reply) {
-                if (reply.userId !== LOGIN_USER_ID) return;
+                if (!isMyData(reply)) return;
 
                 result.push({
                     ...reply,
@@ -1728,31 +1762,9 @@
     }
 
     function getMyPhotos() {
-        const customFoodPhotos = (currentFood.photos || [])
-            .map(function(photo, index) {
-                if (typeof photo !== 'object' || photo === null) return null;
-
-                return {
-                    id: photo.id || `custom_photo_${currentFood.id}_${index}`,
-                    src: photo.src || DEFAULT_IMAGE,
-                    userId: photo.userId || '',
-                    user: photo.user || '익명',
-                    date: photo.date || '',
-                    source: 'customFood'
-                };
-            })
-            .filter(function(photo) {
-                return photo && photo.userId === LOGIN_USER_ID;
-            });
-
-        const detailPhotos = savedPhotos.filter(function(photo) {
-            return photo.userId === LOGIN_USER_ID;
+        return savedPhotos.filter(function(photo) {
+            return isMyData(photo);
         });
-
-        return [
-            ...detailPhotos,
-            ...customFoodPhotos
-        ];
     }
 
     function makeMyCommentHTML(comment) {
@@ -1784,7 +1796,7 @@
             >
                 <div class="my_parent_comment_box">
                     <div class="my_activity_top">
-                        <strong>${parent && parent.userId === LOGIN_USER_ID ? '내 코멘트' : '다른 사람 코멘트'}</strong>
+                        <strong>${parent && isMyData(parent) ? '내 코멘트' : '다른 사람 코멘트'}</strong>
                         <span>
                             ${parent ? escapeHTML(parent.date || '') : ''}
                             ${parent && parent.timePeriod ? ' · ' + escapeHTML(parent.timePeriod) : ''}
@@ -1837,53 +1849,20 @@
                 <p>${escapeHTML(photo.date)}</p>
 
                 <div class="my_activity_btn_group">
-                    <button type="button" class="my_edit_btn" data-action="edit-photo">수정</button>
                     <button type="button" class="my_delete_btn" data-action="delete-photo">삭제</button>
                 </div>
             </div>
         `;
     }
 
-    function makeMyTagHTML(tag) {
-        const selectedClass = selectedMyTagSet.has(tag) ? 'is-selected' : '';
-
-        return `
-            <button 
-                type="button" 
-                class="my_tag_chip ${selectedClass}" 
-                data-tag="${escapeHTML(tag)}"
-            >
-                ${escapeHTML(tag)}
-            </button>
-        `;
-    }
-
     function renderMyOverlay() {
         createMyOverlayIfNeeded();
 
-        const myTags = savedMyTags;
         const myComments = getMyComments();
         const myReplies = getMyReplies();
         const myPhotos = getMyPhotos();
 
         $('#myOverlayContent').innerHTML = `
-            <section class="my_activity_section">
-                <div class="my_section_title_row">
-                    <h3>내 태그 ${myTags.length}</h3>
-
-                    ${
-                        myTags.length > 0
-                        ? `<button type="button" class="my_selected_delete_btn" data-action="delete-my-tags">선택 삭제</button>`
-                        : ''
-                    }
-                </div>
-
-                ${
-                    myTags.length > 0
-                    ? `<div class="my_tag_list">${myTags.map(makeMyTagHTML).join('')}</div>`
-                    : `<p class="my_activity_empty_text">추가한 태그가 없어요.</p>`
-                }
-            </section>
 
             <section class="my_activity_section">
                 <h3>내 코멘트 ${myComments.length}</h3>
@@ -1926,7 +1905,7 @@
     }
 
     function openMyOverlay() {
-        if (!IS_LOGIN || !LOGIN_USER_ID) {
+        if (!IS_LOGIN || !LOGIN_USER_NO) {
             alert('로그인이 필요한 기능이에요!');
             location.href = './login/login.html';
             return;
@@ -1947,59 +1926,7 @@
         setOverlayOpenState();
     }
 
-    function toggleMyTag(tag) {
-        if (selectedMyTagSet.has(tag)) {
-            selectedMyTagSet.delete(tag);
-        } else {
-            selectedMyTagSet.add(tag);
-        }
-
-        renderMyOverlay();
-    }
-
-    function deleteSelectedMyTags() {
-        if (selectedMyTagSet.size === 0) {
-            alert('삭제할 태그를 선택해주세요!');
-            return;
-        }
-
-        if (!confirm('선택한 태그를 삭제할까요?')) return;
-
-        const deleteTags = Array.from(selectedMyTagSet);
-
-        currentFood.tags = currentFood.tags.filter(function (tag) {
-            return !deleteTags.includes(tag);
-        });
-
-        savedCustomTags = savedCustomTags.filter(function (tag) {
-            return !deleteTags.includes(tag);
-        });
-
-        savedMyTags = savedMyTags.filter(function (tag) {
-            return !deleteTags.includes(tag);
-        });
-
-        saveStorage(STORAGE.customTags, savedCustomTags);
-
-        if (STORAGE.myTags) {
-            saveStorage(STORAGE.myTags, savedMyTags);
-        }
-
-        selectedMyTagSet.clear();
-
-        renderDetail();
-        renderTagOverlay();
-        renderMyOverlay();
-    }
-
     function handleMyOverlayClick(event) {
-        const tagChip = event.target.closest('.my_tag_chip');
-
-        if (tagChip) {
-            toggleMyTag(tagChip.dataset.tag);
-            return;
-        }
-
         const button = event.target.closest('button[data-action]');
 
         if (!button) return;
@@ -2007,11 +1934,6 @@
         const action = button.dataset.action;
         const activityItem = button.closest('.my_activity_item');
         const photoItem = button.closest('.my_photo_item');
-
-        if (action === 'delete-my-tags') {
-            deleteSelectedMyTags();
-            return;
-        }
 
         if (action === 'edit-comment') {
             editComment(activityItem.dataset.commentId);
@@ -2030,11 +1952,6 @@
 
         if (action === 'delete-reply') {
             deleteReply(activityItem.dataset.commentId, activityItem.dataset.replyId);
-            return;
-        }
-
-        if (action === 'edit-photo') {
-            editPhoto(photoItem.dataset.photoId);
             return;
         }
 
@@ -2266,11 +2183,13 @@
     // ================================
 
     function init() {
-        addedHitsCount += 1;
-        saveNumber(STORAGE.hits, addedHitsCount);
-
-        renderDetail();
-        connectEvents();
+        Promise.all([
+            loadCommentsFromDB(),
+            loadPhotosFromDB()
+        ]).then(function() {
+            renderDetail();
+            connectEvents();
+        });
     }
 
     init();

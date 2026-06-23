@@ -1600,6 +1600,10 @@ button {
     margin-top: 8px;
 }
 
+.my_photo_item .my_activity_btn_group{
+    padding: 8px;
+}
+
 .my_edit_btn,
 .my_delete_btn {
     padding: 6px 10px;
@@ -1663,7 +1667,7 @@ button {
 
 .my_photo_grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 9px;
 }
 

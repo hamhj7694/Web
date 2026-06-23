@@ -1,110 +1,24 @@
 // ================================
 // mypage.js
 // 마이페이지 기능
-// 현재 HTML 기준:
-// 1. 로그인 유저 정보 표시
-// 2. 내가 참여한 음식 목록 표시
-// 3. 내가 추천한 음식 목록 표시
-// 4. 계정 정보 변경
-// 5. 로그아웃 / 계정 탈퇴
+// 글로벌 DB 기준 내 활동 / 내 추천 / 계정 관리
 // ================================
 
-(function () {
+document.addEventListener('DOMContentLoaded', function () {
     // ================================
-    // 1. 기본 음식 데이터
-    // wiki.js / wiki_detail.js와 id를 맞춰야 함
+    // 1. API / 기본값
     // ================================
 
     const DEFAULT_IMAGE = '../assets/food/default.png';
-    const CUSTOM_FOOD_STORAGE_KEY = 'omechu_wiki_custom_foods';
 
-    const defaultFoodList = [
-        {
-            id: 1,
-            name: '제육볶음',
-            category: '한식',
-            image: '../assets/food/jeyuk.png',
-            likes: 842
-        },
-        {
-            id: 2,
-            name: '김치찌개',
-            category: '한식',
-            image: '../assets/food/kimchi.png',
-            likes: 812
-        },
-        {
-            id: 3,
-            name: '치킨',
-            category: '야식',
-            image: '../assets/food/chicken.png',
-            likes: 1052
-        },
-        {
-            id: 4,
-            name: '짜장면',
-            category: '중식',
-            image: '../assets/food/jajang.png',
-            likes: 765
-        },
-        {
-            id: 5,
-            name: '마라탕',
-            category: '중식',
-            image: '../assets/food/maratang.png',
-            likes: 998
-        },
-        {
-            id: 6,
-            name: '초밥',
-            category: '일식',
-            image: '../assets/food/sushi.png',
-            likes: 691
-        },
-        {
-            id: 7,
-            name: '파스타',
-            category: '양식',
-            image: '../assets/food/pasta.png',
-            likes: 634
-        },
-        {
-            id: 8,
-            name: '떡볶이',
-            category: '분식',
-            image: '../assets/food/tteokbokki.png',
-            likes: 913
-        },
-        {
-            id: 9,
-            name: '라면',
-            category: '분식',
-            image: '../assets/food/ramen.png',
-            likes: 720
-        },
-        {
-            id: 10,
-            name: '샐러드',
-            category: '기타',
-            image: '../assets/food/salad.png',
-            likes: 356
-        },
-        {
-            id: 11,
-            name: '돈까스',
-            category: '일식',
-            image: '../assets/food/donkatsu.png',
-            likes: 678
-        },
-        {
-            id: 12,
-            name: '피자',
-            category: '양식',
-            image: '../assets/food/pizza.png',
-            likes: 884
-        }
-    ];
-
+    const MY_ACTIVITY_API_URL = '../backend/api/wiki/my_activity.php';
+    const WIKI_LIKE_API_URL = '../backend/api/wiki/like.php';
+    const WIKI_DELETE_MY_LIKE_API_URL = '../backend/api/wiki/delete_my_like.php';
+    const WIKI_DELETE_MY_ACTIVITY_API_URL = '../backend/api/wiki/delete_my_activity.php';
+    
+    const UPDATE_ACCOUNT_API_URL = '../backend/api/auth/update_account.php';
+    const DELETE_ACCOUNT_API_URL = '../backend/api/auth/delete_account.php';
+    const LOGOUT_API_URL = '../backend/api/auth/logout.php';
 
     // ================================
     // 2. DOM
@@ -155,9 +69,28 @@
     };
 
     // ================================
-    // 2-1. 페이지네이션 설정
-    // 내가 참여한 음식: 5개씩
-    // 내가 추천한 음식: 10개씩
+    // 3. 로그인 상태
+    // ================================
+
+    const IS_LOGIN = localStorage.getItem('omechu_is_login') === 'true';
+    const LOGIN_USER_NO = localStorage.getItem('omechu_user_no') || '';
+    const LOGIN_USER_ID = localStorage.getItem('omechu_user_id') || '';
+    const LOGIN_USER_NICKNAME = localStorage.getItem('omechu_user_nickname') || '사용자';
+
+    if (!IS_LOGIN || !LOGIN_USER_NO) {
+        alert('로그인이 필요한 페이지예요!');
+        location.href = './login/login.html';
+        return;
+    }
+
+    let currentUser = {
+        no: LOGIN_USER_NO,
+        id: LOGIN_USER_ID,
+        nickname: LOGIN_USER_NICKNAME
+    };
+
+    // ================================
+    // 4. 상태값
     // ================================
 
     const JOINED_FOOD_PAGE_SIZE = 5;
@@ -166,60 +99,12 @@
     let joinedFoodCurrentPage = 1;
     let likedFoodCurrentPage = 1;
 
-    // ================================
-    // 3. 로그인 확인
-    // ================================
-
-    const IS_LOGIN = localStorage.getItem('omechu_is_login') === 'true';
-    const LOGIN_USER_ID = localStorage.getItem('omechu_user_id') || '';
-    const LOGIN_USER_NICKNAME = localStorage.getItem('omechu_user_nickname') || '사용자';
-
-    if (!IS_LOGIN || !LOGIN_USER_ID) {
-        alert('로그인이 필요한 페이지예요!');
-        location.href = './login/login.html';
-        return;
-    }
-
-    let currentUser = getCurrentUser();
-
-    if (!currentUser) {
-        alert('회원 정보를 찾을 수 없어요. 다시 로그인해주세요.');
-        clearLoginInfo();
-        location.href = './login/login.html';
-        return;
-    }
-
+    let joinedFoods = [];
+    let likedFoods = [];
 
     // ================================
-    // 4. 공통 유틸
+    // 5. 공통 유틸
     // ================================
-
-    function readJSON(key, fallbackValue) {
-        const savedData = localStorage.getItem(key);
-
-        if (!savedData) {
-            return fallbackValue;
-        }
-
-        try {
-            return JSON.parse(savedData);
-        } catch (error) {
-            console.error(`${key} 데이터를 읽는 중 오류가 발생했습니다.`, error);
-            return fallbackValue;
-        }
-    }
-
-    function saveJSON(key, value) {
-        localStorage.setItem(key, JSON.stringify(value));
-    }
-
-    function readNumber(key) {
-        return Number(localStorage.getItem(key)) || 0;
-    }
-
-    function saveNumber(key, value) {
-        localStorage.setItem(key, String(value));
-    }
 
     function escapeHTML(value) {
         return String(value || '')
@@ -230,20 +115,33 @@
             .replaceAll("'", '&#039;');
     }
 
-    function getSavedUsers() {
-        return readJSON('omechu_users', []);
-    }
+    function normalizeImagePath(imagePath) {
+        if (!imagePath) {
+            return DEFAULT_IMAGE;
+        }
 
-    function getCurrentUser() {
-        const users = getSavedUsers();
+        const path = String(imagePath).trim();
 
-        return users.find(function (user) {
-            return user.id === LOGIN_USER_ID;
-        });
+        if (!path) {
+            return DEFAULT_IMAGE;
+        }
+
+        if (
+            path.startsWith('http://') ||
+            path.startsWith('https://') ||
+            path.startsWith('../') ||
+            path.startsWith('./') ||
+            path.startsWith('/')
+        ) {
+            return path;
+        }
+
+        return `../${path}`;
     }
 
     function clearLoginInfo() {
         localStorage.removeItem('omechu_is_login');
+        localStorage.removeItem('omechu_user_no');
         localStorage.removeItem('omechu_user_id');
         localStorage.removeItem('omechu_user_nickname');
     }
@@ -252,12 +150,8 @@
         document.body.classList.toggle('overlay_open', isOpen);
     }
 
-    function uniqueList(list) {
-        return Array.from(new Set(list.filter(Boolean)));
-    }
-
     function getTotalPage(list, pageSize) {
-        return Math.ceil(list.length / pageSize);
+        return Math.max(1, Math.ceil(list.length / pageSize));
     }
 
     function getPagedList(list, currentPage, pageSize) {
@@ -266,6 +160,76 @@
 
         return list.slice(startIndex, endIndex);
     }
+
+    function getCurrentUser() {
+        return {
+            no: LOGIN_USER_NO,
+            id: LOGIN_USER_ID,
+            nickname: localStorage.getItem('omechu_user_nickname') || LOGIN_USER_NICKNAME
+        };
+    }
+
+    function normalizeActivityFood(food) {
+        return {
+            foodId: Number(food.foodId || 0),
+            foodName: food.foodName || '이름 없는 음식',
+            foodCategory: food.foodCategory || '기타',
+            foodImage: normalizeImagePath(food.foodImage || ''),
+
+            commentCount: Number(food.commentCount || 0),
+            replyCount: Number(food.replyCount || 0),
+            photoCount: Number(food.photoCount || 0),
+            tagCount: Number(food.tagCount || 0),
+
+            myLikeCount: Number(food.myLikeCount || 0),
+            totalLikeCount: Number(food.totalLikeCount || 0)
+        };
+    }
+
+    // ================================
+    // 6. 내 활동 DB 불러오기
+    // ================================
+
+    function loadMyActivity() {
+        return fetch(MY_ACTIVITY_API_URL, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '마이페이지 정보를 불러오지 못했어요.');
+                    joinedFoods = [];
+                    likedFoods = [];
+                    return;
+                }
+
+                joinedFoods = Array.isArray(data.joinedFoods)
+                    ? data.joinedFoods.map(normalizeActivityFood)
+                    : [];
+
+                likedFoods = Array.isArray(data.likedFoods)
+                    ? data.likedFoods.map(normalizeActivityFood)
+                    : [];
+            })
+            .catch(function(error) {
+                console.error('마이페이지 활동 정보 불러오기 실패:', error);
+                joinedFoods = [];
+                likedFoods = [];
+            });
+    }
+
+    function refreshMyPage() {
+        return loadMyActivity().then(function() {
+            renderMyPage();
+        });
+    }
+
+    // ================================
+    // 7. 페이지네이션
+    // ================================
 
     function updatePagination(type, currentPage, totalPage) {
         let pagination = null;
@@ -310,12 +274,14 @@
         const pageAction = button.dataset.pageAction;
 
         if (pageType === 'joined') {
+            const totalPage = getTotalPage(joinedFoods, JOINED_FOOD_PAGE_SIZE);
+
             if (pageAction === 'prev') {
                 joinedFoodCurrentPage = Math.max(1, joinedFoodCurrentPage - 1);
             }
 
             if (pageAction === 'next') {
-                joinedFoodCurrentPage += 1;
+                joinedFoodCurrentPage = Math.min(totalPage, joinedFoodCurrentPage + 1);
             }
 
             renderMyPage();
@@ -323,237 +289,19 @@
         }
 
         if (pageType === 'liked') {
+            const totalPage = getTotalPage(likedFoods, LIKED_FOOD_PAGE_SIZE);
+
             if (pageAction === 'prev') {
                 likedFoodCurrentPage = Math.max(1, likedFoodCurrentPage - 1);
             }
 
             if (pageAction === 'next') {
-                likedFoodCurrentPage += 1;
+                likedFoodCurrentPage = Math.min(totalPage, likedFoodCurrentPage + 1);
             }
 
             renderMyPage();
         }
     }
-
-    // ================================
-    // 5. localStorage key
-    // ================================
-
-    function getCommentKey(foodId) {
-        return `omechu_food_${foodId}_comments`;
-    }
-
-    function getReplyKey(foodId) {
-        return `omechu_food_${foodId}_replies`;
-    }
-
-    function getPhotoKey(foodId) {
-        return `omechu_food_${foodId}_photos`;
-    }
-
-    function getFoodTagsKey(foodId) {
-        return `omechu_food_${foodId}_tags`;
-    }
-
-    function getMyTagsKey(foodId) {
-        return `omechu_food_${foodId}_my_tags_${LOGIN_USER_ID}`;
-    }
-
-    function getTotalLikeKey(foodId) {
-        return `omechu_wiki_food_${foodId}_like_count`;
-    }
-
-    function getMyLikeKey(foodId) {
-        return `omechu_wiki_food_${foodId}_my_like_count_${LOGIN_USER_ID}`;
-    }
-
-
-    // ================================
-    // 6. 음식 목록 만들기
-    // 기본 음식 + 커스텀 음식
-    // ================================
-
-    function getCustomFoodList() {
-        return readJSON(CUSTOM_FOOD_STORAGE_KEY, []);
-    }
-
-    function saveCustomFoodList(foodList) {
-        saveJSON(CUSTOM_FOOD_STORAGE_KEY, foodList);
-    }
-
-    function getAllFoodList() {
-        const customFoodList = getCustomFoodList();
-
-        const normalizedCustomFoods = customFoodList.map(function (food) {
-            return {
-                ...food,
-                isCustomFood: true,
-                image: food.image || DEFAULT_IMAGE,
-                likes: Number(food.likes || 0)
-            };
-        });
-
-        const normalizedDefaultFoods = defaultFoodList.map(function (food) {
-            return {
-                ...food,
-                isCustomFood: false,
-                image: food.image || DEFAULT_IMAGE,
-                likes: Number(food.likes || 0)
-            };
-        });
-
-        return [
-            ...normalizedCustomFoods,
-            ...normalizedDefaultFoods
-        ];
-    }
-
-
-    // ================================
-    // 7. 음식별 내 활동 수집
-    // ================================
-
-    function getStorageComments(foodId) {
-        return readJSON(getCommentKey(foodId), []);
-    }
-
-    function getCustomFoodComments(food) {
-        if (!Array.isArray(food.commentList)) {
-            return [];
-        }
-
-        return food.commentList;
-    }
-
-    function getAllComments(food) {
-        return [
-            ...getStorageComments(food.id),
-            ...getCustomFoodComments(food)
-        ];
-    }
-
-    function getStoragePhotos(foodId) {
-        return readJSON(getPhotoKey(foodId), []);
-    }
-
-    function getCustomFoodPhotos(food) {
-        if (!Array.isArray(food.photos)) {
-            return [];
-        }
-
-        return food.photos.filter(function (photo) {
-            return typeof photo === 'object' && photo !== null;
-        });
-    }
-
-    function getAllPhotos(food) {
-        return [
-            ...getStoragePhotos(food.id),
-            ...getCustomFoodPhotos(food)
-        ];
-    }
-
-    function getMyReplyCount(foodId) {
-        const savedReplies = readJSON(getReplyKey(foodId), {});
-        let count = 0;
-
-        Object.keys(savedReplies).forEach(function (commentId) {
-            const replyList = Array.isArray(savedReplies[commentId])
-                ? savedReplies[commentId]
-                : [];
-
-            replyList.forEach(function (reply) {
-                if (reply.userId === LOGIN_USER_ID) {
-                    count += 1;
-                }
-            });
-        });
-
-        return count;
-    }
-
-    function getMyTags(food) {
-        const savedMyTags = readJSON(getMyTagsKey(food.id), []);
-
-        const myCommentTags = [];
-
-        getAllComments(food).forEach(function (comment) {
-            if (comment.userId !== LOGIN_USER_ID) {
-                return;
-            }
-
-            if (Array.isArray(comment.tags)) {
-                myCommentTags.push(...comment.tags);
-            }
-        });
-
-        return uniqueList([
-            ...savedMyTags,
-            ...myCommentTags
-        ]);
-    }
-
-    function getMyFoodActivity(food) {
-        const allComments = getAllComments(food);
-        const allPhotos = getAllPhotos(food);
-
-        const myComments = allComments.filter(function (comment) {
-            return comment.userId === LOGIN_USER_ID;
-        });
-
-        const myPhotos = allPhotos.filter(function (photo) {
-            return photo.userId === LOGIN_USER_ID;
-        });
-
-        const myReplyCount = getMyReplyCount(food.id);
-        const myTags = getMyTags(food);
-
-        const myLikeCount = readNumber(getMyLikeKey(food.id));
-        const addedLikeCount = readNumber(getTotalLikeKey(food.id));
-        const totalLikeCount = Number(food.likes || 0) + addedLikeCount;
-
-        return {
-            foodId: food.id,
-            foodName: food.name || '이름 없는 음식',
-            foodCategory: food.category || '기타',
-            foodImage: food.image || DEFAULT_IMAGE,
-
-            commentCount: myComments.length,
-            replyCount: myReplyCount,
-            photoCount: myPhotos.length,
-            tagCount: myTags.length,
-
-            myLikeCount: myLikeCount,
-            totalLikeCount: totalLikeCount
-        };
-    }
-
-    function getMyActivityData() {
-        const allFoods = getAllFoodList();
-
-        const allActivities = allFoods.map(function (food) {
-            return getMyFoodActivity(food);
-        });
-
-        const joinedFoods = allActivities.filter(function (activity) {
-            return (
-                activity.commentCount > 0 ||
-                activity.replyCount > 0 ||
-                activity.photoCount > 0 ||
-                activity.tagCount > 0
-            );
-        });
-
-        const likedFoods = allActivities.filter(function (activity) {
-            return activity.myLikeCount > 0;
-        });
-
-        return {
-            joinedFoods: joinedFoods,
-            likedFoods: likedFoods
-        };
-    }
-
 
     // ================================
     // 8. 화면 출력
@@ -562,14 +310,13 @@
     function renderProfile() {
         currentUser = getCurrentUser();
 
-        if (!currentUser) {
-            el.myNickname.textContent = LOGIN_USER_NICKNAME;
-            el.myUserId.textContent = `ID: ${LOGIN_USER_ID}`;
-            return;
+        if (el.myNickname) {
+            el.myNickname.textContent = currentUser.nickname || LOGIN_USER_NICKNAME;
         }
 
-        el.myNickname.textContent = currentUser.nickname || LOGIN_USER_NICKNAME;
-        el.myUserId.textContent = `ID: ${currentUser.id}`;
+        if (el.myUserId) {
+            el.myUserId.textContent = `ID: ${currentUser.id}`;
+        }
 
         if (el.editNickname) {
             el.editNickname.value = currentUser.nickname || '';
@@ -579,27 +326,34 @@
     function renderMyPage() {
         renderProfile();
 
-        const data = getMyActivityData();
+        if (el.myJoinFoodCount) {
+            el.myJoinFoodCount.textContent = joinedFoods.length;
+        }
 
-        el.myJoinFoodCount.textContent = data.joinedFoods.length;
-        el.myLikedFoodCount.textContent = data.likedFoods.length;
+        if (el.myLikedFoodCount) {
+            el.myLikedFoodCount.textContent = likedFoods.length;
+        }
 
-        renderJoinedFoods(data.joinedFoods);
-        renderLikedFoods(data.likedFoods);
+        renderJoinedFoods();
+        renderLikedFoods();
     }
 
-    function renderJoinedFoods(joinedFoods) {
+    function renderJoinedFoods() {
+        if (!el.myJoinedFoodList) {
+            return;
+        }
+
         if (joinedFoods.length === 0) {
             joinedFoodCurrentPage = 1;
 
             el.myJoinedFoodList.innerHTML = `
                 <p class="my_empty_text">
                     아직 참여한 음식이 없어요.<br>
-                    태그, 코멘트, 사진을 추가해보세요!
+                    코멘트, 의견, 사진을 추가해보세요!
                 </p>
             `;
 
-            updatePagination('joined', 1, 0);
+            updatePagination('joined', 1, 1);
             return;
         }
 
@@ -615,7 +369,7 @@
             JOINED_FOOD_PAGE_SIZE
         );
 
-        const foodHTML = pagedFoods.map(function (food) {
+        el.myJoinedFoodList.innerHTML = pagedFoods.map(function(food) {
             return `
                 <div class="my_food_card" data-food-id="${food.foodId}">
                     <img 
@@ -630,8 +384,7 @@
                         <p>
                             코멘트 ${food.commentCount}개 · 
                             의견 ${food.replyCount}개<br>
-                            사진 ${food.photoCount}개 · 
-                            태그 ${food.tagCount}개
+                            사진 ${food.photoCount}개
                         </p>
                     </div>
 
@@ -647,12 +400,14 @@
             `;
         }).join('');
 
-        el.myJoinedFoodList.innerHTML = foodHTML;
-
         updatePagination('joined', joinedFoodCurrentPage, totalPage);
     }
 
-    function renderLikedFoods(likedFoods) {
+    function renderLikedFoods() {
+        if (!el.myLikedFoodList) {
+            return;
+        }
+
         if (likedFoods.length === 0) {
             likedFoodCurrentPage = 1;
 
@@ -663,7 +418,7 @@
                 </p>
             `;
 
-            updatePagination('liked', 1, 0);
+            updatePagination('liked', 1, 1);
             return;
         }
 
@@ -679,7 +434,7 @@
             LIKED_FOOD_PAGE_SIZE
         );
 
-        const foodHTML = pagedFoods.map(function (food) {
+        el.myLikedFoodList.innerHTML = pagedFoods.map(function(food) {
             return `
                 <div class="my_food_card" data-food-id="${food.foodId}">
                     <div class="my_like_top">
@@ -709,8 +464,6 @@
             `;
         }).join('');
 
-        el.myLikedFoodList.innerHTML = foodHTML;
-
         updatePagination('liked', likedFoodCurrentPage, totalPage);
     }
 
@@ -721,116 +474,129 @@
     function openAccountOverlay() {
         renderProfile();
 
-        el.currentPw.value = '';
-        el.editPw.value = '';
-        el.editPwCheck.value = '';
+        if (el.currentPw) el.currentPw.value = '';
+        if (el.editPw) el.editPw.value = '';
+        if (el.editPwCheck) el.editPwCheck.value = '';
 
-        el.accountOverlay.classList.remove('hidden');
+        if (el.accountOverlay) {
+            el.accountOverlay.classList.remove('hidden');
+        }
+
         setOverlayOpen(true);
     }
 
     function closeAccountOverlay() {
-        el.accountOverlay.classList.add('hidden');
+        if (el.accountOverlay) {
+            el.accountOverlay.classList.add('hidden');
+        }
+
         setOverlayOpen(false);
     }
 
     function handleAccountEditSubmit(event) {
         event.preventDefault();
 
-        const newNickname = el.editNickname.value.trim();
-        const currentPw = el.currentPw.value.trim();
-        const newPw = el.editPw.value.trim();
-        const newPwCheck = el.editPwCheck.value.trim();
+        const newNickname = el.editNickname ? el.editNickname.value.trim() : '';
+        const currentPw = el.currentPw ? el.currentPw.value.trim() : '';
+        const newPw = el.editPw ? el.editPw.value.trim() : '';
+        const newPwCheck = el.editPwCheck ? el.editPwCheck.value.trim() : '';
 
         if (newNickname === '') {
             alert('닉네임을 입력해주세요!');
-            el.editNickname.focus();
+            if (el.editNickname) el.editNickname.focus();
             return;
         }
 
         if (currentPw === '') {
             alert('현재 비밀번호를 입력해주세요!');
-            el.currentPw.focus();
-            return;
-        }
-
-        if (currentPw !== currentUser.password) {
-            alert('현재 비밀번호가 일치하지 않아요!');
-            el.currentPw.focus();
+            if (el.currentPw) el.currentPw.focus();
             return;
         }
 
         if (newPw !== '' || newPwCheck !== '') {
             if (newPw.length < 4) {
                 alert('새 비밀번호는 4자 이상 입력해주세요!');
-                el.editPw.focus();
+                if (el.editPw) el.editPw.focus();
                 return;
             }
 
             if (newPw !== newPwCheck) {
                 alert('새 비밀번호가 서로 달라요!');
-                el.editPwCheck.focus();
+                if (el.editPwCheck) el.editPwCheck.focus();
                 return;
             }
         }
 
-        const users = getSavedUsers();
+        fetch(UPDATE_ACCOUNT_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nickname: newNickname,
+                current_password: currentPw,
+                new_password: newPw
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '계정 정보 변경에 실패했어요.');
+                    return;
+                }
 
-        const userIndex = users.findIndex(function (user) {
-            return user.id === LOGIN_USER_ID;
-        });
+                localStorage.setItem('omechu_user_nickname', data.user.nickname);
 
-        if (userIndex === -1) {
-            alert('회원 정보를 찾을 수 없어요.');
-            return;
-        }
+                currentUser = {
+                    no: data.user.no,
+                    id: data.user.login_id,
+                    nickname: data.user.nickname
+                };
 
-        users[userIndex].nickname = newNickname;
+                alert(data.message || '계정 정보가 변경됐어요.');
 
-        if (newPw !== '') {
-            users[userIndex].password = newPw;
-        }
-
-        saveJSON('omechu_users', users);
-        localStorage.setItem('omechu_user_nickname', newNickname);
-
-        currentUser = users[userIndex];
-
-        alert('계정 정보가 변경됐어요.');
-
-        closeAccountOverlay();
-        renderMyPage();
+                closeAccountOverlay();
+                renderMyPage();
+            })
+            .catch(function(error) {
+                console.error('계정 정보 변경 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
-
 
     // ================================
     // 10. 계정 탈퇴
     // ================================
 
     function openDeleteOverlay() {
-        el.deletePwInput.value = '';
+        if (el.deletePwInput) {
+            el.deletePwInput.value = '';
+        }
 
-        el.deleteOverlay.classList.remove('hidden');
+        if (el.deleteOverlay) {
+            el.deleteOverlay.classList.remove('hidden');
+        }
+
         setOverlayOpen(true);
     }
 
     function closeDeleteOverlay() {
-        el.deleteOverlay.classList.add('hidden');
+        if (el.deleteOverlay) {
+            el.deleteOverlay.classList.add('hidden');
+        }
+
         setOverlayOpen(false);
     }
 
     function handleDeleteAccount() {
-        const password = el.deletePwInput.value.trim();
+        const password = el.deletePwInput ? el.deletePwInput.value.trim() : '';
 
         if (password === '') {
             alert('현재 비밀번호를 입력해주세요.');
-            el.deletePwInput.focus();
-            return;
-        }
-
-        if (password !== currentUser.password) {
-            alert('비밀번호가 일치하지 않아요.');
-            el.deletePwInput.focus();
+            if (el.deletePwInput) el.deletePwInput.focus();
             return;
         }
 
@@ -840,126 +606,44 @@
             return;
         }
 
-        deleteCurrentUser();
-        clearLoginInfo();
-
-        alert('계정 탈퇴가 완료됐어요.');
-
-        location.href = '../index.html';
-    }
-
-    function deleteCurrentUser() {
-        let users = getSavedUsers();
-
-        users = users.filter(function (user) {
-            return user.id !== LOGIN_USER_ID;
-        });
-
-        saveJSON('omechu_users', users);
-
-        removeMyLoginBasedRecords();
-    }
-
-    function removeMyLoginBasedRecords() {
-        const allFoods = getAllFoodList();
-
-        allFoods.forEach(function (food) {
-            removeMyLikeRecord(food.id);
-            removeMyTagsRecord(food.id);
-        });
-
-        removeMyDataFromStoredLists();
-        removeMyDataFromCustomFoods();
-    }
-
-    function removeMyLikeRecord(foodId) {
-        localStorage.removeItem(getMyLikeKey(foodId));
-
-        // 예전 코드에서 쓰던 key가 남아 있을 수 있으므로 같이 정리
-        localStorage.removeItem(`omechu_wiki_food_${foodId}_my_like_${LOGIN_USER_ID}`);
-        localStorage.removeItem(`omechu_wiki_detail_my_like_${foodId}_${LOGIN_USER_ID}`);
-    }
-
-    function removeMyTagsRecord(foodId) {
-        localStorage.removeItem(getMyTagsKey(foodId));
-    }
-
-    function removeMyDataFromStoredLists() {
-        const allFoods = getAllFoodList();
-
-        allFoods.forEach(function (food) {
-            const foodId = food.id;
-
-            const comments = readJSON(getCommentKey(foodId), []);
-            const photos = readJSON(getPhotoKey(foodId), []);
-            const replies = readJSON(getReplyKey(foodId), {});
-
-            const nextComments = comments.filter(function (comment) {
-                return comment.userId !== LOGIN_USER_ID;
-            });
-
-            const nextPhotos = photos.filter(function (photo) {
-                return photo.userId !== LOGIN_USER_ID;
-            });
-
-            Object.keys(replies).forEach(function (commentId) {
-                const replyList = Array.isArray(replies[commentId])
-                    ? replies[commentId]
-                    : [];
-
-                replies[commentId] = replyList.filter(function (reply) {
-                    return reply.userId !== LOGIN_USER_ID;
-                });
-
-                if (replies[commentId].length === 0) {
-                    delete replies[commentId];
+        fetch(DELETE_ACCOUNT_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: password
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '계정 탈퇴에 실패했어요.');
+                    return;
                 }
+
+                clearLoginInfo();
+
+                alert(data.message || '계정 탈퇴가 완료됐어요.');
+
+                location.href = '../index.html';
+            })
+            .catch(function(error) {
+                console.error('계정 탈퇴 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
             });
-
-            saveJSON(getCommentKey(foodId), nextComments);
-            saveJSON(getPhotoKey(foodId), nextPhotos);
-            saveJSON(getReplyKey(foodId), replies);
-        });
-    }
-
-    function removeMyDataFromCustomFoods() {
-        const customFoodList = getCustomFoodList();
-
-        const nextCustomFoodList = customFoodList.map(function (food) {
-            const nextCommentList = Array.isArray(food.commentList)
-                ? food.commentList.filter(function (comment) {
-                    return comment.userId !== LOGIN_USER_ID;
-                })
-                : [];
-
-            const nextPhotos = Array.isArray(food.photos)
-                ? food.photos.filter(function (photo) {
-                    return !(photo && photo.userId === LOGIN_USER_ID);
-                })
-                : [];
-
-            return {
-                ...food,
-                commentList: nextCommentList,
-                photos: nextPhotos,
-                comments: nextCommentList.length,
-                image: nextPhotos[0] && nextPhotos[0].src
-                    ? nextPhotos[0].src
-                    : (food.image || DEFAULT_IMAGE)
-            };
-        });
-
-        saveCustomFoodList(nextCustomFoodList);
     }
 
     // ================================
-    // 10-1. 음식별 내 작성내용 삭제
-    // 태그 / 사진 / 코멘트 / 의견(대댓글)
+    // 11. 추천 처리
     // ================================
 
     function deleteMyActivityByFoodId(foodId) {
-        const targetFood = getAllFoodList().find(function (food) {
-            return String(food.id) === String(foodId);
+        const targetFood = joinedFoods.find(function(food) {
+            return String(food.foodId) === String(foodId);
         });
 
         if (!targetFood) {
@@ -968,153 +652,80 @@
         }
 
         const confirmDelete = confirm(
-            `"${targetFood.name}"에 작성한 내 태그, 사진, 코멘트, 의견을 모두 삭제할까요?`
+            `"${targetFood.foodName}"에 작성한 내 코멘트, 의견, 사진을 모두 삭제할까요?\n\n태그는 작성자 정보를 저장하지 않아서 삭제 대상에서 제외돼요.`
         );
 
         if (!confirmDelete) {
             return;
         }
 
-        removeMyCommentsByFoodId(foodId);
-        removeMyRepliesByFoodId(foodId);
-        removeMyPhotosByFoodId(foodId);
-        removeMyTagsByFoodId(foodId);
-        removeMyActivityFromCustomFood(foodId);
+        fetch(WIKI_DELETE_MY_ACTIVITY_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                food_id: foodId
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '내 작성내용 삭제에 실패했어요.');
+                    return;
+                }
 
-        alert('내 작성내용이 삭제됐어요.');
+                const deleted = data.deleted || {};
 
-        renderMyPage();
-    }
+                alert(
+                    `내 작성내용이 삭제됐어요.\n` +
+                    `코멘트 ${Number(deleted.comments || 0)}개\n` +
+                    `의견 ${Number(deleted.replies || 0)}개\n` +
+                    `사진 ${Number(deleted.photos || 0)}개`
+                );
 
-    function removeMyCommentsByFoodId(foodId) {
-        const comments = readJSON(getCommentKey(foodId), []);
-
-        const nextComments = comments.filter(function (comment) {
-            return comment.userId !== LOGIN_USER_ID;
-        });
-
-        saveJSON(getCommentKey(foodId), nextComments);
-    }
-
-    function removeMyRepliesByFoodId(foodId) {
-        const replies = readJSON(getReplyKey(foodId), {});
-
-        Object.keys(replies).forEach(function (commentId) {
-            const replyList = Array.isArray(replies[commentId])
-                ? replies[commentId]
-                : [];
-
-            replies[commentId] = replyList.filter(function (reply) {
-                return reply.userId !== LOGIN_USER_ID;
+                refreshMyPage();
+            })
+            .catch(function(error) {
+                console.error('내 작성내용 삭제 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
             });
-
-            if (replies[commentId].length === 0) {
-                delete replies[commentId];
-            }
-        });
-
-        saveJSON(getReplyKey(foodId), replies);
     }
-
-    function removeMyPhotosByFoodId(foodId) {
-        const photos = readJSON(getPhotoKey(foodId), []);
-
-        const nextPhotos = photos.filter(function (photo) {
-            return photo.userId !== LOGIN_USER_ID;
-        });
-
-        saveJSON(getPhotoKey(foodId), nextPhotos);
-    }
-
-    function removeMyTagsByFoodId(foodId) {
-        const myTags = readJSON(getMyTagsKey(foodId), []);
-        const foodTags = readJSON(getFoodTagsKey(foodId), []);
-
-        if (myTags.length > 0) {
-            const nextFoodTags = foodTags.filter(function (tag) {
-                return !myTags.includes(tag);
-            });
-
-            saveJSON(getFoodTagsKey(foodId), nextFoodTags);
-        }
-
-        localStorage.removeItem(getMyTagsKey(foodId));
-    }
-
-    function removeMyActivityFromCustomFood(foodId) {
-        const customFoodList = getCustomFoodList();
-
-        const nextCustomFoodList = customFoodList.map(function (food) {
-            if (String(food.id) !== String(foodId)) {
-                return food;
-            }
-
-            const myCommentTags = [];
-
-            const nextCommentList = Array.isArray(food.commentList)
-                ? food.commentList.filter(function (comment) {
-                    if (comment.userId === LOGIN_USER_ID && Array.isArray(comment.tags)) {
-                        myCommentTags.push(...comment.tags);
-                    }
-
-                    return comment.userId !== LOGIN_USER_ID;
-                })
-                : [];
-
-            const nextPhotos = Array.isArray(food.photos)
-                ? food.photos.filter(function (photo) {
-                    return !(photo && photo.userId === LOGIN_USER_ID);
-                })
-                : [];
-
-            const nextTags = Array.isArray(food.tags)
-                ? food.tags.filter(function (tag) {
-                    return !myCommentTags.includes(tag);
-                })
-                : [];
-
-            return {
-                ...food,
-                tags: nextTags,
-                photos: nextPhotos,
-                commentList: nextCommentList,
-                comments: nextCommentList.length,
-                image: nextPhotos[0] && nextPhotos[0].src
-                    ? nextPhotos[0].src
-                    : (food.image || DEFAULT_IMAGE)
-            };
-        });
-
-        saveCustomFoodList(nextCustomFoodList);
-    }
-
-    // ================================
-    // 10-2. 음식별 내 추천 모두 삭제
-    // 내 추천 수 초기화 + 전체 추천 수 차감
-    // ================================
 
     function addMyLikeByFoodId(foodId) {
-        const targetFood = getAllFoodList().find(function (food) {
-            return String(food.id) === String(foodId);
-        });
+        fetch(WIKI_LIKE_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                food_id: foodId
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '추천에 실패했어요.');
+                    return;
+                }
 
-        if (!targetFood) {
-            alert('음식 정보를 찾을 수 없어요.');
-            return;
-        }
-
-        const currentMyLikeCount = readNumber(getMyLikeKey(foodId));
-        const currentTotalAddedLike = readNumber(getTotalLikeKey(foodId));
-
-        saveNumber(getMyLikeKey(foodId), currentMyLikeCount + 1);
-        saveNumber(getTotalLikeKey(foodId), currentTotalAddedLike + 1);
-
-        renderMyPage();
+                refreshMyPage();
+            })
+            .catch(function(error) {
+                console.error('추천 추가 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
-    
+
     function deleteMyLikeByFoodId(foodId) {
-        const targetFood = getAllFoodList().find(function (food) {
-            return String(food.id) === String(foodId);
+        const targetFood = likedFoods.find(function(food) {
+            return String(food.foodId) === String(foodId);
         });
 
         if (!targetFood) {
@@ -1122,39 +733,53 @@
             return;
         }
 
-        const myLikeCount = readNumber(getMyLikeKey(foodId));
+        const myLikeCount = Number(targetFood.myLikeCount || 0);
 
         if (myLikeCount <= 0) {
             alert('삭제할 추천 기록이 없어요.');
-            renderMyPage();
+            refreshMyPage();
             return;
         }
 
         const confirmDelete = confirm(
-            `"${targetFood.name}"에 누른 내 추천 ${myLikeCount}회를 모두 삭제할까요?`
+            `"${targetFood.foodName}"에 누른 내 추천 ${myLikeCount}회를 모두 삭제할까요?`
         );
 
         if (!confirmDelete) {
             return;
         }
 
-        const currentTotalAddedLike = readNumber(getTotalLikeKey(foodId));
-        const nextTotalAddedLike = Math.max(0, currentTotalAddedLike - myLikeCount);
+        fetch(WIKI_DELETE_MY_LIKE_API_URL, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                food_id: foodId
+            })
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (!data.success) {
+                    alert(data.message || '내 추천 삭제에 실패했어요.');
+                    return;
+                }
 
-        saveNumber(getTotalLikeKey(foodId), nextTotalAddedLike);
-        localStorage.removeItem(getMyLikeKey(foodId));
+                alert(data.message || '내 추천 기록이 삭제됐어요.');
 
-        // 예전 코드에서 쓰던 key가 남아 있을 수 있으므로 같이 정리
-        localStorage.removeItem(`omechu_wiki_food_${foodId}_my_like_${LOGIN_USER_ID}`);
-        localStorage.removeItem(`omechu_wiki_detail_my_like_${foodId}_${LOGIN_USER_ID}`);
-
-        alert('내 추천 기록이 삭제됐어요.');
-
-        renderMyPage();
+                refreshMyPage();
+            })
+            .catch(function(error) {
+                console.error('내 추천 삭제 실패:', error);
+                alert('서버와 통신 중 오류가 발생했어요.');
+            });
     }
 
     // ================================
-    // 11. 로그아웃
+    // 12. 로그아웃
     // ================================
 
     function handleLogout() {
@@ -1164,24 +789,29 @@
             return;
         }
 
-        clearLoginInfo();
-
-        alert('로그아웃됐어요.');
-
-        location.href = '../index.html';
+        fetch(LOGOUT_API_URL, {
+            method: 'POST',
+            credentials: 'include'
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function() {
+                clearLoginInfo();
+                location.href = '../index.html';
+            })
+            .catch(function(error) {
+                console.error('로그아웃 실패:', error);
+                clearLoginInfo();
+                location.href = '../index.html';
+            });
     }
 
     // ================================
-    // 12. 상세 페이지 이동
+    // 13. 상세 페이지 이동 / 클릭 처리
     // ================================
 
-    function moveToDetailByCard(card) {
-        if (!card) {
-            return;
-        }
-
-        const foodId = card.dataset.foodId;
-
+    function moveToDetailByFoodId(foodId) {
         if (!foodId) {
             return;
         }
@@ -1200,7 +830,7 @@
         }
 
         if (detailButton) {
-            moveToDetailByCard(card);
+            moveToDetailByFoodId(card.dataset.foodId);
             return;
         }
 
@@ -1210,13 +840,6 @@
     }
 
     function handleLikedFoodClick(event) {
-        const pageButton = event.target.closest('.my_page_btn');
-
-        if (pageButton) {
-            handlePaginationClick(pageButton);
-            return;
-        }
-
         const detailButton = event.target.closest('.go_detail_btn');
         const deleteButton = event.target.closest('.delete_my_like_btn');
         const addLikeButton = event.target.closest('.add_like_btn');
@@ -1228,7 +851,7 @@
         }
 
         if (detailButton) {
-            moveToDetailByCard(card);
+            moveToDetailByFoodId(card.dataset.foodId);
             return;
         }
 
@@ -1241,68 +864,102 @@
             addMyLikeByFoodId(card.dataset.foodId);
         }
     }
-    
+
     // ================================
-    // 13. 이벤트 연결
+    // 14. 이벤트 연결
     // ================================
 
-    el.logoutBtn.addEventListener('click', handleLogout);
-
-    el.editAccountBtn.addEventListener('click', openAccountOverlay);
-    el.accountOverlayCloseBtn.addEventListener('click', closeAccountOverlay);
-    el.accountOverlayBg.addEventListener('click', closeAccountOverlay);
-    el.accountEditForm.addEventListener('submit', handleAccountEditSubmit);
-
-    el.deleteAccountBtn.addEventListener('click', openDeleteOverlay);
-    el.deleteOverlayCloseBtn.addEventListener('click', closeDeleteOverlay);
-    el.deleteOverlayBg.addEventListener('click', closeDeleteOverlay);
-    el.deleteConfirmBtn.addEventListener('click', handleDeleteAccount);
-
-    el.myJoinedFoodList.addEventListener('click', handleJoinedFoodClick);
-    el.myLikedFoodList.addEventListener('click', handleLikedFoodClick);
-
-    if (el.joinedFoodPrevBtn) {
-        el.joinedFoodPrevBtn.addEventListener('click', function () {
-            handlePaginationClick(el.joinedFoodPrevBtn);
-        });
-    }
-
-    if (el.joinedFoodNextBtn) {
-        el.joinedFoodNextBtn.addEventListener('click', function () {
-            handlePaginationClick(el.joinedFoodNextBtn);
-        });
-    }
-
-    if (el.likedFoodPrevBtn) {
-        el.likedFoodPrevBtn.addEventListener('click', function () {
-            handlePaginationClick(el.likedFoodPrevBtn);
-        });
-    }
-
-    if (el.likedFoodNextBtn) {
-        el.likedFoodNextBtn.addEventListener('click', function () {
-            handlePaginationClick(el.likedFoodNextBtn);
-        });
-    }
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key !== 'Escape') {
-            return;
+    function connectEvents() {
+        if (el.logoutBtn) {
+            el.logoutBtn.addEventListener('click', handleLogout);
         }
 
-        if (!el.accountOverlay.classList.contains('hidden')) {
-            closeAccountOverlay();
-            return;
+        if (el.editAccountBtn) {
+            el.editAccountBtn.addEventListener('click', openAccountOverlay);
         }
 
-        if (!el.deleteOverlay.classList.contains('hidden')) {
-            closeDeleteOverlay();
+        if (el.accountOverlayCloseBtn) {
+            el.accountOverlayCloseBtn.addEventListener('click', closeAccountOverlay);
         }
-    });
+
+        if (el.accountOverlayBg) {
+            el.accountOverlayBg.addEventListener('click', closeAccountOverlay);
+        }
+
+        if (el.accountEditForm) {
+            el.accountEditForm.addEventListener('submit', handleAccountEditSubmit);
+        }
+
+        if (el.deleteAccountBtn) {
+            el.deleteAccountBtn.addEventListener('click', openDeleteOverlay);
+        }
+
+        if (el.deleteOverlayCloseBtn) {
+            el.deleteOverlayCloseBtn.addEventListener('click', closeDeleteOverlay);
+        }
+
+        if (el.deleteOverlayBg) {
+            el.deleteOverlayBg.addEventListener('click', closeDeleteOverlay);
+        }
+
+        if (el.deleteConfirmBtn) {
+            el.deleteConfirmBtn.addEventListener('click', handleDeleteAccount);
+        }
+
+        if (el.myJoinedFoodList) {
+            el.myJoinedFoodList.addEventListener('click', handleJoinedFoodClick);
+        }
+
+        if (el.myLikedFoodList) {
+            el.myLikedFoodList.addEventListener('click', handleLikedFoodClick);
+        }
+
+        if (el.joinedFoodPrevBtn) {
+            el.joinedFoodPrevBtn.addEventListener('click', function () {
+                handlePaginationClick(el.joinedFoodPrevBtn);
+            });
+        }
+
+        if (el.joinedFoodNextBtn) {
+            el.joinedFoodNextBtn.addEventListener('click', function () {
+                handlePaginationClick(el.joinedFoodNextBtn);
+            });
+        }
+
+        if (el.likedFoodPrevBtn) {
+            el.likedFoodPrevBtn.addEventListener('click', function () {
+                handlePaginationClick(el.likedFoodPrevBtn);
+            });
+        }
+
+        if (el.likedFoodNextBtn) {
+            el.likedFoodNextBtn.addEventListener('click', function () {
+                handlePaginationClick(el.likedFoodNextBtn);
+            });
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape') {
+                return;
+            }
+
+            if (el.accountOverlay && !el.accountOverlay.classList.contains('hidden')) {
+                closeAccountOverlay();
+                return;
+            }
+
+            if (el.deleteOverlay && !el.deleteOverlay.classList.contains('hidden')) {
+                closeDeleteOverlay();
+            }
+        });
+    }
 
     // ================================
-    // 14. 실행
+    // 15. 실행
     // ================================
 
-    renderMyPage();
-})();
+    connectEvents();
+
+    refreshMyPage();
+
+});

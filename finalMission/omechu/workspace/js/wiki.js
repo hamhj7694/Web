@@ -11,158 +11,37 @@
 // 지금은 서버 없이 배열 데이터로 화면을 그림
 // 나중에 DB를 붙이면 이 배열 부분만 서버 데이터로 교체하면 됨
 
-let foodList = [
-    {
-        id: 1,
-        name: '제육볶음',
-        category: '한식',
-        image: '../assets/food/jeyuk.png',
-        description: '점심에 실패 없는 든든한 메뉴',
-        tags: ['#한식', '#점심', '#혼밥'],
-        likes: 842,
-        comments: 37,
-        hits: 50
-    },
-    {
-        id: 2,
-        name: '김치찌개',
-        category: '한식',
-        image: '../assets/food/kimchi.png',
-        description: '밥 한 공기 뚝딱 가능한 얼큰한 집밥 메뉴',
-        tags: ['#한식', '#국물', '#집밥'],
-        likes: 812,
-        comments: 42,
-        hits: 50
-    },
-    {
-        id: 3,
-        name: '치킨',
-        category: '야식',
-        image: '../assets/food/chicken.png',
-        description: '야식 고민을 끝내주는 바삭한 정답',
-        tags: ['#야식', '#배달', '#주말'],
-        likes: 1052,
-        comments: 96,
-        hits: 50
-    },
-    {
-        id: 4,
-        name: '짜장면',
-        category: '중식',
-        image: '../assets/food/jajang.png',
-        description: '달달하고 고소한 국민 중식 메뉴',
-        tags: ['#중식', '#배달', '#가성비'],
-        likes: 765,
-        comments: 52,
-        hits: 50
-    },
-    {
-        id: 5,
-        name: '마라탕',
-        category: '중식',
-        image: '../assets/food/maratang.png',
-        description: '취향대로 재료를 고르는 얼얼한 메뉴',
-        tags: ['#중식', '#매운맛', '#친구랑'],
-        likes: 998,
-        comments: 104,
-        hits: 50
-    },
-    {
-        id: 6,
-        name: '초밥',
-        category: '일식',
-        image: '../assets/food/sushi.png',
-        description: '깔끔하고 특별한 기분을 내고 싶을 때',
-        tags: ['#일식', '#데이트', '#깔끔'],
-        likes: 691,
-        comments: 44,
-        hits: 50
-    },
-    {
-        id: 7,
-        name: '파스타',
-        category: '양식',
-        image: '../assets/food/pasta.png',
-        description: '분위기 내고 싶을 때 좋은 부드러운 메뉴',
-        tags: ['#양식', '#데이트', '#저녁'],
-        likes: 634,
-        comments: 29,
-        hits: 50
-    },
-    {
-        id: 8,
-        name: '떡볶이',
-        category: '분식',
-        image: '../assets/food/tteokbokki.png',
-        description: '매콤달콤하게 기분 전환하기 좋은 분식',
-        tags: ['#분식', '#매콤', '#간식'],
-        likes: 913,
-        comments: 81,
-        hits: 50
-    },
-    {
-        id: 9,
-        name: '라면',
-        category: '분식',
-        image: '../assets/food/ramen.png',
-        description: '간단하지만 늘 강력한 한 끼 메뉴',
-        tags: ['#분식', '#혼밥', '#간단'],
-        likes: 720,
-        comments: 63,
-        hits: 50
-    },
-    {
-        id: 10,
-        name: '샐러드',
-        category: '기타',
-        image: '../assets/food/salad.png',
-        description: '가볍고 산뜻하게 먹고 싶을 때',
-        tags: ['#기타', '#가벼움', '#건강'],
-        likes: 356,
-        comments: 18,
-        hits: 50
-    },
-    {
-        id: 11,
-        name: '돈까스',
-        category: '일식',
-        image: '../assets/food/donkatsu.png',
-        description: '바삭하고 든든하게 먹기 좋은 메뉴',
-        tags: ['#일식', '#점심', '#든든함'],
-        likes: 678,
-        comments: 35,
-        hits: 50
-    },
-    {
-        id: 12,
-        name: '피자',
-        category: '양식',
-        image: '../assets/food/pizza.png',
-        description: '여럿이 나눠 먹기 좋은 대표 메뉴',
-        tags: ['#양식', '#배달', '#친구랑'],
-        likes: 884,
-        comments: 77,
-        hits: 50
-    }
-];
-// 작성 페이지에서 등록한 음식 불러오기
-function getCustomFoodList() {
-    const savedData = localStorage.getItem('omechu_wiki_custom_foods');
+let foodList = [];
 
-    if (!savedData) return [];
+const WIKI_LIST_API_URL = '../backend/api/wiki/list.php';
+const WIKI_LIKE_API_URL = '../backend/api/wiki/like.php';
+const DEFAULT_IMAGE = '../assets/food/default.png';
+const WIKI_FOOD_DELETE_API_URL = '../backend/api/wiki/food_delete.php';
+const IS_ADMIN = localStorage.getItem('omechu_is_admin') === 'true';
 
-    try {
-        return JSON.parse(savedData);
-    } catch (error) {
-        console.error('등록된 위키 데이터를 불러오지 못했습니다.', error);
-        return [];
+function normalizeImagePath(imagePath) {
+    if (!imagePath) {
+        return DEFAULT_IMAGE;
     }
+
+    const path = String(imagePath).trim();
+
+    if (!path) {
+        return DEFAULT_IMAGE;
+    }
+
+    if (
+        path.startsWith('http://') ||
+        path.startsWith('https://') ||
+        path.startsWith('/') ||
+        path.startsWith('../') ||
+        path.startsWith('./')
+    ) {
+        return path;
+    }
+
+    return `../${path}`;
 }
-
-foodList = [
-    ...getCustomFoodList(),
-    ...foodList
-];
 
 // ================================
 // 2. localStorage key
@@ -178,6 +57,7 @@ const SORT_STORAGE_KEY = 'omechu_wiki_sort';
 // 버튼 눌린 자국은 현재 로그인한 사용자 기준으로만 표시함
 
 const IS_LOGIN = localStorage.getItem('omechu_is_login') === 'true';
+const LOGIN_USER_NO = localStorage.getItem('omechu_user_no') || '';
 const LOGIN_USER_ID = localStorage.getItem('omechu_user_id') || '';
 
 
@@ -207,7 +87,7 @@ const foodCount = document.querySelector('#foodCount');
 const emptyMessage = document.querySelector('#emptyMessage');
 const pagination = document.querySelector('#pagination');
 const categoryList = document.querySelector('#categoryList');
-
+const wikiWriteBtn = document.querySelector('.wiki_write');
 
 // ================================
 // 6. 초기 select 값 반영
@@ -226,47 +106,25 @@ if (sortSelect) {
 // 7. 추천 관련 helper
 // ================================
 
-function getTotalLikeStorageKey(foodId) {
-    // 전체 추천 수 증가분
-    // 나중에 DB 연결하면 이 key는 제거하고 서버 추천 수를 쓰면 됨
-    return `omechu_wiki_food_${foodId}_like_count`;
-}
-
-function getMyLikeStorageKey(foodId) {
-    // 현재 로그인한 사용자가 해당 메뉴를 몇 번 추천했는지
-    return `omechu_wiki_food_${foodId}_my_like_count_${LOGIN_USER_ID}`;
-}
-
-function getAddedLikeCount(foodId) {
-    const key = getTotalLikeStorageKey(foodId);
-    return Number(localStorage.getItem(key)) || 0;
-}
-
 function getFoodTotalLikeCount(food) {
-    return food.likes + getAddedLikeCount(food.id);
-}
-
-function getAddedHitCount(foodId) {
-    const hitStorageKey = `omechu_wiki_food_${foodId}_hits`;
-    return Number(localStorage.getItem(hitStorageKey)) || 0;
+    return Number(food.likes || 0);
 }
 
 function getFoodTotalHitCount(food) {
-    return food.hits + getAddedHitCount(food.id);
+    return Number(food.hits || 0);
 }
 
-function getMyLikeCount(foodId) {
-    if (!IS_LOGIN || !LOGIN_USER_ID) {
+function getMyLikeCountByFood(food) {
+    if (!IS_LOGIN || !LOGIN_USER_NO) {
         return 0;
     }
 
-    return Number(localStorage.getItem(getMyLikeStorageKey(foodId))) || 0;
+    return Number(food.myLikeCount || 0);
 }
 
-function isMyLikedFood(foodId) {
-    return getMyLikeCount(foodId) > 0;
+function isMyLikedFood(food) {
+    return getMyLikeCountByFood(food) > 0;
 }
-
 
 // ================================
 // 8. 음식 카드 HTML 만들기
@@ -281,7 +139,7 @@ function createFoodCard(food) {
         return `<span>${tag}</span>`;
     }).join('');
 
-    const isLiked = isMyLikedFood(food.id);
+    const isLiked = isMyLikedFood(food);
     const totalLikeCount = getFoodTotalLikeCount(food);
     const totalHitCount = getFoodTotalHitCount(food);
 
@@ -289,7 +147,7 @@ function createFoodCard(food) {
         <div class="food_card" data-id="${food.id}">
             <img 
                 class="food_img" 
-                src="${food.image}" 
+                src="${food.image || DEFAULT_IMAGE}"
                 alt="${food.name}"
                 decoding="async"
                 onerror="this.onerror=null; this.src='../assets/food/default.png'"
@@ -317,6 +175,20 @@ function createFoodCard(food) {
             >
                 ${isLiked ? '🤍' : '♡'}
             </button>
+
+            ${
+                IS_ADMIN
+                ? `
+                    <button
+                        type="button"
+                        class="wiki_food_delete_btn"
+                        data-id="${food.id}"
+                    >
+                        위키 삭제
+                    </button>
+                `
+                : ''
+            }
         </div>
     `;
 }
@@ -391,6 +263,62 @@ function getTotalPage(totalCount) {
 // ================================
 // 11. 음식 목록 출력
 // ================================
+
+function normalizeFoodFromDB(food) {
+    return {
+        id: Number(food.id),
+        name: food.name || '이름 없는 음식',
+        category: food.category || '기타',
+        image: normalizeImagePath(food.image),
+        summary: food.summary || '',
+        description: food.description || '',
+        tags: Array.isArray(food.tags) ? food.tags : [],
+        situations: Array.isArray(food.situations) ? food.situations : [],
+        times: Array.isArray(food.times) ? food.times : [],
+        likes: Number(food.likes || 0),
+        comments: Number(food.comments || 0),
+        hits: Number(food.hits || 0),
+        photos: Number(food.photos || 0),
+        myLikeCount: Number(food.myLikeCount || 0),
+        createdAt: food.createdAt || ''
+    };
+}
+
+function loadWikiFoodList() {
+    if (foodListBox) {
+        foodListBox.innerHTML = `
+            <p class="my_empty_text">푸드 위키를 불러오는 중이에요...</p>
+        `;
+    }
+
+    fetch(WIKI_LIST_API_URL, {
+        method: 'GET',
+        credentials: 'include'
+    })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                alert(data.message || '푸드 위키 목록을 불러오지 못했어요.');
+                foodList = [];
+                renderFoodList();
+                return;
+            }
+
+            foodList = Array.isArray(data.foods)
+                ? data.foods.map(normalizeFoodFromDB)
+                : [];
+
+            renderFoodList();
+        })
+        .catch(function(error) {
+            console.error('푸드 위키 목록 불러오기 실패:', error);
+
+            foodList = [];
+            renderFoodList();
+        });
+}
 
 function renderFoodList() {
     const filteredList = getFilteredFoodList();
@@ -482,46 +410,109 @@ function handleFoodLikeButton(button) {
         return;
     }
 
-    if (!IS_LOGIN || !LOGIN_USER_ID) {
-        // 비로그인일 때는 login_common.js가 먼저 잡아서 로그인으로 보냄
-        // 그래도 안전하게 여기서 한 번 더 막음
+    if (!IS_LOGIN || !LOGIN_USER_NO) {
+        alert('추천은 로그인 후 이용할 수 있어요!');
+        location.href = './login/login.html';
         return;
     }
 
-    const totalLikeStorageKey = getTotalLikeStorageKey(foodId);
-    const myLikeStorageKey = getMyLikeStorageKey(foodId);
+    button.disabled = true;
 
-    const currentAddedLikeCount = Number(localStorage.getItem(totalLikeStorageKey)) || 0;
-    const nextAddedLikeCount = currentAddedLikeCount + 1;
+    fetch(WIKI_LIKE_API_URL, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            food_id: foodId
+        })
+    })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                alert(data.message || '추천에 실패했어요.');
+                return;
+            }
 
-    const currentMyLikeCount = Number(localStorage.getItem(myLikeStorageKey)) || 0;
-    const nextMyLikeCount = currentMyLikeCount + 1;
+            const targetFood = foodList.find(function(food) {
+                return Number(food.id) === Number(foodId);
+            });
 
-    // 전체 추천 수 증가분 저장
-    localStorage.setItem(totalLikeStorageKey, String(nextAddedLikeCount));
+            if (targetFood) {
+                targetFood.likes = Number(data.like_count || 0);
+                targetFood.myLikeCount = Number(data.my_like_count || 0);
+            }
 
-    // 내가 추천한 횟수 저장
-    localStorage.setItem(myLikeStorageKey, String(nextMyLikeCount));
+            button.classList.add('is-liked');
+            button.textContent = '🤍';
+            button.setAttribute('aria-label', `내 추천 ${data.my_like_count}회`);
 
-    button.classList.add('is-liked');
-    button.textContent = '🤍';
-    button.setAttribute('aria-label', `내 추천 ${nextMyLikeCount}회`);
+            createFoodHeartParticles(button);
 
-    const card = button.closest('.food_card');
-    const likeText = card ? card.querySelector('.food_meta span:first-child') : null;
-
-    if (likeText) {
-        const currentLikeNumber = Number(likeText.textContent.replace(/[^0-9]/g, '')) || 0;
-        likeText.textContent = `추천 ${currentLikeNumber + 1}`;
-    }
-
-    createFoodHeartParticles(button);
-
-    if (currentSort === 'likes') {
-        setTimeout(function() {
             renderFoodList();
-        }, 800);
+        })
+        .catch(function(error) {
+            console.error('추천 실패:', error);
+            alert('서버와 통신 중 오류가 발생했어요.');
+        })
+        .finally(function() {
+            button.disabled = false;
+        });
+}
+
+function deleteWikiFood(foodId) {
+    if (!IS_ADMIN) {
+        alert('관리자만 삭제할 수 있어요.');
+        return;
     }
+
+    const targetFood = foodList.find(function(food) {
+        return Number(food.id) === Number(foodId);
+    });
+
+    if (!targetFood) {
+        alert('삭제할 음식 정보를 찾을 수 없어요.');
+        return;
+    }
+
+    if (!confirm(`"${targetFood.name}" 위키를 삭제할까요?\n관련 코멘트와 사진도 함께 숨김 처리됩니다.`)) {
+        return;
+    }
+
+    fetch(WIKI_FOOD_DELETE_API_URL, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            food_id: foodId
+        })
+    })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                alert(data.message || '음식 위키 삭제에 실패했어요.');
+                return;
+            }
+
+            alert(data.message || '음식 위키가 삭제됐어요.');
+
+            foodList = foodList.filter(function(food) {
+                return Number(food.id) !== Number(foodId);
+            });
+
+            renderFoodList();
+        })
+        .catch(function(error) {
+            console.error('음식 위키 삭제 실패:', error);
+            alert('서버와 통신 중 오류가 발생했어요.');
+        });
 }
 
 // ================================
@@ -560,6 +551,16 @@ function createFoodHeartParticles(button) {
 
 // 음식 카드 / 추천 버튼 클릭
 foodListBox.addEventListener('click', function(event) {
+    const deleteButton = event.target.closest('.wiki_food_delete_btn');
+
+    if (deleteButton) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        deleteWikiFood(Number(deleteButton.dataset.id));
+        return;
+    }
+
     const likeButton = event.target.closest('.food_like_btn');
 
     if (likeButton) {
@@ -654,6 +655,11 @@ perPageSelect.addEventListener('change', function() {
     renderFoodList();
 });
 
+if (wikiWriteBtn) {
+    wikiWriteBtn.addEventListener('click', function() {
+        location.href = './wiki_write.html';
+    });
+}
 
 // ================================
 // 16. 카테고리 마우스 드래그 가로 스크롤
@@ -715,4 +721,4 @@ if (categoryList) {
 // 17. 최초 실행
 // ================================
 
-renderFoodList();
+loadWikiFoodList();

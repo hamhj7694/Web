@@ -175,6 +175,7 @@
 
 .map_filter_list {
     display: flex;
+    justify-content: center;
     gap: 8px;
     overflow-x: auto;
     padding-bottom: 4px;
@@ -295,12 +296,20 @@
     text-align: center;
 }
 
+.Information_note{
+    display: block;
+    color: var(--color-text-sub);
+    font-size: 1.3rem;
+    font-weight: 800;
+    text-align: center;
+}
+
 .place_list {
     display: grid;
     gap: 12px;
 }
 
-.empty_place_text{
+.empty_place_text{ 
     border: 2px dashed var(--color-line);
     border-radius: var(--radius-lg);
     background-color: white;
@@ -409,6 +418,22 @@
 
 .related_food_box.is-hidden {
     display: none;
+}
+
+.related_food_tag {
+    display: inline-flex;
+    align-items: center;
+    margin: 3px 4px 3px 0;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: var(--color-bg-sub);
+    color: var(--color-text);
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.redtable_menu_tag {
+    font-weight: 600;
 }
 
 /* =============================

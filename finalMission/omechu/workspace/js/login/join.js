@@ -8,8 +8,7 @@ const agreeCheck = document.querySelector('#agreeCheck');
 
 
 // -------------------------------------------
-// db 속 id들과 id 대조 중복 검사
-// 지금은 DB 연결 전이므로 localStorage 속 id들과 대조
+// 아이디 중복 검사 AJAX
 // -------------------------------------------
 
 const idDuplicateCheckBtn = document.querySelector('.id_duplicate_check_btn');
@@ -41,34 +40,43 @@ idDuplicateCheckBtn.addEventListener('click', function() {
         return;
     }
 
-    const savedUsers = getSavedUsers();
+    // AJAX 아이디 중복 확인
+    fetch('../../backend/api/auth/check_id.php?login_id=' + encodeURIComponent(userId))
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                alert(data.message || '아이디 중복확인 중 오류가 발생했어요.');
+                return;
+            }
 
-    const isDuplicatedId = savedUsers.some(function(user) {
-        return user.id === userId;
-    });
+            if (data.is_duplicated) {
+                alert(data.message || '이미 사용 중인 아이디예요!');
+                joinIdInput.focus();
 
-    if (isDuplicatedId) {
-        alert('이미 사용 중인 아이디예요!');
-        joinIdInput.focus();
+                isIdChecked = false;
+                checkedIdValue = '';
 
-        isIdChecked = false;
-        checkedIdValue = '';
+                idDuplicateCheckBtn.classList.remove('is-checked');
+                idDuplicateCheckBtn.textContent = '중복확인';
 
-        idDuplicateCheckBtn.classList.remove('is-checked');
-        idDuplicateCheckBtn.textContent = '중복확인';
+                return;
+            }
 
-        return;
-    }
+            alert(data.message || '사용 가능한 아이디예요!');
 
-    alert('사용 가능한 아이디예요!');
+            isIdChecked = true;
+            checkedIdValue = userId;
 
-    isIdChecked = true;
-    checkedIdValue = userId;
-
-    idDuplicateCheckBtn.classList.add('is-checked');
-    idDuplicateCheckBtn.textContent = '확인완료';
+            idDuplicateCheckBtn.classList.add('is-checked');
+            idDuplicateCheckBtn.textContent = '확인완료';
+        })
+        .catch(function(error) {
+            console.error('아이디 중복확인 요청 실패:', error);
+            alert('서버와 통신 중 오류가 발생했어요.');
+        });
 });
-
 
 // -------------------------------------------
 // 회원가입
@@ -138,22 +146,8 @@ joinForm.addEventListener('submit', function(event) {
         return;
     }
 
-    // 기존 회원 정보 가져오기
-    const savedUsersForCheck = getSavedUsers();
-
-    // 닉네임 중복 확인
-    const isDuplicatedNickname = savedUsersForCheck.some(function(user) {
-        return user.nickname === nickname;
-    });
-
-    if (isDuplicatedNickname) {
-        alert('이미 사용 중인 닉네임이에요!');
-        joinNicknameInput.focus();
-        return;
-    }
-
     // 이메일 확인
-    const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegExp = /^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
     if (email === '') {
         alert('이메일을 입력해주세요!');
@@ -167,116 +161,40 @@ joinForm.addEventListener('submit', function(event) {
         return;
     }
 
-    const isDuplicatedEmail = savedUsersForCheck.some(function(user) {
-        return user.email === email;
-    });
-
-    if (isDuplicatedEmail) {
-        alert('이미 가입된 이메일이에요!');
-        joinEmailInput.focus();
-        return;
-    }
-
     if (!agreeCheck.checked) {
         alert('개인정보 수집 동의가 필요해요!');
         agreeCheck.focus();
         return;
     }
 
-    // 회원가입 완료 및 저장 코드
-    const savedUsers = getSavedUsers();
+    // 회원가입 정보 전송 AJAX
+    fetch('../../backend/api/auth/register.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            login_id: userId,
+            password: userPw,
+            password_check: userPwCheck,
+            nickname: nickname,
+            email: email
+        })
+    })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.success) {
+                alert(data.message || '회원가입 중 오류가 발생했어요.');
+                return;
+            }
 
-    // -----------------------------
-    // 저장 직전 아이디 중복 방지
-    const isDuplicatedId = savedUsers.some(function(user) {
-        return user.id === userId;
-    });
-
-    if (isDuplicatedId) {
-        alert('이미 사용 중인 아이디예요! 다시 중복확인을 해주세요.');
-
-        isIdChecked = false;
-        checkedIdValue = '';
-
-        idDuplicateCheckBtn.classList.remove('is-checked');
-        idDuplicateCheckBtn.textContent = '중복확인';
-
-        joinIdInput.focus();
-        return;
-    }
-
-    // 저장 직전 닉네임 중복 방지
-    const isDuplicatedNicknameBeforeSave = savedUsers.some(function(user) {
-        return user.nickname === nickname;
-    });
-
-    if (isDuplicatedNicknameBeforeSave) {
-        alert('이미 사용 중인 닉네임이에요!');
-        joinNicknameInput.focus();
-        return;
-    }
-
-    // 저장 직전 이메일 중복 방지
-    const isDuplicatedEmailBeforeSave = savedUsers.some(function(user) {
-        return user.email === email;
-    });
-
-    if (isDuplicatedEmailBeforeSave) {
-        alert('이미 가입된 이메일이에요!');
-        joinEmailInput.focus();
-        return;
-    }
-    
-    // -----------------------------
-    
-    const newUser = {
-        id: userId,
-        password: userPw,
-        nickname: nickname,
-        email: email,
-        createdAt: getTodayText()
-    };
-
-    savedUsers.push(newUser);
-
-    localStorage.setItem('omechu_users', JSON.stringify(savedUsers));
-
-    alert('회원가입이 완료됐어요! 로그인해주세요.');
-
-    location.href = './login.html';
+            alert(data.message || '회원가입이 완료됐어요! 로그인해주세요.');
+            location.href = './login.html';
+        })
+        .catch(function(error) {
+            console.error('회원가입 요청 실패:', error);
+            alert('서버와 통신 중 오류가 발생했어요.');
+        });
 });
-
-
-// -------------------------------------------
-// 저장된 회원 목록 가져오기
-// -------------------------------------------
-
-function getSavedUsers() {
-    const savedData = localStorage.getItem('omechu_users');
-
-    if (!savedData) {
-        return [];
-    }
-
-    try {
-        return JSON.parse(savedData);
-    } catch (error) {
-        console.error('회원 데이터를 불러오는 중 오류가 발생했습니다.', error);
-        return [];
-    }
-}
-
-
-// -------------------------------------------
-// 날짜 함수
-// -------------------------------------------
-
-function getTodayText() {
-    const today = new Date();
-
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const date = String(today.getDate()).padStart(2, '0');
-
-    return `${year}.${month}.${date}`;
-}

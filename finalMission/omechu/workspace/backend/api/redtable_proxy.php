@@ -1,9 +1,3 @@
-<!-- RedTable API 인증키 -->
-<!-- vyw8BQae8o1A7Bhovayi7ylF0zga1kppXOy5Erhz7e3zpfiIQSFJDyrNURwjw8y9 -->
-
-<!-- RedTable API 주소 -->
-<!-- https://www.data.go.kr/data/15097605/openapi.do?utm_source=chatgpt.com -->
-
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
@@ -45,3 +39,5 @@ if ($response === false) {
 
 http_response_code($httpCode);
 echo $response;
+
+?>

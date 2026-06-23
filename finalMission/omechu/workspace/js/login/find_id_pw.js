@@ -1,5 +1,6 @@
 // ================================
 // ID / PW 찾기 페이지
+// DB/PHP API 연동 버전
 // ================================
 
 const findTabButtons = document.querySelectorAll('.find_tab_btn');
@@ -17,6 +18,9 @@ const newPwCheckInput = document.querySelector('#newPwCheck');
 const findPwResult = document.querySelector('#findPwResult');
 
 const guestBtn = document.querySelector('#guestBtn');
+
+const FIND_ID_API_URL = '../../backend/api/auth/find_id.php';
+const RESET_PASSWORD_API_URL = '../../backend/api/auth/reset_password.php';
 
 
 // ================================
@@ -56,8 +60,9 @@ findIdForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
     const email = findIdEmailInput.value.trim();
-
     const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    hideResultBoxes();
 
     if (email === '') {
         alert('이메일을 입력해주세요!');
@@ -71,24 +76,36 @@ findIdForm.addEventListener('submit', function(event) {
         return;
     }
 
-    const savedUsers = getSavedUsers();
+    fetch(FIND_ID_API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: email
+        })
+    })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            findIdResult.classList.remove('hidden');
 
-    const foundUser = savedUsers.find(function(user) {
-        return user.email === email;
-    });
+            if (!data.success) {
+                findIdResult.innerHTML = data.message || '일치하는 회원 정보를 찾을 수 없어요.';
+                return;
+            }
 
-    if (!foundUser) {
-        findIdResult.classList.remove('hidden');
-        findIdResult.innerHTML = `
-            일치하는 회원 정보를 찾을 수 없어요.
-        `;
-        return;
-    }
+            findIdResult.innerHTML = `
+                찾은 아이디는 <strong>${escapeHTML(data.login_id)}</strong> 입니다.
+            `;
+        })
+        .catch(function(error) {
+            console.error('아이디 찾기 실패:', error);
 
-    findIdResult.classList.remove('hidden');
-    findIdResult.innerHTML = `
-        찾은 아이디는 <strong>${foundUser.id}</strong> 입니다.
-    `;
+            findIdResult.classList.remove('hidden');
+            findIdResult.innerHTML = '서버와 통신 중 오류가 발생했어요.';
+        });
 });
 
 
@@ -106,6 +123,8 @@ findPwForm.addEventListener('submit', function(event) {
 
     const idRegExp = /^[a-zA-Z0-9]{4,}$/;
     const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    hideResultBoxes();
 
     if (userId === '') {
         alert('아이디를 입력해주세요!');
@@ -155,32 +174,42 @@ findPwForm.addEventListener('submit', function(event) {
         return;
     }
 
-    const savedUsers = getSavedUsers();
+    fetch(RESET_PASSWORD_API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            login_id: userId,
+            email: email,
+            new_password: newPw
+        })
+    })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            findPwResult.classList.remove('hidden');
 
-    const foundUserIndex = savedUsers.findIndex(function(user) {
-        return user.id === userId && user.email === email;
-    });
+            if (!data.success) {
+                findPwResult.innerHTML = data.message || '일치하는 회원 정보를 찾을 수 없어요.';
+                return;
+            }
 
-    if (foundUserIndex === -1) {
-        findPwResult.classList.remove('hidden');
-        findPwResult.innerHTML = `
-            일치하는 회원 정보를 찾을 수 없어요.
-        `;
-        return;
-    }
+            findPwResult.innerHTML = `
+                비밀번호가 변경됐어요.<br>
+                새 비밀번호로 로그인해주세요.
+            `;
 
-    savedUsers[foundUserIndex].password = newPw;
+            newPwInput.value = '';
+            newPwCheckInput.value = '';
+        })
+        .catch(function(error) {
+            console.error('비밀번호 변경 실패:', error);
 
-    localStorage.setItem('omechu_users', JSON.stringify(savedUsers));
-
-    findPwResult.classList.remove('hidden');
-    findPwResult.innerHTML = `
-        비밀번호가 변경됐어요.<br>
-        새 비밀번호로 로그인해주세요.
-    `;
-
-    newPwInput.value = '';
-    newPwCheckInput.value = '';
+            findPwResult.classList.remove('hidden');
+            findPwResult.innerHTML = '서버와 통신 중 오류가 발생했어요.';
+        });
 });
 
 
@@ -197,25 +226,19 @@ guestBtn.addEventListener('click', function() {
 // 5. 공통 함수
 // ================================
 
-function getSavedUsers() {
-    const savedData = localStorage.getItem('omechu_users');
-
-    if (!savedData) {
-        return [];
-    }
-
-    try {
-        return JSON.parse(savedData);
-    } catch (error) {
-        console.error('회원 데이터를 불러오는 중 오류가 발생했습니다.', error);
-        return [];
-    }
-}
-
 function hideResultBoxes() {
     findIdResult.classList.add('hidden');
     findPwResult.classList.add('hidden');
 
     findIdResult.innerHTML = '';
     findPwResult.innerHTML = '';
+}
+
+function escapeHTML(value) {
+    return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
 }

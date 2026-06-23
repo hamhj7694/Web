@@ -8,16 +8,14 @@
 // ================================
 // 0. 로그인 여부 확인
 // ================================
-
 const isLogin = localStorage.getItem('omechu_is_login') === 'true';
-const loginUserId = localStorage.getItem('omechu_user_id');
-const loginUserNickname = localStorage.getItem('omechu_user_nickname') || '익명';
+const loginUserNo = localStorage.getItem('omechu_user_no');
 
-if (!isLogin || !loginUserId) {
+if (!isLogin || !loginUserNo) {
     alert('로그인이 필요한 페이지예요!');
     location.href = './login/login.html';
+    throw new Error('로그인이 필요한 페이지입니다.');
 }
-
 
 // ================================
 // 1. DOM 가져오기
@@ -35,13 +33,13 @@ const fileNameText = document.querySelector('#fileNameText');
 const wikiWriteForm = document.querySelector('#wikiWriteForm');
 const cancelBtn = document.querySelector('.cancel_btn');
 
-
+const WIKI_CREATE_API_URL = '../backend/api/wiki/create.php';
+const PHOTO_ADD_API_URL = '../backend/api/wiki/photo_add.php';
 // ================================
 // 2. 기본 설정
 // ================================
 
-const CUSTOM_FOOD_STORAGE_KEY = 'omechu_wiki_custom_foods';
-const WRITE_FORM_STORAGE_KEY = `omechu_wiki_write_form_${loginUserId}`;
+const WRITE_FORM_STORAGE_KEY = `omechu_wiki_write_form_${loginUserNo}`;
 
 // 이미지 최대 용량 기준
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -55,77 +53,18 @@ const IMAGE_QUALITY = 0.8;
 
 // 선택된 이미지 base64 데이터
 let selectedImageData = '';
-
+let selectedImageFile = null;
 
 // ================================
 // 3. 기본 음식 인덱스
 // wiki.js / wiki_detail.js의 기본 음식과 맞춰야 함
 // ================================
 
-const DEFAULT_FOOD_INDEX = [
-    { id: 1, name: '제육볶음', category: '한식' },
-    { id: 2, name: '김치찌개', category: '한식' },
-    { id: 3, name: '치킨', category: '야식' },
-    { id: 4, name: '짜장면', category: '중식' },
-    { id: 5, name: '마라탕', category: '중식' },
-    { id: 6, name: '초밥', category: '일식' },
-    { id: 7, name: '파스타', category: '양식' },
-    { id: 8, name: '떡볶이', category: '분식' },
-    { id: 9, name: '라면', category: '분식' },
-    { id: 10, name: '샐러드', category: '기타' },
-    { id: 11, name: '돈까스', category: '일식' },
-    { id: 12, name: '피자', category: '양식' }
-];
 
 
 // ================================
 // 4. 공통 유틸
 // ================================
-
-function readStorage(key, fallbackValue) {
-    const savedData = localStorage.getItem(key);
-
-    if (!savedData) return fallbackValue;
-
-    try {
-        return JSON.parse(savedData);
-    } catch (error) {
-        console.error(`${key} 데이터를 불러오지 못했습니다.`, error);
-        return fallbackValue;
-    }
-}
-
-function saveStorage(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-}
-
-function readCustomFoodList() {
-    return readStorage(CUSTOM_FOOD_STORAGE_KEY, []);
-}
-
-function saveCustomFoodList(foodList) {
-    saveStorage(CUSTOM_FOOD_STORAGE_KEY, foodList);
-}
-
-function todayText() {
-    const today = new Date();
-
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const date = String(today.getDate()).padStart(2, '0');
-
-    return `${year}.${month}.${date}`;
-}
-
-function currentMealTime() {
-    const hour = new Date().getHours();
-
-    if (hour >= 5 && hour < 11) return '아침';
-    if (hour >= 11 && hour < 16) return '점심';
-    if (hour >= 16 && hour < 21) return '저녁';
-
-    return '야식';
-}
 
 function makeHashTag(value) {
     const cleanValue = String(value || '').trim();
@@ -135,37 +74,13 @@ function makeHashTag(value) {
     return cleanValue.startsWith('#') ? cleanValue : `#${cleanValue}`;
 }
 
-function normalizeFoodName(name) {
-    return String(name || '')
-        .trim()
-        .replace(/\s+/g, '')
-        .toLowerCase();
-}
-
-function isSameFood(aName, aCategory, bName, bCategory) {
-    return normalizeFoodName(aName) === normalizeFoodName(bName) &&
-        String(aCategory || '').trim() === String(bCategory || '').trim();
-}
-
-function findDefaultFood(foodName, category) {
-    return DEFAULT_FOOD_INDEX.find(function(food) {
-        return isSameFood(food.name, food.category, foodName, category);
-    });
-}
-
-function findCustomFood(customFoodList, foodName, category) {
-    return customFoodList.find(function(food) {
-        return isSameFood(food.name, food.category, foodName, category);
-    });
-}
-
-
 // ================================
 // 5. 이미지 미리보기 + 자동 압축
 // ================================
 
 function clearImageState() {
     selectedImageData = '';
+    selectedImageFile = null;
 
     if (foodImageInput) {
         foodImageInput.value = '';
@@ -192,6 +107,8 @@ function handleImageChange() {
         return;
     }
 
+    selectedImageFile = file;
+    
     if (!file.type.startsWith('image/')) {
         alert('이미지 파일만 등록할 수 있어요!');
         clearImageState();
@@ -415,94 +332,46 @@ function resetWriteForm() {
     clearImageState();
 }
 
-
-// ================================
-// 9. 중복 음식 취합 처리
-// ================================
-
-function makeNewComment(comment, tags) {
-    return {
-        id: `user_comment_${Date.now()}`,
-        userId: loginUserId,
-        user: loginUserNickname,
-        text: comment,
-        date: todayText(),
-        timePeriod: currentMealTime(),
-        tags: tags.slice(0, 3)
-    };
-}
-
-function makeNewPhoto() {
-    return {
-        id: `user_photo_${Date.now()}`,
-        src: selectedImageData,
-        userId: loginUserId,
-        user: loginUserNickname,
-        date: todayText()
-    };
-}
-
-function mergeIntoCustomFood(customFood, comment, tags) {
-    const newComment = makeNewComment(comment, tags);
-
-    customFood.tags = Array.from(new Set([
-        ...(customFood.tags || []),
-        ...tags
-    ]));
-
-    customFood.photos = [
-        makeNewPhoto(),
-        ...(customFood.photos || [])
-    ];
-
-    customFood.commentList = [
-        newComment,
-        ...(customFood.commentList || [])
-    ];
-
-    customFood.comments = Number(customFood.comments || 0) + 1;
-
-    customFood.description = comment;
-    customFood.summary = comment;
-
-    // 대표 이미지는 최신 사진으로 갱신
-    customFood.image = selectedImageData;
-}
-
-function mergeIntoDefaultFood(defaultFoodId, comment, tags) {
-    const photoStorageKey = `omechu_food_${defaultFoodId}_photos`;
-    const commentStorageKey = `omechu_food_${defaultFoodId}_comments`;
-    const tagStorageKey = `omechu_food_${defaultFoodId}_tags`;
-    const myTagStorageKey = `omechu_food_${defaultFoodId}_my_tags_${loginUserId}`;
-
-    const savedPhotos = readStorage(photoStorageKey, []);
-    const savedComments = readStorage(commentStorageKey, []);
-    const savedTags = readStorage(tagStorageKey, []);
-    const savedMyTags = readStorage(myTagStorageKey, []);
-
-    savedPhotos.unshift(makeNewPhoto());
-    savedComments.unshift(makeNewComment(comment, tags));
-
-    const nextTags = Array.from(new Set([
-        ...savedTags,
-        ...tags
-    ]));
-
-    const nextMyTags = Array.from(new Set([
-        ...savedMyTags,
-        ...tags
-    ]));
-
-    saveStorage(photoStorageKey, savedPhotos);
-    saveStorage(commentStorageKey, savedComments);
-    saveStorage(tagStorageKey, nextTags);
-    saveStorage(myTagStorageKey, nextMyTags);
-}
-
-
 // ================================
 // 10. 위키 등록 처리
 // ================================
+
+function saveWikiFoodToDB(foodData) {
+    return fetch(WIKI_CREATE_API_URL, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(foodData)
+    })
+        .then(function(response) {
+            return response.json();
+        });
+}
+
+function uploadWikiFoodPhoto(foodId) {
+    if (!selectedImageFile) {
+        return Promise.resolve({
+            success: false,
+            message: '업로드할 사진이 없어요.'
+        });
+    }
+
+    const formData = new FormData();
+
+    formData.append('food_id', foodId);
+    formData.append('image', selectedImageFile);
+
+    return fetch(PHOTO_ADD_API_URL, {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+    })
+        .then(function(response) {
+            return response.json();
+        });
+}
 
 function submitWikiWriteForm(event) {
     event.preventDefault();
@@ -523,86 +392,95 @@ function submitWikiWriteForm(event) {
         return;
     }
 
-    if (!comment) {
-        alert('코멘트를 입력해주세요!');
-        if (foodCommentInput) foodCommentInput.focus();
-        return;
-    }
-
-    // 요청사항 1. 사진이 없으면 등록 불가
-    if (!selectedImageData) {
-        alert('사진을 등록해주세요! 사진이 없으면 위키를 등록할 수 없어요.');
+    if (!selectedImageFile) {
+        alert('사진을 등록해주세요! 사진이 있어야 푸드 위키를 게시할 수 있어요.');
         if (foodImageInput) foodImageInput.focus();
         return;
     }
 
     const tags = getAllWriteTags(category);
-    const customFoodList = readCustomFoodList();
+    const times = getCheckedValues('timeTags');
+    const situations = getCheckedValues('situationTags');
 
-    // 요청사항 2-1. 커스텀 음식 중 같은 이름 + 같은 카테고리면 취합
-    const sameCustomFood = findCustomFood(customFoodList, foodName, category);
-
-    if (sameCustomFood) {
-        mergeIntoCustomFood(sameCustomFood, comment, tags);
-
-        saveCustomFoodList(customFoodList);
-
-        localStorage.removeItem(WRITE_FORM_STORAGE_KEY);
-        resetWriteForm();
-
-        alert('이미 있는 메뉴라서 기존 위키에 합쳐졌어요!');
-
-        location.href = `./wiki_detail.html?id=${sameCustomFood.id}`;
-        return;
-    }
-
-    // 요청사항 2-2. 기본 음식 중 같은 이름 + 같은 카테고리면 기존 상세로 취합
-    const sameDefaultFood = findDefaultFood(foodName, category);
-
-    if (sameDefaultFood) {
-        mergeIntoDefaultFood(sameDefaultFood.id, comment, tags);
-
-        localStorage.removeItem(WRITE_FORM_STORAGE_KEY);
-        resetWriteForm();
-
-        alert('이미 있는 메뉴라서 기존 위키에 합쳐졌어요!');
-
-        location.href = `./wiki_detail.html?id=${sameDefaultFood.id}`;
-        return;
-    }
-
-    // 완전히 새로운 음식이면 새 위키 생성
-    const newFoodId = Date.now();
-    const newComment = makeNewComment(comment, tags);
-
-    const newFood = {
-        id: newFoodId,
+    const foodData = {
         name: foodName,
         category: category,
-        image: selectedImageData,
-
-        // wiki.js 목록용
         description: comment,
-        tags: tags,
-        likes: 0,
-        comments: 1,
-        hits: 0,
-
-        // wiki_detail.js 상세용
         summary: comment,
-        photos: [makeNewPhoto()],
-        commentList: [newComment]
+        tags: tags,
+        situations: situations,
+        times: times,
+        image: ''
     };
 
-    customFoodList.unshift(newFood);
-    saveCustomFoodList(customFoodList);
+    if (wikiWriteForm) {
+        const submitButton = wikiWriteForm.querySelector('button[type="submit"]');
 
-    localStorage.removeItem(WRITE_FORM_STORAGE_KEY);
-    resetWriteForm();
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = '등록 중...';
+        }
+    }
 
-    alert('위키가 등록됐어요!');
+    saveWikiFoodToDB(foodData)
+        .then(function(data) {
+            if (!data.success) {
+                alert(data.message || '푸드 위키 등록에 실패했어요.');
+                return;
+            }
 
-    location.href = `./wiki_detail.html?id=${newFoodId}`;
+            const foodId = data.food && data.food.id ? data.food.id : '';
+
+            if (!foodId) {
+                localStorage.removeItem(WRITE_FORM_STORAGE_KEY);
+                resetWriteForm();
+
+                alert(data.message || '푸드 위키가 등록됐어요!');
+                location.href = './wiki.html';
+                return;
+            }
+
+            uploadWikiFoodPhoto(foodId)
+                .then(function(photoData) {
+                    if (!photoData.success) {
+                        alert(
+                            '음식은 등록됐지만 사진 저장에 실패했어요.\n' +
+                            (photoData.message || '')
+                        );
+                    } else {
+                        alert(data.message || '푸드 위키가 등록됐어요!');
+                    }
+
+                    localStorage.removeItem(WRITE_FORM_STORAGE_KEY);
+                    resetWriteForm();
+
+                    location.href = `./wiki_detail.html?id=${foodId}`;
+                })
+                .catch(function(error) {
+                    console.error('대표 이미지 업로드 실패:', error);
+
+                    alert('음식은 등록됐지만 사진 저장 중 오류가 발생했어요.');
+
+                    localStorage.removeItem(WRITE_FORM_STORAGE_KEY);
+                    resetWriteForm();
+
+                    location.href = `./wiki_detail.html?id=${foodId}`;
+                });
+        })
+        .catch(function(error) {
+            console.error('푸드 위키 등록 실패:', error);
+            alert('서버와 통신 중 오류가 발생했어요.');
+        })
+        .finally(function() {
+            if (wikiWriteForm) {
+                const submitButton = wikiWriteForm.querySelector('button[type="submit"]');
+
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = '등록하기';
+                }
+            }
+        });
 }
 
 
