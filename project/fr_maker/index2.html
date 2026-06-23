@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>친구 지원서</title>
+        <link rel="stylesheet" href="./index.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>형준이 친구하기 지원서</h1>
+            <h4>"2000년생 27살 함형준을 이해하고 보살펴 주실 친구를 찾습니다."</h4>
+            <p><strong style="color: red;">[개인정보 취급 주의!]</strong>
+            적어 주신 이름, 성별, 나이, 사진, 매력 포인트는 <br>
+            하단에 있는 '형준이의 친구들 👉'에 기록 및 공개됩니다. (연락처, 지원 분야는 비공개)</p>
+            <hr>
+
+            <form action="ok.php" method="post" enctype="multipart/form-data">
+                <h4>내 정보</h4>
+
+                <div class="info-grid">
+                    <div>
+                        <div class="form-row">
+                            <label>이름</label>
+                            <input type="text" name="name" placeholder="이름을 적어주세요🥰">
+                        </div>
+
+                        <div class="form-row">
+                            <label>연락처</label>
+                            <input type="text" name="phone" placeholder="010-0000-0000">
+                        </div>
+
+                        <div class="form-row">
+                            성별 :
+                            <label><input type="radio" name="gender" value="남성">남성</label>
+                            <label><input type="radio" name="gender" value="여성" checked>여성</label>
+                        </div>
+
+                        <div class="form-row">
+                            <label>나이(20~40)</label>
+                            <input class="age-input" type="number" name="age" min="20" max="40" value="24">
+                        </div>
+                    </div>
+
+                    <div class="file-box">
+                        <label>사진 자랑하기</label>
+
+                        <div class="preview-box">
+                            <img id="preview-img" alt="사진 미리보기">
+                            <span id="preview-text">사진 미리보기</span>
+                        </div>
+
+                        <input type="file" name="img1" id="img1" accept="image/*">
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <h4>지원 분야(복수 지원 가능)</h4>
+                <ul>
+                    <label><input type="checkbox" name="pick[]" value="여자친구" checked>여자친구</label>
+                    <label><input type="checkbox" name="pick[]" value="썸녀" checked>썸녀</label>
+                    <label><input type="checkbox" name="pick[]" value="친구 및 지인">친구 및 지인</label>
+                </ul>
+
+                <hr>
+
+                <h4>성격 및 매력 포인트</h4>
+                <textarea name="msg2" rows="4" placeholder="자신의 성격이나 매력을 간략히 써 주세요!"></textarea>
+
+                <hr>
+
+                <div class="button-row">
+                    <div>
+                        <input type="submit" value="접수하기">
+                        <input type="reset" value="다시 쓰기">
+                    </div>
+
+                    <div class="friend-mini">
+                        <span>형준이의 친구들 👉</span>
+                        <button type="button" onclick="location.href='./fr_list.php'">
+                            누가 있는지 보러가기
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <script>
+            const imgInput = document.getElementById("img1");
+            const previewImg = document.getElementById("preview-img");
+            const previewText = document.getElementById("preview-text");
+
+            imgInput.addEventListener("change", function () {
+                const file = imgInput.files[0];
+
+                if (!file) {
+                    previewImg.style.display = "none";
+                    previewText.style.display = "block";
+                    return;
+                }
+
+                previewImg.src = URL.createObjectURL(file);
+                previewImg.style.display = "block";
+                previewText.style.display = "none";
+            });
+        </script>
+
+    </body>
+</html>
