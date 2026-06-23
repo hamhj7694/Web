@@ -457,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </button>
                         
                         <button type="button" class="my_food_btn2 delete_my_like_btn">
-                            내 추천 모두 삭제
+                            모두 삭제
                         </button>
                     </div>
                 </div>
