@@ -450,9 +450,14 @@ function handleFoodLikeButton(button) {
             button.textContent = '🤍';
             button.setAttribute('aria-label', `내 추천 ${data.my_like_count}회`);
 
-            createFoodHeartParticles(button);
+            const foodCard = button.closest('.food_card');
+            const likeCountText = foodCard ? foodCard.querySelector('.food_meta span:first-child') : null;
 
-            renderFoodList();
+            if (likeCountText && targetFood) {
+                likeCountText.textContent = `추천 ${targetFood.likes}`;
+            }
+
+            createFoodHeartParticles(button);
         })
         .catch(function(error) {
             console.error('추천 실패:', error);

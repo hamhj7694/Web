@@ -35,6 +35,7 @@ const cancelBtn = document.querySelector('.cancel_btn');
 
 const WIKI_CREATE_API_URL = '../backend/api/wiki/create.php';
 const PHOTO_ADD_API_URL = '../backend/api/wiki/photo_add.php';
+const COMMENT_ADD_API_URL = '../backend/api/wiki/comment_add.php';
 // ================================
 // 2. 기본 설정
 // ================================
@@ -373,6 +374,32 @@ function uploadWikiFoodPhoto(foodId) {
         });
 }
 
+function addWikiFoodComment(foodId, comment, tags) {
+    if (!comment || !comment.trim()) {
+        return Promise.resolve({
+            success: true,
+            skipped: true
+        });
+    }
+
+    return fetch(COMMENT_ADD_API_URL, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            food_id: foodId,
+            content: comment.trim(),
+            meal_time: '',
+            tags: tags || []
+        })
+    })
+        .then(function(response) {
+            return response.json();
+        });
+}
+
 function submitWikiWriteForm(event) {
     event.preventDefault();
 
@@ -440,12 +467,32 @@ function submitWikiWriteForm(event) {
                 return;
             }
 
-            uploadWikiFoodPhoto(foodId)
-                .then(function(photoData) {
+            Promise.all([
+                uploadWikiFoodPhoto(foodId),
+                addWikiFoodComment(foodId, comment, tags)
+            ])
+                .then(function(results) {
+                    const photoData = results[0];
+                    const commentData = results[1];
+
+                    let warningMessages = [];
+
                     if (!photoData.success) {
+                        warningMessages.push(
+                            '사진 저장에 실패했어요.\n' + (photoData.message || '')
+                        );
+                    }
+
+                    if (!commentData.success) {
+                        warningMessages.push(
+                            '코멘트 등록에 실패했어요.\n' + (commentData.message || '')
+                        );
+                    }
+
+                    if (warningMessages.length > 0) {
                         alert(
-                            '음식은 등록됐지만 사진 저장에 실패했어요.\n' +
-                            (photoData.message || '')
+                            '음식은 등록됐지만 일부 정보 저장에 실패했어요.\n\n' +
+                            warningMessages.join('\n\n')
                         );
                     } else {
                         alert(data.message || '푸드 위키가 등록됐어요!');
@@ -457,9 +504,9 @@ function submitWikiWriteForm(event) {
                     location.href = `./wiki_detail.html?id=${foodId}`;
                 })
                 .catch(function(error) {
-                    console.error('대표 이미지 업로드 실패:', error);
+                    console.error('추가 정보 저장 실패:', error);
 
-                    alert('음식은 등록됐지만 사진 저장 중 오류가 발생했어요.');
+                    alert('음식은 등록됐지만 사진 또는 코멘트 저장 중 오류가 발생했어요.');
 
                     localStorage.removeItem(WRITE_FORM_STORAGE_KEY);
                     resetWriteForm();
