@@ -1,0 +1,11 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+**/db.local.php
+**/secrets.php
+**/credentials.json
+**/private-config.php
